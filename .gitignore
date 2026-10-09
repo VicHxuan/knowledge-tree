@@ -1,0 +1,28 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# environment variables
+.env
+.env.production
+
+# macOS-specific files
+.DS_Store
+
+# 既有笔记原件：已迁移至 src/content/docs/，仅本地保留，不入库
+/rl/
+/trajectory/
+/workflow-tool/
+/px4-controller-attitude-rate.md
+/wp.md

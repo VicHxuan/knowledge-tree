@@ -1,0 +1,15 @@
+/* Knowledge Tree 自定义样式 */
+
+/* 中文字体回退：保证 macOS / Windows / Linux 下中文渲染一致 */
+:root {
+	--sl-font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+		'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+	--sl-font-heading: var(--sl-font-body);
+}
+
+/* 移动端长公式可横向滚动，避免撑破版面 */
+.katex-display {
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 0.2rem 0;
+}

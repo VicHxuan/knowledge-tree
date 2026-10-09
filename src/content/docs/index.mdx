@@ -1,0 +1,47 @@
+---
+title: Knowledge Tree
+description: 个人技术知识树：数学、编程、机器学习、强化学习与机器人学
+template: splash
+hero:
+  title: Knowledge Tree
+  tagline: 结构化整理 AI、强化学习、机器人学与自主系统的知识笔记与实践教程。Markdown 源文件驱动，持续更新。
+  actions:
+    - text: 开始学习
+      link: /knowledge-tree/machine-learning/reinforcement-learning/
+      icon: right-arrow
+      variant: primary
+    - text: GitHub 仓库
+      link: https://github.com/ShangjinghangXUan/knowledge-tree
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## 知识分类
+
+<CardGrid stagger>
+	<Card title="数学基础" icon="open-book">
+		线性代数、概率论与最优化（规划中）。
+	</Card>
+	<Card title="编程与工程" icon="code-branch">
+		[Git 工作流](/knowledge-tree/programming/git-manual/)与[多服务器多 GPU 训练部署](/knowledge-tree/programming/multi-server-gpu-manual/)。
+	</Card>
+	<Card title="机器学习" icon="rocket">
+		[强化学习](/knowledge-tree/machine-learning/reinforcement-learning/)：PPO、工程避坑指南、参数手册与 TensorBoard 指标体系。
+	</Card>
+	<Card title="机器人学" icon="desktop">
+		[轨迹表示与参数化](/knowledge-tree/robotics/planning/trajectory-representation-parameterization/)、轨迹优化与 [PX4 控制器](/knowledge-tree/robotics/control/px4-controller-attitude-rate/)。
+	</Card>
+	<Card title="科研与开源项目" icon="external">
+		[小脑 Work Pipeline](/knowledge-tree/projects/work-pipeline/) 等研究实践。
+	</Card>
+	<Card title="学习路径" icon="right-arrow">
+		按推荐顺序串联知识点的[学习路线](/knowledge-tree/learning-paths/)。
+	</Card>
+</CardGrid>
+
+## 关于本站
+
+本站由 Markdown 源文件直接构建（Astro + Starlight），全部内容开源。
+发现错误或想补充内容，欢迎在 [GitHub 仓库](https://github.com/ShangjinghangXUan/knowledge-tree)提交 Issue 或 Pull Request，也可以点击每个页面右上角的编辑链接直接修改。
