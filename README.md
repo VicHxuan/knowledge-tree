@@ -1,11 +1,11 @@
 # 🌳 Knowledge Tree
 
-[![Deploy](https://github.com/ShangjinghangXUan/knowledge-tree/actions/workflows/deploy.yml/badge.svg)](https://github.com/ShangjinghangXUan/knowledge-tree/actions/workflows/deploy.yml)
+[![Deploy](https://github.com/VicHxuan/knowledge-tree/actions/workflows/deploy.yml/badge.svg)](https://github.com/VicHxuan/knowledge-tree/actions/workflows/deploy.yml)
 
 > 个人技术知识树：数学、编程、机器学习、强化学习与机器人学的结构化笔记与开源教学。
 > Markdown 源文件驱动，由 [Astro](https://astro.build) + [Starlight](https://starlight.astro.build) 构建，部署在 GitHub Pages。
 
-**在线地址**：<https://shangjinghangxuan.github.io/knowledge-tree/>
+**在线地址**：<https://vichxuan.github.io/knowledge-tree/>
 
 ## 内容结构
 
