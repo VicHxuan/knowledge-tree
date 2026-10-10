@@ -1,15 +1,19 @@
 ---
 title: Knowledge Tree
-description: 个人技术知识树：传统规划控制、强化学习端到端与工程工具链
+description: 个人技术知识树：数学基础、经典规划控制、学习式规划、工程工具与仿真评估
 template: splash
 hero:
   title: Knowledge Tree
-  tagline: 结构化整理无人机轨迹规划控制、强化学习端到端与工程工具链的知识笔记与实践教程。Markdown 源文件驱动，持续更新。
+  tagline: 结构化整理无人机轨迹规划控制的知识笔记与实践教程：从数学底座与经典管线，到强化学习与学习式规划。tech_stack 原件驱动，确定性构建，持续更新。
   actions:
-    - text: 开始学习
+    - text: 浏览知识体系
       link: /knowledge-tree/classical-planning-control/
       icon: right-arrow
       variant: primary
+    - text: 推荐学习路径
+      link: /knowledge-tree/learning-paths/
+      icon: list-format
+      variant: secondary
     - text: GitHub 仓库
       link: https://github.com/VicHxuan/knowledge-tree
       icon: github
@@ -17,28 +21,71 @@ hero:
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import stats from '../../data/content-stats.json';
 
-## 知识分类
+## 知识体系
+
+五大知识领域，共 <b>{stats.published}</b> 篇已发布、{stats.draft} 篇撰写中。
 
 <CardGrid stagger>
 	<Card title="数学基础" icon="open-book">
-		线性代数、概率论与最优化（规划中）。
+		线性代数与几何、微积分与优化、概率统计、动力学、最优控制——整棵知识树的根。
+		<span class="domain-count"><b>{stats.domains.mathematics.published}</b> 篇已发布 · {stats.domains.mathematics.draft} 篇撰写中</span>
+		[进入板块 →](/knowledge-tree/mathematics/)
 	</Card>
 	<Card title="传统规划控制" icon="code-branch">
-		sensor → SLAM → 路径搜索 → [轨迹优化](/knowledge-tree/classical-planning-control/trajectory-optimization/) → [跟踪控制](/knowledge-tree/classical-planning-control/tracking-control/)的经典管线。
+		sensor → SLAM → 搜索 → 轨迹优化 → 跟踪控制的经典管线。
+		<span class="domain-count"><b>{stats.domains['classical-planning-control'].published}</b> 篇已发布 · {stats.domains['classical-planning-control'].draft} 篇撰写中</span>
+		[进入板块 →](/knowledge-tree/classical-planning-control/)
 	</Card>
 	<Card title="学习式规划" icon="rocket">
-		[神经网络架构](/knowledge-tree/learning-based-planning/neural-network-architectures/)、[PPO / SAC 等算法](/knowledge-tree/learning-based-planning/rl-algorithms/)与[训练工程实践](/knowledge-tree/learning-based-planning/engineering-practice/)。
+		sensor → 特征提取 → RL 推理 → control 的学习式管线：从网络骨干、PPO/SAC 到学习式轨迹规划。
+		<span class="domain-count"><b>{stats.domains['learning-based-planning'].published}</b> 篇已发布 · {stats.domains['learning-based-planning'].draft} 篇撰写中</span>
+		[进入板块 →](/knowledge-tree/learning-based-planning/)
 	</Card>
 	<Card title="工程工具链" icon="desktop">
-		[PX4 / MAVROS](/knowledge-tree/engineering-tools/px4-mavros/)、ROS1、[Git 手册](/knowledge-tree/engineering-tools/git-manual/)与[多服务器多 GPU 训练](/knowledge-tree/engineering-tools/multi-server-gpu-training/)。
+		PX4 / MAVROS、ROS、Docker、Git 与多服务器多 GPU 训练。
+		<span class="domain-count"><b>{stats.domains['engineering-tools'].published}</b> 篇已发布 · {stats.domains['engineering-tools'].draft} 篇撰写中</span>
+		[进入板块 →](/knowledge-tree/engineering-tools/)
 	</Card>
-	<Card title="学习路径" icon="right-arrow">
-		按推荐顺序串联知识点的[学习路线](/knowledge-tree/learning-paths/)。
+	<Card title="仿真与评估" icon="document">
+		仿真平台、场景设计、评估方法与 sim-to-real（V2 新增，撰写中）。
+		<span class="domain-count"><b>{stats.domains['simulation-evaluation'].published}</b> 篇已发布 · {stats.domains['simulation-evaluation'].draft} 篇撰写中</span>
+		[进入板块 →](/knowledge-tree/simulation-evaluation/)
+	</Card>
+	<Card title="学习路径" icon="list-format">
+		按依赖关系串联知识点的推荐学习顺序。
+		[查看路径 →](/knowledge-tree/learning-paths/)
 	</Card>
 </CardGrid>
 
+## 核心管线
+
+两条技术主线贯穿全站：
+
+<div class="pipeline">
+	<span class="node">经典</span>
+	<span class="node">sensor</span><span class="arrow">→</span>
+	<span class="node">SLAM</span><span class="arrow">→</span>
+	<span class="node">搜索</span><span class="arrow">→</span>
+	<span class="node">轨迹优化</span><span class="arrow">→</span>
+	<span class="node">跟踪控制</span>
+</div>
+
+<div class="pipeline">
+	<span class="node">学习式</span>
+	<span class="node">sensor</span><span class="arrow">→</span>
+	<span class="node">特征提取</span><span class="arrow">→</span>
+	<span class="node">RL 推理</span><span class="arrow">→</span>
+	<span class="node">control</span>
+</div>
+
 ## 关于本站
 
-本站由 Markdown 源文件直接构建（Astro + Starlight），全部内容开源。
-发现错误或想补充内容，欢迎在 [GitHub 仓库](https://github.com/VicHxuan/knowledge-tree)提交 Issue 或 Pull Request，也可以点击每个页面右上角的编辑链接直接修改。
+本站由 Markdown 原件驱动：知识笔记维护在仓库的 `tech_stack/` 目录，
+[同步脚本](https://github.com/VicHxuan/knowledge-tree/blob/main/scripts/sync-docs.mjs)
+按 `src/data/content-map.json` 确定性生成 Starlight 页面——正文只改一处，网站自动跟进。
+每个页面右上角的编辑链接会直接跳转到对应原件。
+
+发现错误或想补充内容，欢迎在 [GitHub 仓库](https://github.com/VicHxuan/knowledge-tree)提交 Issue 或 Pull Request。
+代码采用 MIT 许可，文档内容采用 CC BY 4.0 许可。
