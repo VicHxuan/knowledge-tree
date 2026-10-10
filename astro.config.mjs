@@ -1,6 +1,7 @@
 // @ts-check
 import { readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 
 import remarkMath from 'remark-math';
@@ -33,6 +34,7 @@ export default defineConfig({
 	redirects,
 
 	integrations: [
+		react(),
 		starlight({
 			title: 'VicHxuan Knowledge Tree',
 			description: '传统规划控制、学习式规划与工程工具链的个人知识树',
@@ -69,6 +71,7 @@ export default defineConfig({
 					items: [
 						{ slug: '' },
 						{ slug: 'learning-paths' },
+						{ slug: 'knowledge-map' },
 						{ label: '个人主页', link: homepage },
 						{ label: 'GitHub 仓库', link: repository },
 					],

@@ -1,0 +1,25 @@
+---
+title: "知识图谱"
+description: "知识点依赖关系的交互式可视化：依赖 / 领域两种视图，支持搜索、筛选与详情"
+sidebar:
+  order: 2
+---
+
+import KnowledgeMap from '../../../components/knowledge-map/KnowledgeMap';
+
+以交互式图谱呈现全部知识点的**前置知识**（实线箭头）与**相关主题**（虚线）关系：
+
+- **依赖视图**：按前置关系分层，左侧是根节点，向右逐层展开；
+- **领域视图**：按五大知识领域分列查看；
+- **筛选**：按状态（已发布 / 撰写中）与领域过滤，支持按标题搜索（不匹配的节点会变淡）；
+- **详情**：单击节点查看描述、前置与相关主题；双击已发布节点直接跳转对应页面。
+
+进度图较大，可以拖拽平移、滚轮缩放；右下角有缩放控件，右侧小地图可用于快速定位。
+
+<KnowledgeMap client:load />
+
+## 阅读建议
+
+- 图谱数据来自 [knowledge-relations.json](https://github.com/VicHxuan/knowledge-tree/blob/main/src/data/knowledge-relations.json)，随内容目录一起维护；
+- 系统性学习请配合[学习路径](/knowledge-tree/learning-paths/)，图谱更适合查依赖、找关联；
+- 撰写中（🚧 虚线框）的节点暂无内容页面，点击不会跳转。

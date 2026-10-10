@@ -16,9 +16,13 @@
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.2",
+    "@astrojs/react": "^7.0.1",
     "@astrojs/starlight": "^0.42.6",
+    "@xyflow/react": "^12.12.0",
     "astro": "^7.2.10",
     "katex": "^0.19.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.35.3"

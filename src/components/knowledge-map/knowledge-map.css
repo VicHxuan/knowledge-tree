@@ -1,0 +1,278 @@
+/* KnowledgeMap — 跟随 Starlight 明暗主题的 React Flow 定制。 */
+
+.knowledge-map {
+	--xy-edge-stroke: var(--sl-color-gray-4);
+	--xy-edge-stroke-width: 1.5;
+	--xy-edges-focus-color: var(--sl-color-accent);
+	--xy-controls-button-background-color: var(--sl-color-bg);
+	--xy-controls-button-background-color-hover: var(--sl-color-bg-inline-code);
+	--xy-controls-button-color: var(--sl-color-text);
+	--xy-controls-button-border-color: var(--sl-color-hairline);
+	--xy-minimap-background-background-color: var(--sl-color-bg-inline-code);
+	--xy-minimap-mask-background-color: color-mix(
+		in srgb,
+		var(--sl-color-bg) 65%,
+		transparent
+	);
+	height: 70vh;
+	min-height: 480px;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.75rem;
+	background: var(--sl-color-bg);
+	overflow: hidden;
+}
+
+.ktm-node {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 190px;
+	height: 38px;
+	padding: 0 10px;
+	border-radius: 8px;
+	border: 1.5px solid var(--sl-color-hairline);
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	font-size: 12px;
+	line-height: 1.2;
+	cursor: pointer;
+	box-shadow: 0 1px 3px rgb(0 0 0 / 18%);
+	transition:
+		border-color 120ms ease,
+		opacity 120ms ease;
+}
+.ktm-node:hover,
+.ktm-node.selected {
+	border-color: var(--ktm-color);
+}
+.ktm-node.selected {
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--ktm-color) 35%, transparent);
+}
+.ktm-node[data-status='draft'] {
+	border-style: dashed;
+}
+.ktm-node[data-dim='true'] {
+	opacity: 0.2;
+}
+.ktm-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
+	background: var(--ktm-color);
+	flex: none;
+}
+.ktm-label {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 500;
+}
+.ktm-flag {
+	flex: none;
+	font-size: 10px;
+}
+.ktm-handle {
+	opacity: 0;
+	pointer-events: none;
+	min-width: 0;
+	min-height: 0;
+	border: 0;
+	background: transparent;
+}
+
+.ktm-edge-related {
+	stroke-dasharray: 5 4;
+}
+
+/* 工具栏 */
+.ktm-toolbar {
+	background: var(--sl-color-bg-inline-code);
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.5rem;
+	padding: 0.5rem 0.625rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	max-width: min(92vw, 460px);
+}
+.ktm-row {
+	display: flex;
+	gap: 0.4rem;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.ktm-seg {
+	display: inline-flex;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.375rem;
+	overflow: hidden;
+}
+.ktm-seg button {
+	border: 0;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	font-size: 12px;
+	padding: 0.25rem 0.625rem;
+	cursor: pointer;
+}
+.ktm-seg button.on {
+	background: var(--sl-color-accent);
+	color: var(--sl-color-text-invert);
+}
+.ktm-toolbar input[type='search'] {
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.375rem;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	font-size: 12px;
+	padding: 0.25rem 0.5rem;
+	min-width: 150px;
+}
+.ktm-toolbar select {
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.375rem;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	font-size: 12px;
+	padding: 0.25rem 0.375rem;
+}
+.ktm-check {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	font-size: 12px;
+	color: var(--sl-color-text);
+	white-space: nowrap;
+}
+
+/* 图例 */
+.ktm-legend {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	font-size: 11px;
+	color: var(--sl-color-gray-3);
+	background: var(--sl-color-bg-inline-code);
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.5rem;
+	padding: 0.375rem 0.625rem;
+}
+.ktm-legend-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+.ktm-legend-item i {
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
+	display: inline-block;
+}
+.ktm-legend-item i.ktm-legend-draft {
+	border-radius: 999px;
+	border: 1.5px dashed var(--sl-color-gray-4);
+	width: 7px;
+	height: 7px;
+}
+
+/* 详情面板 */
+.ktm-detail {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 6;
+	width: min(88vw, 280px);
+	background: var(--sl-color-bg);
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 0.75rem;
+	box-shadow: 0 8px 30px rgb(0 0 0 / 25%);
+	padding: 0.875rem 1rem;
+	max-height: calc(100% - 24px);
+	overflow: auto;
+}
+.ktm-detail header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+.ktm-detail h3 {
+	margin: 0;
+	font-size: 0.9375rem;
+	line-height: 1.35;
+}
+.ktm-detail header button {
+	border: 0;
+	background: none;
+	color: var(--sl-color-gray-3);
+	font-size: 1.1rem;
+	cursor: pointer;
+	line-height: 1;
+	padding: 0.125rem 0.25rem;
+}
+.ktm-detail-meta {
+	display: flex;
+	gap: 0.375rem;
+	flex-wrap: wrap;
+	margin: 0.5rem 0 0;
+}
+.ktm-badge {
+	font-size: 11px;
+	padding: 0.0625rem 0.5rem;
+	border-radius: 999px;
+	border: 1px solid var(--sl-color-hairline-light);
+	color: var(--sl-color-text);
+}
+.ktm-badge[data-status='draft'] {
+	border-style: dashed;
+	color: var(--sl-color-gray-3);
+}
+.ktm-detail-desc {
+	margin: 0.625rem 0 0;
+	font-size: 0.8125rem;
+	color: var(--sl-color-gray-3);
+	line-height: 1.5;
+}
+.ktm-detail section {
+	margin-top: 0.75rem;
+}
+.ktm-detail h4 {
+	margin: 0 0 0.375rem;
+	font-size: 11px;
+	letter-spacing: 0.05em;
+	color: var(--sl-color-gray-3);
+}
+.ktm-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+}
+.ktm-chips button {
+	border: 1px solid var(--sl-color-hairline-light);
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	border-radius: 999px;
+	font-size: 11px;
+	padding: 0.125rem 0.5rem;
+	cursor: pointer;
+}
+.ktm-chips button:hover {
+	border-color: var(--sl-color-accent);
+	color: var(--sl-color-text-accent);
+}
+.ktm-open {
+	display: block;
+	margin-top: 0.875rem;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--sl-color-text-accent);
+	text-decoration: none;
+}
+.ktm-open:hover {
+	text-decoration: underline;
+}
+.ktm-open-draft {
+	color: var(--sl-color-gray-4);
+	font-weight: 400;
+}
