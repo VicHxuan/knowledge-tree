@@ -2,43 +2,52 @@
 
 [![Deploy](https://github.com/VicHxuan/knowledge-tree/actions/workflows/deploy.yml/badge.svg)](https://github.com/VicHxuan/knowledge-tree/actions/workflows/deploy.yml)
 
-> 个人技术知识树：数学、编程、机器学习、强化学习与机器人学的结构化笔记与开源教学。
-> Markdown 源文件驱动，由 [Astro](https://astro.build) + [Starlight](https://starlight.astro.build) 构建，部署在 GitHub Pages。
+> 个人技术知识树：数学基础、传统规划控制、学习式规划、工程工具与仿真评估的结构化笔记与开源教学。
+> Markdown 原件驱动，确定性构建，部署在 GitHub Pages。
 
 **在线地址**：<https://vichxuan.github.io/knowledge-tree/>
 
-## 内容结构
+## 两层内容模型
+
+**知识笔记的唯一事实源是 `tech_stack/`**，网站页面由同步脚本按内容映射表确定性生成——正文只改一处，网站自动跟进：
 
 ```
-src/content/docs/
-├── index.mdx               # 知识树首页（Splash）
-├── mathematics/            # 数学基础（规划中）
-├── programming/            # 编程与工程：Git、多服务器 GPU 训练
-├── machine-learning/       # 机器学习
-│   └── reinforcement-learning/   # 强化学习：PPO、工程避坑、参数、TensorBoard
-├── robotics/               # 机器人学
-│   ├── planning/           # 轨迹表示、参数化与优化
-│   └── control/            # PX4 姿态与角速度控制
-├── projects/               # 科研与开源项目实践
-└── learning-paths/         # 学习路径
+tech_stack/                        # ← 在这里写笔记（tracked，事实源）
+├── 01_math-physic-base/           #    数学基础
+├── 02_classical-planning-control/ #    传统规划控制
+├── 03_learning-based-planning/    #    学习式规划
+├── 04_engineering-tools/          #    工程工具链
+└── 05_simulation-evaluation/      #    仿真与评估
+
+        │  scripts/sync-docs.mjs（按 src/data/content-map.json 生成标题、
+        │  sidebar、草稿标记，转换相对链接）
+        ▼
+
+src/content/docs/                  # → 生成产物（untracked）+ 少量手写页
+├── index.mdx                      #    首页（Splash）
+├── <五大领域>/                     #    生成的章节页 + 手写的板块首页
+├── learning-paths/                #    学习路径（手写，含进度追踪）
+├── knowledge-map/                 #    知识图谱（React Flow 交互页）
+└── projects/                      #    研究项目页（手写）
 ```
 
-文件夹即知识分类，Markdown 文件即教学页面，无需维护独立的目录数据库。
+`astro.config.mjs` 的 sidebar 用 `autogenerate` 按目录结构自动生成侧栏分组，无需维护独立的目录数据库。
 
 ## 本地开发
 
 ```bash
 npm install
-npm run dev      # 开发服务器 http://localhost:4321/knowledge-tree/
-npm run build    # 生产构建
-npm run preview  # 预览生产构建
+npm run dev           # 开发服务器（predev 钩子自动先同步文档）
+npm run build         # 生产构建（prebuild 钩子自动先同步文档）
+npm run docs:check    # 校验：同步无漂移 + 链接与重定向合法
+npm run privacy:check # 提交前扫描，确认可发布文件不含个人隐私数据
 ```
 
-推送到 `main` 分支后，GitHub Actions 会自动构建并发布网站。
+推送到 `main` 分支后，GitHub Actions 会先跑校验再构建发布。
 
 ## 如何贡献
 
-见 [CONTRIBUTING.md](CONTRIBUTING.md)。最简单的方式：在任一页面右上角点击「编辑此页」，GitHub 会自动引导你创建 Pull Request。
+见 [CONTRIBUTING.md](CONTRIBUTING.md)。最简单的方式：在任一页面右上角点击「编辑此页」——它会直接指向 `tech_stack/` 里的原始笔记，GitHub 会自动引导你创建 Pull Request。
 
 ## 许可
 
