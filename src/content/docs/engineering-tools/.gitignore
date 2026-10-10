@@ -1,0 +1,4 @@
+# 章节页面由 scripts/sync-docs.mjs 从 tech_stack/ 原件生成，属构建产物不入库。
+# 手写的 index.md 通过 !index.md 保留入库。
+*.md
+!index.md

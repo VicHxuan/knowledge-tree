@@ -23,3 +23,6 @@ pnpm-debug.log*
 # tech_stack 知识库：知识内容入库；personal/（简历/照片等隐私材料）与 references/（第三方课程笔记/论文 PDF）仅本地保留，不入库
 /tech_stack/personal/
 /tech_stack/references/
+
+# privacy checker local patterns (never push)
+/scripts/.privacy-patterns.json

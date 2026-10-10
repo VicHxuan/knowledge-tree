@@ -3,11 +3,16 @@
   "type": "module",
   "version": "0.1.0",
   "scripts": {
+    "predev": "node scripts/sync-docs.mjs",
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "node scripts/sync-docs.mjs",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "docs:sync": "node scripts/sync-docs.mjs",
+    "docs:check": "node scripts/sync-docs.mjs --check && node scripts/validate-docs.mjs",
+    "privacy:check": "node scripts/privacy-check.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.2",

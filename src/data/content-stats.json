@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "entries": 85,
+  "published": 37,
+  "draft": 48,
+  "domains": {
+    "mathematics": {
+      "published": 1,
+      "draft": 13,
+      "total": 14
+    },
+    "classical-planning-control": {
+      "published": 17,
+      "draft": 8,
+      "total": 25
+    },
+    "learning-based-planning": {
+      "published": 14,
+      "draft": 14,
+      "total": 28
+    },
+    "engineering-tools": {
+      "published": 5,
+      "draft": 5,
+      "total": 10
+    },
+    "simulation-evaluation": {
+      "published": 0,
+      "draft": 8,
+      "total": 8
+    }
+  },
+  "contentHash": "311c131abd4d2969bcbeaa93f432e414"
+}
