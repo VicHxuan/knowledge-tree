@@ -50,6 +50,11 @@ export default defineConfig({
 
 			favicon: 'favicon.svg',
 
+			// V2：目录栏覆盖 —— 右侧目录上方叠加「前置知识 / 相关主题」知识关联区
+			components: {
+				TableOfContents: './src/components/TableOfContents.astro',
+			},
+
 			social: [
 				{ icon: 'github', label: 'GitHub', href: repository },
 			],

@@ -1,0 +1,223 @@
+---
+/**
+ * TableOfContents override (Knowledge Tree V2).
+ *
+ * Right rail = 知识关联（前置知识 / 相关主题，来自 knowledge-relations.json）
+ *            + 原版目录（内联 Starlight 的 ToC 渲染与 starlight-toc 滚动高亮）。
+ *
+ * 覆盖原因：Starlight 未导出 TableOfContentsList / starlight-toc，
+ * 这里按 0.42.x 的实现内联同等行为，升级 Starlight 时需对照更新。
+ */
+import relations from '../data/knowledge-relations.json';
+import TocList from './TocList.astro';
+
+// Starlight 0.42：页面 slug 位于 starlightRoute.id（老版本的 .slug 已移除）
+const route = Astro.locals.starlightRoute;
+const slug = route.id;
+const toc = route.toc;
+
+const byId = new Map(relations.nodes.map((n) => [n.id, n]));
+
+/** prerequisite (from → to)：to 的前置是 from */
+const prereqs = relations.edges
+	.filter((e) => e.type === 'prerequisite' && e.to === slug)
+	.map((e) => byId.get(e.from))
+	.filter(Boolean);
+
+/** related：任一端是当前页 */
+const related = relations.edges
+	.filter((e) => e.type === 'related' && (e.from === slug || e.to === slug))
+	.map((e) => byId.get(e.from === slug ? e.to : e.from))
+	.filter(Boolean);
+
+const SITE_BASE = '/knowledge-tree';
+---
+
+{
+	(prereqs.length > 0 || related.length > 0) && (
+		<div class="kt-relations">
+			{prereqs.length > 0 && (
+				<section>
+					<h2>前置知识</h2>
+					<ul>
+						{prereqs.map((n) => (
+							<li>
+								{n.status === 'published' ? (
+									<a href={`${SITE_BASE}/${n.id}/`}>{n.label}</a>
+								) : (
+									<span class="kt-draft">
+										{n.label} <span aria-hidden="true">🚧</span>
+									</span>
+								)}
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
+			{related.length > 0 && (
+				<section>
+					<h2>相关主题</h2>
+					<ul>
+						{related.map((n) => (
+							<li>
+								{n.status === 'published' ? (
+									<a href={`${SITE_BASE}/${n.id}/`}>{n.label}</a>
+								) : (
+									<span class="kt-draft">
+										{n.label} <span aria-hidden="true">🚧</span>
+									</span>
+								)}
+							</li>
+						))}
+					</ul>
+				</section>
+			)}
+		</div>
+	)
+}
+
+{
+	toc && (
+		<starlight-toc data-min-h={toc.minHeadingLevel} data-max-h={toc.maxHeadingLevel}>
+			<nav aria-labelledby="starlight__on-this-page">
+				<h2 id="starlight__on-this-page">{Astro.locals.t('tableOfContents.onThisPage')}</h2>
+				<TocList toc={toc.items} depth={0} />
+			</nav>
+		</starlight-toc>
+	)
+}
+
+<script>
+	// 内联 Starlight starlight-toc 滚动高亮（PAGE_TITLE_ID = '_top'）
+	class StarlightTOC extends HTMLElement {
+		_current = this.querySelector('a[aria-current="true"]');
+		minH = parseInt(this.dataset.minH || '2', 10);
+		maxH = parseInt(this.dataset.maxH || '3', 10);
+		tocHeadingSelector = `h1#_top,:where(${Array.from(
+			{ length: 1 + this.maxH - this.minH },
+			(_, i) => `h${this.minH + i}`,
+		).join()})[id]`;
+		set current(link: HTMLAnchorElement | null) {
+			if (link === this._current) return;
+			this._current?.removeAttribute('aria-current');
+			link?.setAttribute('aria-current', 'true');
+			this._current = link;
+		}
+		onIdle = (cb: () => void) =>
+			(window.requestIdleCallback || ((cb: () => void) => setTimeout(cb, 1)))(cb);
+		constructor() {
+			super();
+			this.onIdle(() => this.init());
+		}
+		init = () => {
+			const links = [...this.querySelectorAll('a')] as HTMLAnchorElement[];
+			const isHeading = (el: Element) => el.matches(this.tocHeadingSelector);
+			const getElementHeading = (el: Element | null): HTMLElement | null => {
+				while (el) {
+					if (el.matches('.sl-markdown-content, main > *')) return document.getElementById('_top');
+					if (isHeading(el)) return el as HTMLElement;
+					const childHeading = el.querySelector(this.tocHeadingSelector);
+					if (childHeading) return childHeading as HTMLElement;
+					let prev = el.previousElementSibling as HTMLElement | null;
+					while (prev?.lastElementChild) prev = prev.lastElementChild as HTMLElement;
+					el = prev ?? el.parentElement;
+				}
+				return null;
+			};
+			const setCurrent = (entries: IntersectionObserverEntry[]) => {
+				for (const { isIntersecting, target } of entries) {
+					if (!isIntersecting) continue;
+					const heading = getElementHeading(target);
+					if (!heading) continue;
+					const link = links.find((l) => l.hash === '#' + encodeURIComponent(heading.id));
+					if (link) {
+						this.current = link;
+						break;
+					}
+				}
+			};
+			const toObserve = document.querySelectorAll(
+				[
+					`main :where(${this.tocHeadingSelector})`,
+					`main :where(${this.tocHeadingSelector}, .sl-heading-wrapper) ~ *:not(:has(${this.tocHeadingSelector}))`,
+					`main .sl-markdown-content > *:not(:has(${this.tocHeadingSelector}))`,
+					`main > *:not(:has(${this.tocHeadingSelector}))`,
+				].join(),
+			);
+			let observer: IntersectionObserver | undefined;
+			const observe = () => {
+				if (observer) return;
+				observer = new IntersectionObserver(setCurrent, { rootMargin: this.getRootMargin() });
+				toObserve.forEach((h) => observer!.observe(h));
+			};
+			observe();
+			let timeout: ReturnType<typeof setTimeout>;
+			window.addEventListener('resize', () => {
+				observer?.disconnect();
+				observer = undefined;
+				clearTimeout(timeout);
+				timeout = setTimeout(() => this.onIdle(observe), 200);
+			});
+		};
+		getRootMargin() {
+			const top =
+				(document.querySelector('header')?.getBoundingClientRect().height || 0) +
+				(this.querySelector('summary')?.getBoundingClientRect().height || 0) +
+				32;
+			return `-${top}px 0% ${top + 53 - document.documentElement.clientHeight}px`;
+		}
+	}
+	customElements.define('starlight-toc', StarlightTOC);
+</script>
+
+<style>
+	/* 知识关联区 */
+	.kt-relations {
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 0.5rem;
+		padding: 0.75rem 0.875rem;
+		margin-bottom: 1rem;
+		background: var(--sl-color-bg-inline-code);
+	}
+	.kt-relations h2 {
+		font-size: var(--sl-text-xs);
+		letter-spacing: 0.06em;
+		color: var(--sl-color-gray-3);
+		margin: 0 0 0.375rem;
+	}
+	.kt-relations section + section {
+		margin-top: 0.75rem;
+	}
+	.kt-relations ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.375rem;
+	}
+	.kt-relations li {
+		font-size: var(--sl-text-xs);
+	}
+	.kt-relations a {
+		display: inline-block;
+		padding: 0.125rem 0.5rem;
+		border-radius: 999px;
+		border: 1px solid var(--sl-color-hairline-light);
+		text-decoration: none;
+		color: var(--sl-color-text);
+		background: var(--sl-color-bg);
+	}
+	.kt-relations a:hover {
+		border-color: var(--sl-color-accent);
+		color: var(--sl-color-text-accent);
+	}
+	.kt-draft {
+		display: inline-block;
+		padding: 0.125rem 0.5rem;
+		border-radius: 999px;
+		border: 1px dashed var(--sl-color-hairline-light);
+		color: var(--sl-color-gray-3);
+		background: var(--sl-color-bg);
+	}
+</style>

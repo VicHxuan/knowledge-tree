@@ -1,0 +1,238 @@
+---
+/**
+ * LearningPathStepper — 学习路径垂直进度条。
+ * 每步三态：未开始(0) → 进行中(1) → 已完成(2)，点击左侧按钮循环切换。
+ * 进度保存在浏览器 localStorage（key: kt-lp:<pathId>），仅本机可见。
+ */
+interface Step {
+	title: string;
+	href?: string;
+	note?: string;
+}
+interface Props {
+	pathId: string;
+	steps: Step[];
+}
+const { pathId, steps } = Astro.props;
+---
+
+<div class="lp-stepper" data-lp-id={pathId} data-lp-count={steps.length}>
+	<div class="lp-legend">
+		点击每一步左侧的按钮切换进度：<span class="lp-state-0">未开始</span> →
+		<span class="lp-state-1">进行中</span> → <span class="lp-state-2">已完成</span>
+		（进度保存在本浏览器）
+	</div>
+	<ol>
+		{
+			steps.map((s, i) => (
+				<li class="lp-step" data-i={i}>
+					<button
+						type="button"
+						class="lp-toggle"
+						data-state="0"
+						title="切换学习进度"
+						aria-label={`切换「${s.title}」的学习进度`}
+					>
+						<span class="lp-rail" aria-hidden="true" />
+						<span class="lp-dot" aria-hidden="true" />
+					</button>
+					<div class="lp-body">
+						{s.href ? (
+							<a class="lp-title" href={s.href}>
+								{s.title}
+							</a>
+						) : (
+							<span class="lp-title lp-todo">
+								{s.title} <span aria-hidden="true">🚧</span>
+							</span>
+						)}
+						{s.note && <p class="lp-note">{s.note}</p>}
+					</div>
+				</li>
+			))
+		}
+	</ol>
+	<p class="lp-progress-line">
+		已完成 <span class="lp-done">0</span> / {steps.length} 步
+		<span class="lp-reset" role="button" tabindex="0">重置进度</span>
+	</p>
+</div>
+
+<script>
+	function initStepper(root: HTMLElement) {
+		const id = root.dataset.lpId;
+		if (!id) return;
+		const key = `kt-lp:${id}`;
+		const buttons = [...root.querySelectorAll<HTMLButtonElement>('.lp-toggle')];
+		const doneEl = root.querySelector<HTMLElement>('.lp-done');
+		const resetEl = root.querySelector<HTMLElement>('.lp-reset');
+
+		const load = (): number[] => {
+			try {
+				const raw = localStorage.getItem(key);
+				const arr = raw ? JSON.parse(raw) : [];
+				return buttons.map((_, i) => (Array.isArray(arr) && typeof arr[i] === 'number' ? arr[i] : 0));
+			} catch {
+				return buttons.map(() => 0);
+			}
+		};
+		const save = (state: number[]) => {
+			try {
+				localStorage.setItem(key, JSON.stringify(state));
+			} catch {
+				/* 隐私模式等存储不可用时静默降级为会话内进度 */
+			}
+		};
+		const render = (state: number[]) => {
+			buttons.forEach((b, i) => (b.dataset.state = String(state[i] ?? 0)));
+			if (doneEl) doneEl.textContent = String(state.filter((s) => s === 2).length);
+		};
+
+		const state = load();
+		render(state);
+		buttons.forEach((b, i) =>
+			b.addEventListener('click', () => {
+				state[i] = ((state[i] ?? 0) + 1) % 3;
+				save(state);
+				render(state);
+			}),
+		);
+		resetEl?.addEventListener('click', () => {
+			state.forEach((_, i) => (state[i] = 0));
+			save(state);
+			render(state);
+		});
+	}
+	document.querySelectorAll<HTMLElement>('.lp-stepper').forEach(initStepper);
+</script>
+
+<style>
+	.lp-stepper {
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 0.75rem;
+		padding: 1rem 1.25rem;
+		margin: 1rem 0;
+		background: var(--sl-color-bg-inline-code);
+	}
+	.lp-legend {
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+		margin-bottom: 0.75rem;
+	}
+	.lp-state-1 {
+		color: var(--sl-color-accent);
+	}
+	.lp-state-2 {
+		color: #22c55e;
+	}
+	.lp-stepper ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.lp-step {
+		display: flex;
+		gap: 0.75rem;
+		align-items: flex-start;
+	}
+	.lp-step + .lp-step {
+		margin-top: 0.25rem;
+	}
+	.lp-toggle {
+		position: relative;
+		width: 1.75rem;
+		border: 0;
+		padding: 0 0 0.5rem;
+		background: none;
+		cursor: pointer;
+		display: flex;
+		justify-content: center;
+		min-height: 2rem;
+	}
+	.lp-rail {
+		position: absolute;
+		top: 0;
+		bottom: -0.25rem;
+		width: 2px;
+		background: var(--sl-color-hairline-light);
+	}
+	.lp-step:last-child .lp-rail {
+		display: none;
+	}
+	.lp-dot {
+		position: relative;
+		width: 0.875rem;
+		height: 0.875rem;
+		border-radius: 999px;
+		border: 2px solid var(--sl-color-gray-4);
+		background: var(--sl-color-bg);
+		transition: all 150ms ease;
+	}
+	.lp-toggle:hover .lp-dot {
+		border-color: var(--sl-color-accent);
+	}
+	.lp-toggle[data-state='1'] .lp-dot {
+		border-color: var(--sl-color-accent);
+		background: var(--sl-color-accent-low);
+	}
+	.lp-toggle[data-state='2'] .lp-dot {
+		border-color: #22c55e;
+		background: #22c55e;
+	}
+	.lp-toggle[data-state='2'] .lp-dot::after {
+		content: '';
+		position: absolute;
+		inset: 2px;
+		border-radius: 999px;
+		background: var(--sl-color-bg);
+		-webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxNCAxNCc+PHBhdGggZmlsbD0nIzIyYzU1ZScgZD0nTTEwLjkxNCA0LjIwNmEuNTgzLjU4MyAwIDAgMC0uODI4IDBMNS43NCA4LjU1NyAzLjkxNCA2LjcyNmEuNTk2LjU5NiAwIDAgMC0uODI4Ljg1N2wyLjI0IDIuMjRhLjU4My41ODMgMCAwIDAgLjgyOCAwbDQuNzYtNC43NmEuNTgzLjU4MyAwIDAgMCAwLS44NTdaJy8+PC9zdmc+')
+			no-repeat center;
+		mask: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxNCAxNCc+PHBhdGggZmlsbD0nIzIyYzU1ZScgZD0nTTEwLjkxNCA0LjIwNmEuNTgzLjU4MyAwIDAgMC0uODI4IDBMNS43NCA4LjU1NyAzLjkxNCA2LjcyNmEuNTk2LjU5NiAwIDAgMC0uODI4Ljg1N2wyLjI0IDIuMjRhLjU4My41ODMgMCAwIDAgLjgyOCAwbDQuNzYtNC43NmEuNTgzLjU4MyAwIDAgMCAwLS44NTdaJy8+PC9zdmc+')
+			no-repeat center;
+	}
+	.lp-body {
+		padding-top: 0.125rem;
+	}
+	.lp-title {
+		font-weight: 600;
+		text-decoration: none;
+	}
+	a.lp-title:hover {
+		color: var(--sl-color-text-accent);
+	}
+	.lp-todo {
+		color: var(--sl-color-gray-3);
+		font-weight: 500;
+	}
+	.lp-note {
+		margin: 0.125rem 0 0.5rem;
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.lp-toggle[data-state='1'] ~ .lp-body .lp-title,
+	.lp-toggle[data-state='2'] ~ .lp-body .lp-title {
+		color: var(--sl-color-text);
+	}
+	.lp-progress-line {
+		margin: 0.75rem 0 0;
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-gray-3);
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.lp-done {
+		color: #22c55e;
+		font-weight: 600;
+	}
+	.lp-reset {
+		margin-left: auto;
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-4);
+		cursor: pointer;
+		text-decoration: underline dotted;
+	}
+	.lp-reset:hover {
+		color: var(--sl-color-text-accent);
+	}
+</style>

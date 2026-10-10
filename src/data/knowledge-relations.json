@@ -1,0 +1,1187 @@
+{
+  "version": 2,
+  "nodes": [
+    {
+      "id": "mathematics/calculus-optimization/optimization-theory",
+      "label": "数学优化理论",
+      "title": "数学优化理论与算法核心手册",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "calculus-optimization",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "classical-planning-control/perception-slam/kalman-filters",
+      "label": "卡尔曼滤波系列",
+      "title": "卡尔曼滤波系列（BF/KF/EKF/PF）",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "perception-slam",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "classical-planning-control/perception-slam/fast-lio",
+      "label": "FAST-LIO",
+      "title": "FAST-LIO 系列",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "perception-slam",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "classical-planning-control/perception-slam/occupancy-grid-esdf",
+      "label": "占据网格与 ESDF",
+      "title": "占据网格与 ESDF 地图",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "perception-slam",
+      "status": "published",
+      "order": 4
+    },
+    {
+      "id": "classical-planning-control/path-search/heuristic-search",
+      "label": "启发式搜索",
+      "title": "启发式搜索（Dijkstra / A* / IDA* / JPS）",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "path-search",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "classical-planning-control/path-search/sampling-based-search",
+      "label": "采样法搜索",
+      "title": "采样法搜索（RRT 系列）",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "path-search",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "classical-planning-control/path-search/incremental-search",
+      "label": "增量式搜索",
+      "title": "增量式搜索（D* / D* Lite / LPA*）",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "path-search",
+      "status": "published",
+      "order": 3
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/trajectory-representation-parameterization",
+      "label": "轨迹表示与参数化",
+      "title": "Trajectory Representation and Parameterization",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "label": "微分平坦与 Minimum Snap",
+      "title": "Minimum Snap 轨迹生成方法与当前 C++ 代码解析",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/bezier-bspline",
+      "label": "贝塞尔与 B 样条",
+      "title": "贝塞尔曲线与 B 样条",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "published",
+      "order": 3
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/safe-flight-corridor",
+      "label": "安全飞行走廊",
+      "title": "安全飞行走廊（SFC）",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "published",
+      "order": 4
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/fast-planner",
+      "label": "Fast-Planner",
+      "title": "Fast-Planner 框架",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "published",
+      "order": 7
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/ego-planner",
+      "label": "EGO-Planner",
+      "title": "EGO-Planner 学习文档",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "published",
+      "order": 8
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/gcopter-minco",
+      "label": "GCOPTER-MINCO",
+      "title": "GCOPTER-MINCO 框架",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "published",
+      "order": 9
+    },
+    {
+      "id": "classical-planning-control/tracking-control/pid",
+      "label": "PID",
+      "title": "PID 控制器",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "tracking-control",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "classical-planning-control/tracking-control/lqr",
+      "label": "LQR",
+      "title": "LQR 控制器",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "tracking-control",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "classical-planning-control/tracking-control/mpc",
+      "label": "MPC",
+      "title": "MPC 控制器",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "tracking-control",
+      "status": "published",
+      "order": 3
+    },
+    {
+      "id": "classical-planning-control/tracking-control/px4-controller-attitude-rate",
+      "label": "PX4 控制器",
+      "title": "PX4 Controller 代码讲解清单",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "tracking-control",
+      "status": "published",
+      "order": 4
+    },
+    {
+      "id": "learning-based-planning/neural-network-architectures/mlp",
+      "label": "多层感知机",
+      "title": "多层感知机",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "neural-network-architectures",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "learning-based-planning/neural-network-architectures/cnn",
+      "label": "卷积神经网络",
+      "title": "卷积神经网络",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "neural-network-architectures",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "learning-based-planning/neural-network-architectures/rnn-lstm",
+      "label": "循环神经网络",
+      "title": "循环神经网络（RNN/LSTM）",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "neural-network-architectures",
+      "status": "published",
+      "order": 3
+    },
+    {
+      "id": "learning-based-planning/neural-network-architectures/attention-transformer",
+      "label": "注意力与 Transformer",
+      "title": "注意力机制与 Transformer",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "neural-network-architectures",
+      "status": "published",
+      "order": 4
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/rl-foundations",
+      "label": "强化学习基础",
+      "title": "强化学习核心公式手册",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/algorithm-evolution",
+      "label": "算法演进",
+      "title": "强化学习算法演进与梳理",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/trpo",
+      "label": "TRPO",
+      "title": "TRPO (Trust Region Policy Optimization) 算法完整解析与代码实现",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "published",
+      "order": 5
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/ppo",
+      "label": "PPO",
+      "title": "PPO 算法完整解析与代码实现",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "published",
+      "order": 6
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/td3",
+      "label": "TD3",
+      "title": "TD3 算法完整解析与代码实现",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "published",
+      "order": 8
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/sac",
+      "label": "SAC",
+      "title": "SAC 算法完整解析与代码实现",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "published",
+      "order": 9
+    },
+    {
+      "id": "learning-based-planning/engineering-practice/ppo-walkthrough",
+      "label": "PPO 走读与调参",
+      "title": "PPO 全流程走读与调参",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "engineering-practice",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "learning-based-planning/engineering-practice/rl-engineering-pitfalls",
+      "label": "工程避坑指南",
+      "title": "强化学习工程避坑指南与注意事项手册",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "engineering-practice",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "learning-based-planning/engineering-practice/tensorboard-metrics",
+      "label": "TensorBoard 指标",
+      "title": "通用强化学习 TensorBoard 指标模板",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "engineering-practice",
+      "status": "published",
+      "order": 3
+    },
+    {
+      "id": "learning-based-planning/engineering-practice/work-pipeline",
+      "label": "小脑 Work Pipeline",
+      "title": "小脑 Work Pipeline",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "engineering-practice",
+      "status": "published",
+      "order": 4
+    },
+    {
+      "id": "engineering-tools/px4-mavros",
+      "label": "PX4 / MAVROS",
+      "title": "PX4 / MAVROS 面试知识点整理",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "engineering-tools/ros1",
+      "label": "ROS1",
+      "title": "ROS1 面试知识点整理",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "engineering-tools/remote-control-setup",
+      "label": "遥控器配置",
+      "title": "遥控器与接收机配置（QGC 校准）",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "published",
+      "order": 3
+    },
+    {
+      "id": "engineering-tools/git-manual",
+      "label": "Git 手册",
+      "title": "Git 常用指令手册",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "published",
+      "order": 4
+    },
+    {
+      "id": "engineering-tools/multi-server-gpu-training",
+      "label": "多服务器 GPU 训练",
+      "title": "YOPO RL Selector：多服务器部署与单机多 GPU 训练操作手册",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "published",
+      "order": 5
+    },
+    {
+      "id": "mathematics/linear-algebra-geometry/matrix-decomposition",
+      "label": "矩阵分解",
+      "title": "矩阵分解（SVD / 特征分解 / QR）",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "linear-algebra-geometry",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "mathematics/linear-algebra-geometry/coordinate-transforms",
+      "label": "坐标变换",
+      "title": "坐标变换与旋转矩阵",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "linear-algebra-geometry",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "mathematics/linear-algebra-geometry/so3-se3-quaternion",
+      "label": "SO(3)/SE(3)",
+      "title": "SO(3)、SE(3) 与四元数",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "linear-algebra-geometry",
+      "status": "draft",
+      "order": 3
+    },
+    {
+      "id": "mathematics/calculus-optimization/gradient-jacobian-hessian",
+      "label": "梯度与雅可比",
+      "title": "梯度、雅可比与海塞矩阵",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "calculus-optimization",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "mathematics/calculus-optimization/unconstrained-optimization",
+      "label": "无约束优化",
+      "title": "无约束优化方法",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "calculus-optimization",
+      "status": "draft",
+      "order": 3
+    },
+    {
+      "id": "mathematics/calculus-optimization/constrained-optimization-kkt",
+      "label": "约束优化与 KKT",
+      "title": "约束优化与 KKT 条件",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "calculus-optimization",
+      "status": "draft",
+      "order": 4
+    },
+    {
+      "id": "mathematics/calculus-optimization/numerical-optimization",
+      "label": "数值优化",
+      "title": "数值优化方法",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "calculus-optimization",
+      "status": "draft",
+      "order": 5
+    },
+    {
+      "id": "mathematics/probability-statistics/probability-bayesian-inference",
+      "label": "概率与贝叶斯",
+      "title": "概率论与贝叶斯推断",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "probability-statistics",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "mathematics/probability-statistics/gaussian-estimation",
+      "label": "高斯估计",
+      "title": "高斯分布与状态估计",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "probability-statistics",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "mathematics/dynamics/rigid-body-dynamics",
+      "label": "刚体动力学",
+      "title": "刚体动力学",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "dynamics",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "mathematics/dynamics/quadrotor-dynamics",
+      "label": "四旋翼动力学",
+      "title": "四旋翼动力学建模",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "dynamics",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "mathematics/optimal-control-foundations/optimal-control-formulation",
+      "label": "最优控制建模",
+      "title": "最优控制问题建模",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "optimal-control-foundations",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "mathematics/optimal-control-foundations/hamiltonian-pontryagin",
+      "label": "Hamilton 与 PMP",
+      "title": "哈密顿体系与 Pontryagin 极小值原理",
+      "domain": "mathematics",
+      "domainLabel": "数学基础",
+      "group": "optimal-control-foundations",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "classical-planning-control/perception-slam/visual-inertial-odometry",
+      "label": "VIO",
+      "title": "视觉惯性里程计（VIO）",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "perception-slam",
+      "status": "draft",
+      "order": 3
+    },
+    {
+      "id": "classical-planning-control/perception-slam/dynamic-obstacle-tracking",
+      "label": "动态障碍物跟踪",
+      "title": "动态障碍物感知与跟踪",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "perception-slam",
+      "status": "draft",
+      "order": 5
+    },
+    {
+      "id": "classical-planning-control/path-search/kinodynamic-search",
+      "label": "Kinodynamic 搜索",
+      "title": "运动学约束搜索（Kinodynamic Search）",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "path-search",
+      "status": "draft",
+      "order": 4
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/trajectory-optimization-formulation",
+      "label": "优化问题建模",
+      "title": "轨迹优化问题的一般建模",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "draft",
+      "order": 5
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/minco-parameterization",
+      "label": "MINCO 参数化",
+      "title": "MINCO 轨迹参数化",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "draft",
+      "order": 6
+    },
+    {
+      "id": "classical-planning-control/trajectory-optimization/replanning-and-trajectory-continuity",
+      "label": "重规划与连续性",
+      "title": "重规划与轨迹连续性",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "trajectory-optimization",
+      "status": "draft",
+      "order": 10
+    },
+    {
+      "id": "classical-planning-control/tracking-control/geometric-control-se3",
+      "label": "几何控制",
+      "title": "SE(3) 几何控制",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "tracking-control",
+      "status": "draft",
+      "order": 5
+    },
+    {
+      "id": "classical-planning-control/tracking-control/tracking-latency-and-actuator-dynamics",
+      "label": "延迟与执行器",
+      "title": "跟踪延迟与执行器动力学",
+      "domain": "classical-planning-control",
+      "domainLabel": "传统规划控制",
+      "group": "tracking-control",
+      "status": "draft",
+      "order": 6
+    },
+    {
+      "id": "learning-based-planning/neural-network-architectures/feature-pyramid-multiscale",
+      "label": "多尺度特征",
+      "title": "特征金字塔与多尺度网络",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "neural-network-architectures",
+      "status": "draft",
+      "order": 5
+    },
+    {
+      "id": "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion",
+      "label": "时序多模态融合",
+      "title": "时序与多模态融合",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "neural-network-architectures",
+      "status": "draft",
+      "order": 6
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/value-based-rl-dqn",
+      "label": "值函数与 DQN",
+      "title": "值函数方法与 DQN",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "draft",
+      "order": 3
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/policy-gradient-actor-critic-gae",
+      "label": "策略梯度与 GAE",
+      "title": "策略梯度、Actor-Critic 与 GAE",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "draft",
+      "order": 4
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/ddpg",
+      "label": "DDPG",
+      "title": "DDPG 与确定性策略梯度",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "draft",
+      "order": 7
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/pomdp-recurrent-rl",
+      "label": "POMDP",
+      "title": "POMDP 与循环策略",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "draft",
+      "order": 10
+    },
+    {
+      "id": "learning-based-planning/rl-algorithms/model-based-and-model-free-rl",
+      "label": "有模型 RL",
+      "title": "有模型与无模型强化学习",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "rl-algorithms",
+      "status": "draft",
+      "order": 11
+    },
+    {
+      "id": "learning-based-planning/engineering-practice/observation-action-reward-design",
+      "label": "观测与奖励设计",
+      "title": "观测、动作与奖励设计",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "engineering-practice",
+      "status": "draft",
+      "order": 5
+    },
+    {
+      "id": "learning-based-planning/engineering-practice/ppo-training-and-debugging",
+      "label": "训练与调试",
+      "title": "PPO 训练与调试实录",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "engineering-practice",
+      "status": "draft",
+      "order": 6
+    },
+    {
+      "id": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "label": "规划总览",
+      "title": "学习式轨迹规划总览",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "learning-based-trajectory-planning",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "learning-based-planning/learning-based-trajectory-planning/yopo",
+      "label": "YOPO",
+      "title": "YOPO：一次性规划网络",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "learning-based-trajectory-planning",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "learning-based-planning/learning-based-trajectory-planning/navrl",
+      "label": "NavRL",
+      "title": "NavRL：导航强化学习",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "learning-based-trajectory-planning",
+      "status": "draft",
+      "order": 3
+    },
+    {
+      "id": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
+      "label": "候选轨迹选择",
+      "title": "轨迹候选生成与选择",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "learning-based-trajectory-planning",
+      "status": "draft",
+      "order": 4
+    },
+    {
+      "id": "learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization",
+      "label": "残差轨迹优化",
+      "title": "残差轨迹优化",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "learning-based-trajectory-planning",
+      "status": "draft",
+      "order": 5
+    },
+    {
+      "id": "engineering-tools/ros2",
+      "label": "ROS2",
+      "title": "ROS2 与 DDS 通信",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "draft",
+      "order": 6
+    },
+    {
+      "id": "engineering-tools/px4-ros2-offboard-control",
+      "label": "PX4 Offboard",
+      "title": "PX4 ROS2 Offboard 控制",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "draft",
+      "order": 7
+    },
+    {
+      "id": "engineering-tools/docker-environment",
+      "label": "Docker 环境",
+      "title": "Docker 训练环境",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "draft",
+      "order": 8
+    },
+    {
+      "id": "engineering-tools/profiling-debugging",
+      "label": "性能与调试",
+      "title": "性能分析与调试",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "draft",
+      "order": 9
+    },
+    {
+      "id": "engineering-tools/reproducible-experiments",
+      "label": "可复现实验",
+      "title": "可复现实验管理",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "draft",
+      "order": 10
+    },
+    {
+      "id": "simulation-evaluation/simulation-platforms/simulator-overview",
+      "label": "仿真平台总览",
+      "title": "仿真平台总览（Isaac Sim / Gazebo / AirSim）",
+      "domain": "simulation-evaluation",
+      "domainLabel": "仿真与评估",
+      "group": "simulation-platforms",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "simulation-evaluation/simulation-timing-and-interfaces",
+      "label": "仿真时序",
+      "title": "仿真时序与接口",
+      "domain": "simulation-evaluation",
+      "domainLabel": "仿真与评估",
+      "group": "",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "simulation-evaluation/scenario-design/static-dynamic-scenarios",
+      "label": "场景设计",
+      "title": "静态与动态场景设计",
+      "domain": "simulation-evaluation",
+      "domainLabel": "仿真与评估",
+      "group": "scenario-design",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "simulation-evaluation/scenario-design/domain-randomization",
+      "label": "域随机化",
+      "title": "域随机化",
+      "domain": "simulation-evaluation",
+      "domainLabel": "仿真与评估",
+      "group": "scenario-design",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "simulation-evaluation/evaluation-methodology/navigation-metrics",
+      "label": "评估指标",
+      "title": "导航评估指标",
+      "domain": "simulation-evaluation",
+      "domainLabel": "仿真与评估",
+      "group": "evaluation-methodology",
+      "status": "draft",
+      "order": 1
+    },
+    {
+      "id": "simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis",
+      "label": "基线与 Oracle",
+      "title": "基线与上界（Oracle）分析",
+      "domain": "simulation-evaluation",
+      "domainLabel": "仿真与评估",
+      "group": "evaluation-methodology",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "simulation-evaluation/evaluation-methodology/generalization-and-ablation",
+      "label": "泛化与消融",
+      "title": "泛化性与消融实验",
+      "domain": "simulation-evaluation",
+      "domainLabel": "仿真与评估",
+      "group": "evaluation-methodology",
+      "status": "draft",
+      "order": 3
+    },
+    {
+      "id": "simulation-evaluation/sim-to-real/sim-to-real-gap",
+      "label": "Sim-to-Real",
+      "title": "Sim-to-Real 差距与迁移",
+      "domain": "simulation-evaluation",
+      "domainLabel": "仿真与评估",
+      "group": "sim-to-real",
+      "status": "draft",
+      "order": 1
+    }
+  ],
+  "edges": [
+    {
+      "from": "mathematics/linear-algebra-geometry/matrix-decomposition",
+      "to": "mathematics/probability-statistics/gaussian-estimation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/linear-algebra-geometry/coordinate-transforms",
+      "to": "mathematics/linear-algebra-geometry/so3-se3-quaternion",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/linear-algebra-geometry/so3-se3-quaternion",
+      "to": "classical-planning-control/perception-slam/fast-lio",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/calculus-optimization/gradient-jacobian-hessian",
+      "to": "mathematics/calculus-optimization/optimization-theory",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/calculus-optimization/optimization-theory",
+      "to": "mathematics/calculus-optimization/unconstrained-optimization",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/calculus-optimization/optimization-theory",
+      "to": "mathematics/calculus-optimization/constrained-optimization-kkt",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/probability-statistics/probability-bayesian-inference",
+      "to": "mathematics/probability-statistics/gaussian-estimation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/probability-statistics/gaussian-estimation",
+      "to": "classical-planning-control/perception-slam/kalman-filters",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/probability-statistics/probability-bayesian-inference",
+      "to": "learning-based-planning/rl-algorithms/rl-foundations",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/dynamics/rigid-body-dynamics",
+      "to": "mathematics/dynamics/quadrotor-dynamics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/dynamics/quadrotor-dynamics",
+      "to": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/dynamics/quadrotor-dynamics",
+      "to": "classical-planning-control/tracking-control/lqr",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/optimal-control-foundations/optimal-control-formulation",
+      "to": "classical-planning-control/tracking-control/lqr",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/optimal-control-foundations/optimal-control-formulation",
+      "to": "classical-planning-control/tracking-control/mpc",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/perception-slam/kalman-filters",
+      "to": "classical-planning-control/perception-slam/fast-lio",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/perception-slam/fast-lio",
+      "to": "classical-planning-control/perception-slam/occupancy-grid-esdf",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/perception-slam/occupancy-grid-esdf",
+      "to": "classical-planning-control/path-search/heuristic-search",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/perception-slam/occupancy-grid-esdf",
+      "to": "classical-planning-control/trajectory-optimization/trajectory-optimization-formulation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/path-search/heuristic-search",
+      "to": "classical-planning-control/path-search/sampling-based-search",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/path-search/heuristic-search",
+      "to": "classical-planning-control/path-search/incremental-search",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/path-search/kinodynamic-search",
+      "to": "classical-planning-control/trajectory-optimization/trajectory-optimization-formulation",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/trajectory-representation-parameterization",
+      "to": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "to": "classical-planning-control/trajectory-optimization/safe-flight-corridor",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "to": "classical-planning-control/trajectory-optimization/bezier-bspline",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/bezier-bspline",
+      "to": "classical-planning-control/trajectory-optimization/minco-parameterization",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/minco-parameterization",
+      "to": "classical-planning-control/trajectory-optimization/gcopter-minco",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/safe-flight-corridor",
+      "to": "classical-planning-control/trajectory-optimization/fast-planner",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/fast-planner",
+      "to": "classical-planning-control/trajectory-optimization/ego-planner",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/ego-planner",
+      "to": "classical-planning-control/trajectory-optimization/gcopter-minco",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/replanning-and-trajectory-continuity",
+      "to": "classical-planning-control/trajectory-optimization/fast-planner",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/replanning-and-trajectory-continuity",
+      "to": "classical-planning-control/trajectory-optimization/ego-planner",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "to": "classical-planning-control/tracking-control/pid",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/tracking-control/lqr",
+      "to": "classical-planning-control/tracking-control/mpc",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/tracking-control/pid",
+      "to": "classical-planning-control/tracking-control/px4-controller-attitude-rate",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/tracking-control/lqr",
+      "to": "classical-planning-control/tracking-control/px4-controller-attitude-rate",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/mlp",
+      "to": "learning-based-planning/neural-network-architectures/cnn",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/cnn",
+      "to": "learning-based-planning/neural-network-architectures/rnn-lstm",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/rnn-lstm",
+      "to": "learning-based-planning/neural-network-architectures/attention-transformer",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/mlp",
+      "to": "learning-based-planning/rl-algorithms/rl-foundations",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/value-based-rl-dqn",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/policy-gradient-actor-critic-gae",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/policy-gradient-actor-critic-gae",
+      "to": "learning-based-planning/rl-algorithms/trpo",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/trpo",
+      "to": "learning-based-planning/rl-algorithms/ppo",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/ddpg",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/ddpg",
+      "to": "learning-based-planning/rl-algorithms/td3",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/td3",
+      "to": "learning-based-planning/rl-algorithms/sac",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/pomdp-recurrent-rl",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/ppo",
+      "to": "learning-based-planning/rl-algorithms/pomdp-recurrent-rl",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/ppo",
+      "to": "learning-based-planning/engineering-practice/ppo-walkthrough",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/engineering-practice/rl-engineering-pitfalls",
+      "to": "learning-based-planning/engineering-practice/ppo-walkthrough",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/engineering-practice/ppo-walkthrough",
+      "to": "learning-based-planning/engineering-practice/tensorboard-metrics",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/engineering-practice/observation-action-reward-design",
+      "to": "learning-based-planning/engineering-practice/rl-engineering-pitfalls",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/cnn",
+      "to": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/ppo",
+      "to": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "to": "learning-based-planning/learning-based-trajectory-planning/yopo",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/learning-based-trajectory-planning/yopo",
+      "to": "learning-based-planning/learning-based-trajectory-planning/navrl",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/learning-based-trajectory-planning/yopo",
+      "to": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
+      "to": "learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization",
+      "type": "related"
+    },
+    {
+      "from": "mathematics/calculus-optimization/constrained-optimization-kkt",
+      "to": "classical-planning-control/tracking-control/mpc",
+      "type": "related"
+    },
+    {
+      "from": "mathematics/calculus-optimization/optimization-theory",
+      "to": "classical-planning-control/trajectory-optimization/trajectory-optimization-formulation",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/engineering-practice/work-pipeline",
+      "to": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "type": "related"
+    },
+    {
+      "from": "simulation-evaluation/simulation-platforms/simulator-overview",
+      "to": "simulation-evaluation/scenario-design/domain-randomization",
+      "type": "related"
+    },
+    {
+      "from": "simulation-evaluation/scenario-design/static-dynamic-scenarios",
+      "to": "simulation-evaluation/evaluation-methodology/navigation-metrics",
+      "type": "related"
+    },
+    {
+      "from": "simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis",
+      "to": "simulation-evaluation/evaluation-methodology/navigation-metrics",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/learning-based-trajectory-planning/yopo",
+      "to": "simulation-evaluation/sim-to-real/sim-to-real-gap",
+      "type": "related"
+    },
+    {
+      "from": "engineering-tools/multi-server-gpu-training",
+      "to": "learning-based-planning/engineering-practice/ppo-walkthrough",
+      "type": "related"
+    }
+  ]
+}

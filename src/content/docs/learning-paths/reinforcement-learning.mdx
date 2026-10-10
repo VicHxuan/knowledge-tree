@@ -1,0 +1,34 @@
+---
+title: "强化学习学习路径"
+description: "从数学基础到 PPO 实践的推荐学习顺序，附本地进度追踪"
+sidebar:
+  order: 1
+---
+
+import LearningPathStepper from '../../../components/LearningPathStepper.astro';
+
+按依赖关系推荐的学习顺序。点击每一步左侧的圆点可以标记学习进度（未开始 → 进行中 → 已完成，进度保存在本浏览器）：
+
+<LearningPathStepper
+	pathId="reinforcement-learning"
+	steps={[
+		{ title: '数学优化理论', href: '/knowledge-tree/mathematics/calculus-optimization/optimization-theory/', note: '凸优化、拉格朗日对偶——TRPO/PPO 推导的语言底座' },
+		{ title: '概率论与高斯估计', note: '分布、期望与高斯分布的性质（撰写中）' },
+		{ title: '强化学习核心公式手册', href: '/knowledge-tree/learning-based-planning/rl-algorithms/rl-foundations/', note: 'MDP、贝尔曼方程到策略梯度的数学主线' },
+		{ title: '算法演进', href: '/knowledge-tree/learning-based-planning/rl-algorithms/algorithm-evolution/', note: '从值方法到策略梯度，建立算法族谱' },
+		{ title: 'TRPO', href: '/knowledge-tree/learning-based-planning/rl-algorithms/trpo/', note: '信赖域思想的完整推导' },
+		{ title: 'PPO 算法', href: '/knowledge-tree/learning-based-planning/rl-algorithms/ppo/', note: '完整理解一次 PPO 迭代的数据流' },
+		{ title: '强化学习工程避坑指南', href: '/knowledge-tree/learning-based-planning/engineering-practice/rl-engineering-pitfalls/', note: '动手训练前通读一遍，能省掉大量调试时间' },
+		{ title: 'PPO 全流程走读与调参', href: '/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/', note: '从训练脚本到 checkpoint 的完整链路' },
+		{ title: 'TensorBoard 指标模板', href: '/knowledge-tree/learning-based-planning/engineering-practice/tensorboard-metrics/', note: '训练监控与调参速查' },
+		{ title: '小脑 Work Pipeline', href: '/knowledge-tree/learning-based-planning/engineering-practice/work-pipeline/', note: '应用视角：这些方法如何用于无人机轨迹输出' },
+	]}
+/>
+
+## 延伸方向
+
+完成主线后可以按兴趣分支：
+
+- **值方法分支**：DQN 家族与 POMDP（见[算法演进](/knowledge-tree/learning-based-planning/rl-algorithms/algorithm-evolution/)）；
+- **连续控制分支**：DDPG → TD3 → [SAC](/knowledge-tree/learning-based-planning/rl-algorithms/sac/)；
+- **网络骨干**：[CNN](/knowledge-tree/learning-based-planning/neural-network-architectures/cnn/)、[RNN/LSTM](/knowledge-tree/learning-based-planning/neural-network-architectures/rnn-lstm/)、[Attention/Transformer](/knowledge-tree/learning-based-planning/neural-network-architectures/attention-transformer/)——设计观测编码器时用得上。

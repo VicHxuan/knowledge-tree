@@ -1,0 +1,29 @@
+---
+title: "学习式无人机导航学习路径"
+description: "从视觉/RL 基础到学习式规划落地的推荐学习顺序，附本地进度追踪"
+sidebar:
+  order: 3
+---
+
+import LearningPathStepper from '../../../components/LearningPathStepper.astro';
+
+面向「端到端学习式无人机轨迹规划」的跨板块路径：前半段打基础（视觉骨干 + RL 算法），后半段进入学习式规划与仿真评估。点击每一步左侧的圆点可以标记学习进度（未开始 → 进行中 → 已完成，进度保存在本浏览器）：
+
+<LearningPathStepper
+	pathId="learning-based-uav-navigation"
+	steps={[
+		{ title: 'CNN', href: '/knowledge-tree/learning-based-planning/neural-network-architectures/cnn/', note: '深度网络如何从图像提取特征——观测编码器的骨干' },
+		{ title: '强化学习核心公式手册', href: '/knowledge-tree/learning-based-planning/rl-algorithms/rl-foundations/', note: 'MDP、贝尔曼方程到策略梯度' },
+		{ title: 'PPO 算法', href: '/knowledge-tree/learning-based-planning/rl-algorithms/ppo/', note: '学习式规划最常用的训练算法' },
+		{ title: '强化学习工程避坑指南', href: '/knowledge-tree/learning-based-planning/engineering-practice/rl-engineering-pitfalls/', note: '观测 / 奖励 / 训练稳定性的实践要点' },
+		{ title: '学习式轨迹规划总览', note: '观测、动作、奖励设计与网络输出如何映射到轨迹（撰写中）' },
+		{ title: 'YOPO 论文走读', note: '感知到规划的端到端架构拆解（撰写中）' },
+		{ title: '仿真与评估板块', href: '/knowledge-tree/simulation-evaluation/', note: '仿真平台选型、场景设计与评估方法（撰写中）' },
+		{ title: 'Sim-to-Real Gap', note: '迁移到实机的差距来源与缓解手段（撰写中）' },
+	]}
+/>
+
+## 与其他路径的关系
+
+- 前半段（CNN → RL 基础 → PPO）与[强化学习学习路径](/knowledge-tree/learning-paths/reinforcement-learning/)高度重合，可以并行推进；
+- 后半段涉及的多机交互、场景泛化评估属于[仿真与评估](/knowledge-tree/simulation-evaluation/)板块，该板块正在撰写中。
