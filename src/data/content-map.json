@@ -1,0 +1,855 @@
+{
+  "version": 2,
+  "entries": [
+    {
+      "source": "tech_stack/01_math-physic-base/02_calculus-optimization/02_optimization-theory.md",
+      "output": "src/content/docs/mathematics/calculus-optimization/optimization-theory.md",
+      "slug": "mathematics/calculus-optimization/optimization-theory",
+      "title": "数学优化理论与算法核心手册",
+      "label": "数学优化理论",
+      "order": 2,
+      "status": "published",
+      "description": "凸优化、梯度方法与对偶理论"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/01_perception-slam/01_kalman-filters.md",
+      "output": "src/content/docs/classical-planning-control/perception-slam/kalman-filters.md",
+      "slug": "classical-planning-control/perception-slam/kalman-filters",
+      "title": "卡尔曼滤波系列（BF/KF/EKF/PF）",
+      "label": "卡尔曼滤波系列",
+      "order": 1,
+      "status": "published",
+      "description": "贝叶斯滤波到 KF/EKF/PF 的完整推导"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/01_perception-slam/02_fast-lio.md",
+      "output": "src/content/docs/classical-planning-control/perception-slam/fast-lio.md",
+      "slug": "classical-planning-control/perception-slam/fast-lio",
+      "title": "FAST-LIO 系列",
+      "label": "FAST-LIO",
+      "order": 2,
+      "status": "published",
+      "description": "FAST-LIO2 框架与迭代误差状态卡尔曼滤波"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/01_perception-slam/04_occupancy-grid-esdf.md",
+      "output": "src/content/docs/classical-planning-control/perception-slam/occupancy-grid-esdf.md",
+      "slug": "classical-planning-control/perception-slam/occupancy-grid-esdf",
+      "title": "占据网格与 ESDF 地图",
+      "label": "占据网格与 ESDF",
+      "order": 4,
+      "status": "published",
+      "description": "体素地图与增量式 ESDF 构建（Voxblox）"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/02_path-search/01_heuristic-search.md",
+      "output": "src/content/docs/classical-planning-control/path-search/heuristic-search.md",
+      "slug": "classical-planning-control/path-search/heuristic-search",
+      "title": "启发式搜索（Dijkstra / A* / IDA* / JPS）",
+      "label": "启发式搜索",
+      "order": 1,
+      "status": "published",
+      "description": "Dijkstra、A*、IDA* 与 JPS"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/02_path-search/02_sampling-based-search.md",
+      "output": "src/content/docs/classical-planning-control/path-search/sampling-based-search.md",
+      "slug": "classical-planning-control/path-search/sampling-based-search",
+      "title": "采样法搜索（RRT 系列）",
+      "label": "采样法搜索",
+      "order": 2,
+      "status": "published",
+      "description": "RRT、RRT* 与 Informed RRT*"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/02_path-search/03_incremental-search.md",
+      "output": "src/content/docs/classical-planning-control/path-search/incremental-search.md",
+      "slug": "classical-planning-control/path-search/incremental-search",
+      "title": "增量式搜索（D* / D* Lite / LPA*）",
+      "label": "增量式搜索",
+      "order": 3,
+      "status": "published",
+      "description": "D*、D* Lite 与 LPA*"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/01_trajectory-representation-parameterization.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/trajectory-representation-parameterization.md",
+      "slug": "classical-planning-control/trajectory-optimization/trajectory-representation-parameterization",
+      "title": "Trajectory Representation and Parameterization",
+      "label": "轨迹表示与参数化",
+      "order": 1,
+      "status": "published",
+      "description": "轨迹的多项式表示与参数化选择"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/02_differential-flatness-minimum-snap.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap.md",
+      "slug": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "title": "Minimum Snap 轨迹生成方法与当前 C++ 代码解析",
+      "label": "微分平坦与 Minimum Snap",
+      "order": 2,
+      "status": "published",
+      "description": "微分平坦性与 Minimum Snap QP 求解"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/03_bezier-bspline.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/bezier-bspline.md",
+      "slug": "classical-planning-control/trajectory-optimization/bezier-bspline",
+      "title": "贝塞尔曲线与 B 样条",
+      "label": "贝塞尔与 B 样条",
+      "order": 3,
+      "status": "published",
+      "description": "贝塞尔曲线与 B 样条基础"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/04_safe-flight-corridor.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/safe-flight-corridor.md",
+      "slug": "classical-planning-control/trajectory-optimization/safe-flight-corridor",
+      "title": "安全飞行走廊（SFC）",
+      "label": "安全飞行走廊",
+      "order": 4,
+      "status": "published",
+      "description": "飞行安全走廊的生成与约束"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/07_fast-planner.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/fast-planner.md",
+      "slug": "classical-planning-control/trajectory-optimization/fast-planner",
+      "title": "Fast-Planner 框架",
+      "label": "Fast-Planner",
+      "order": 7,
+      "status": "published",
+      "description": "Fast-Planner 前后端规划框架"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/08_ego-planner.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/ego-planner.md",
+      "slug": "classical-planning-control/trajectory-optimization/ego-planner",
+      "title": "EGO-Planner 学习文档",
+      "label": "EGO-Planner",
+      "order": 8,
+      "status": "published",
+      "description": "EGO-Planner 梯度轨迹优化"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/09_gcopter-minco.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/gcopter-minco.md",
+      "slug": "classical-planning-control/trajectory-optimization/gcopter-minco",
+      "title": "GCOPTER-MINCO 框架",
+      "label": "GCOPTER-MINCO",
+      "order": 9,
+      "status": "published",
+      "description": "GCOPTER 与 MINCO 联合优化"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/04_tracking-control/01_pid.md",
+      "output": "src/content/docs/classical-planning-control/tracking-control/pid.md",
+      "slug": "classical-planning-control/tracking-control/pid",
+      "title": "PID 控制器",
+      "label": "PID",
+      "order": 1,
+      "status": "published",
+      "description": "比例积分微分控制"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/04_tracking-control/02_lqr.md",
+      "output": "src/content/docs/classical-planning-control/tracking-control/lqr.md",
+      "slug": "classical-planning-control/tracking-control/lqr",
+      "title": "LQR 控制器",
+      "label": "LQR",
+      "order": 2,
+      "status": "published",
+      "description": "线性二次型调节器"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/04_tracking-control/03_mpc.md",
+      "output": "src/content/docs/classical-planning-control/tracking-control/mpc.md",
+      "slug": "classical-planning-control/tracking-control/mpc",
+      "title": "MPC 控制器",
+      "label": "MPC",
+      "order": 3,
+      "status": "published",
+      "description": "模型预测控制"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/04_tracking-control/04_px4-controller-attitude-rate.md",
+      "output": "src/content/docs/classical-planning-control/tracking-control/px4-controller-attitude-rate.md",
+      "slug": "classical-planning-control/tracking-control/px4-controller-attitude-rate",
+      "title": "PX4 Controller 代码讲解清单",
+      "label": "PX4 控制器",
+      "order": 4,
+      "status": "published",
+      "description": "PX4 姿态与角速度级联控制代码"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/01_mlp.md",
+      "output": "src/content/docs/learning-based-planning/neural-network-architectures/mlp.md",
+      "slug": "learning-based-planning/neural-network-architectures/mlp",
+      "title": "多层感知机",
+      "label": "多层感知机",
+      "order": 1,
+      "status": "published",
+      "description": "感知机与反向传播"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/02_cnn.md",
+      "output": "src/content/docs/learning-based-planning/neural-network-architectures/cnn.md",
+      "slug": "learning-based-planning/neural-network-architectures/cnn",
+      "title": "卷积神经网络",
+      "label": "卷积神经网络",
+      "order": 2,
+      "status": "published",
+      "description": "卷积、池化与经典结构"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/03_rnn-lstm.md",
+      "output": "src/content/docs/learning-based-planning/neural-network-architectures/rnn-lstm.md",
+      "slug": "learning-based-planning/neural-network-architectures/rnn-lstm",
+      "title": "循环神经网络（RNN/LSTM）",
+      "label": "循环神经网络",
+      "order": 3,
+      "status": "published",
+      "description": "序列建模与长短期记忆"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/04_attention-transformer.md",
+      "output": "src/content/docs/learning-based-planning/neural-network-architectures/attention-transformer.md",
+      "slug": "learning-based-planning/neural-network-architectures/attention-transformer",
+      "title": "注意力机制与 Transformer",
+      "label": "注意力与 Transformer",
+      "order": 4,
+      "status": "published",
+      "description": "自注意力与 Transformer 结构"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/01_rl-foundations.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/rl-foundations.md",
+      "slug": "learning-based-planning/rl-algorithms/rl-foundations",
+      "title": "强化学习核心公式手册",
+      "label": "强化学习基础",
+      "order": 1,
+      "status": "published",
+      "description": "MDP、贝尔曼方程到策略梯度"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_algorithm-evolution.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/algorithm-evolution.md",
+      "slug": "learning-based-planning/rl-algorithms/algorithm-evolution",
+      "title": "强化学习算法演进与梳理",
+      "label": "算法演进",
+      "order": 2,
+      "status": "published",
+      "description": "值方法到策略梯度的演进"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/05_trpo.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/trpo.md",
+      "slug": "learning-based-planning/rl-algorithms/trpo",
+      "title": "TRPO (Trust Region Policy Optimization) 算法完整解析与代码实现",
+      "label": "TRPO",
+      "order": 5,
+      "status": "published",
+      "description": "信赖域策略优化推导与实现"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/06_ppo.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/ppo.md",
+      "slug": "learning-based-planning/rl-algorithms/ppo",
+      "title": "PPO 算法完整解析与代码实现",
+      "label": "PPO",
+      "order": 6,
+      "status": "published",
+      "description": "PPO 完整推导与代码实现"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/08_td3.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/td3.md",
+      "slug": "learning-based-planning/rl-algorithms/td3",
+      "title": "TD3 算法完整解析与代码实现",
+      "label": "TD3",
+      "order": 8,
+      "status": "published",
+      "description": "双 Q 学习与延迟策略更新"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/09_sac.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/sac.md",
+      "slug": "learning-based-planning/rl-algorithms/sac",
+      "title": "SAC 算法完整解析与代码实现",
+      "label": "SAC",
+      "order": 9,
+      "status": "published",
+      "description": "最大熵 Actor-Critic 推导"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/01_ppo-walkthrough.md",
+      "output": "src/content/docs/learning-based-planning/engineering-practice/ppo-walkthrough.md",
+      "slug": "learning-based-planning/engineering-practice/ppo-walkthrough",
+      "title": "PPO 全流程走读与调参",
+      "label": "PPO 走读与调参",
+      "order": 1,
+      "status": "published",
+      "description": "一次 PPO 迭代的数据流走读"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/02_rl-engineering-pitfalls.md",
+      "output": "src/content/docs/learning-based-planning/engineering-practice/rl-engineering-pitfalls.md",
+      "slug": "learning-based-planning/engineering-practice/rl-engineering-pitfalls",
+      "title": "强化学习工程避坑指南与注意事项手册",
+      "label": "工程避坑指南",
+      "order": 2,
+      "status": "published",
+      "description": "动手训练前必读的工程注意事项"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/03_tensorboard-metrics.md",
+      "output": "src/content/docs/learning-based-planning/engineering-practice/tensorboard-metrics.md",
+      "slug": "learning-based-planning/engineering-practice/tensorboard-metrics",
+      "title": "通用强化学习 TensorBoard 指标模板",
+      "label": "TensorBoard 指标",
+      "order": 3,
+      "status": "published",
+      "description": "RL 训练指标体系与解读"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/04_work-pipeline.md",
+      "output": "src/content/docs/learning-based-planning/engineering-practice/work-pipeline.md",
+      "slug": "learning-based-planning/engineering-practice/work-pipeline",
+      "title": "小脑 Work Pipeline",
+      "label": "小脑 Work Pipeline",
+      "order": 4,
+      "status": "published",
+      "description": "小脑项目的工作流"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/01_px4-mavros.md",
+      "output": "src/content/docs/engineering-tools/px4-mavros.md",
+      "slug": "engineering-tools/px4-mavros",
+      "title": "PX4 / MAVROS 面试知识点整理",
+      "label": "PX4 / MAVROS",
+      "order": 1,
+      "status": "published",
+      "description": "PX4 与 MAVROS 面试要点"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/02_ros1.md",
+      "output": "src/content/docs/engineering-tools/ros1.md",
+      "slug": "engineering-tools/ros1",
+      "title": "ROS1 面试知识点整理",
+      "label": "ROS1",
+      "order": 2,
+      "status": "published",
+      "description": "ROS1 面试要点"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/03_remote-control-setup.md",
+      "output": "src/content/docs/engineering-tools/remote-control-setup.md",
+      "slug": "engineering-tools/remote-control-setup",
+      "title": "遥控器与接收机配置（QGC 校准）",
+      "label": "遥控器配置",
+      "order": 3,
+      "status": "published",
+      "description": "QGC 遥控器校准"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/04_git-manual.md",
+      "output": "src/content/docs/engineering-tools/git-manual.md",
+      "slug": "engineering-tools/git-manual",
+      "title": "Git 常用指令手册",
+      "label": "Git 手册",
+      "order": 4,
+      "status": "published",
+      "description": "Git 常用指令"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/05_multi-server-gpu-training.md",
+      "output": "src/content/docs/engineering-tools/multi-server-gpu-training.md",
+      "slug": "engineering-tools/multi-server-gpu-training",
+      "title": "YOPO RL Selector：多服务器部署与单机多 GPU 训练操作手册",
+      "label": "多服务器 GPU 训练",
+      "order": 5,
+      "status": "published",
+      "description": "多服务器部署与 torchrun 多卡训练"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/01_linear-algebra-geometry/01_matrix-decomposition.md",
+      "output": "src/content/docs/mathematics/linear-algebra-geometry/matrix-decomposition.md",
+      "slug": "mathematics/linear-algebra-geometry/matrix-decomposition",
+      "title": "矩阵分解（SVD / 特征分解 / QR）",
+      "label": "矩阵分解",
+      "order": 1,
+      "status": "draft",
+      "description": "特征分解、SVD 与数值线性代数基础"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/01_linear-algebra-geometry/02_coordinate-transforms.md",
+      "output": "src/content/docs/mathematics/linear-algebra-geometry/coordinate-transforms.md",
+      "slug": "mathematics/linear-algebra-geometry/coordinate-transforms",
+      "title": "坐标变换与旋转矩阵",
+      "label": "坐标变换",
+      "order": 2,
+      "status": "draft",
+      "description": "旋转、平移与多坐标系链式变换"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/01_linear-algebra-geometry/03_so3-se3-quaternion.md",
+      "output": "src/content/docs/mathematics/linear-algebra-geometry/so3-se3-quaternion.md",
+      "slug": "mathematics/linear-algebra-geometry/so3-se3-quaternion",
+      "title": "SO(3)、SE(3) 与四元数",
+      "label": "SO(3)/SE(3)",
+      "order": 3,
+      "status": "draft",
+      "description": "李群李代数、四元数与旋转求导"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/02_calculus-optimization/01_gradient-jacobian-hessian.md",
+      "output": "src/content/docs/mathematics/calculus-optimization/gradient-jacobian-hessian.md",
+      "slug": "mathematics/calculus-optimization/gradient-jacobian-hessian",
+      "title": "梯度、雅可比与海塞矩阵",
+      "label": "梯度与雅可比",
+      "order": 1,
+      "status": "draft",
+      "description": "多元微分、雅可比链式法则与二阶曲率"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/02_calculus-optimization/03_unconstrained-optimization.md",
+      "output": "src/content/docs/mathematics/calculus-optimization/unconstrained-optimization.md",
+      "slug": "mathematics/calculus-optimization/unconstrained-optimization",
+      "title": "无约束优化方法",
+      "label": "无约束优化",
+      "order": 3,
+      "status": "draft",
+      "description": "梯度下降、牛顿法与收敛性"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/02_calculus-optimization/04_constrained-optimization-kkt.md",
+      "output": "src/content/docs/mathematics/calculus-optimization/constrained-optimization-kkt.md",
+      "slug": "mathematics/calculus-optimization/constrained-optimization-kkt",
+      "title": "约束优化与 KKT 条件",
+      "label": "约束优化与 KKT",
+      "order": 4,
+      "status": "draft",
+      "description": "拉格朗日对偶、KKT 与二次规划"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/02_calculus-optimization/05_numerical-optimization.md",
+      "output": "src/content/docs/mathematics/calculus-optimization/numerical-optimization.md",
+      "slug": "mathematics/calculus-optimization/numerical-optimization",
+      "title": "数值优化方法",
+      "label": "数值优化",
+      "order": 5,
+      "status": "draft",
+      "description": "数值稳定性、步长策略与求解库"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/03_probability-statistics/01_probability-bayesian-inference.md",
+      "output": "src/content/docs/mathematics/probability-statistics/probability-bayesian-inference.md",
+      "slug": "mathematics/probability-statistics/probability-bayesian-inference",
+      "title": "概率论与贝叶斯推断",
+      "label": "概率与贝叶斯",
+      "order": 1,
+      "status": "draft",
+      "description": "概率基础与贝叶斯估计观点"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/03_probability-statistics/02_gaussian-estimation.md",
+      "output": "src/content/docs/mathematics/probability-statistics/gaussian-estimation.md",
+      "slug": "mathematics/probability-statistics/gaussian-estimation",
+      "title": "高斯分布与状态估计",
+      "label": "高斯估计",
+      "order": 2,
+      "status": "draft",
+      "description": "多元高斯与高斯闭式滤波"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/04_dynamics/01_rigid-body-dynamics.md",
+      "output": "src/content/docs/mathematics/dynamics/rigid-body-dynamics.md",
+      "slug": "mathematics/dynamics/rigid-body-dynamics",
+      "title": "刚体动力学",
+      "label": "刚体动力学",
+      "order": 1,
+      "status": "draft",
+      "description": "牛顿-欧拉方程与惯性张量"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/04_dynamics/02_quadrotor-dynamics.md",
+      "output": "src/content/docs/mathematics/dynamics/quadrotor-dynamics.md",
+      "slug": "mathematics/dynamics/quadrotor-dynamics",
+      "title": "四旋翼动力学建模",
+      "label": "四旋翼动力学",
+      "order": 2,
+      "status": "draft",
+      "description": "四旋翼控制量、建模与微分平坦"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/05_optimal-control-foundations/01_optimal-control-formulation.md",
+      "output": "src/content/docs/mathematics/optimal-control-foundations/optimal-control-formulation.md",
+      "slug": "mathematics/optimal-control-foundations/optimal-control-formulation",
+      "title": "最优控制问题建模",
+      "label": "最优控制建模",
+      "order": 1,
+      "status": "draft",
+      "description": "状态、控制、代价与约束的一般形式"
+    },
+    {
+      "source": "tech_stack/01_math-physic-base/05_optimal-control-foundations/02_hamiltonian-pontryagin.md",
+      "output": "src/content/docs/mathematics/optimal-control-foundations/hamiltonian-pontryagin.md",
+      "slug": "mathematics/optimal-control-foundations/hamiltonian-pontryagin",
+      "title": "哈密顿体系与 Pontryagin 极小值原理",
+      "label": "Hamilton 与 PMP",
+      "order": 2,
+      "status": "draft",
+      "description": "连续时间最优性的必要条件"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/01_perception-slam/03_visual-inertial-odometry.md",
+      "output": "src/content/docs/classical-planning-control/perception-slam/visual-inertial-odometry.md",
+      "slug": "classical-planning-control/perception-slam/visual-inertial-odometry",
+      "title": "视觉惯性里程计（VIO）",
+      "label": "VIO",
+      "order": 3,
+      "status": "draft",
+      "description": "视觉与 IMU 紧耦合状态估计"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/01_perception-slam/05_dynamic-obstacle-tracking.md",
+      "output": "src/content/docs/classical-planning-control/perception-slam/dynamic-obstacle-tracking.md",
+      "slug": "classical-planning-control/perception-slam/dynamic-obstacle-tracking",
+      "title": "动态障碍物感知与跟踪",
+      "label": "动态障碍物跟踪",
+      "order": 5,
+      "status": "draft",
+      "description": "动态目标检测、跟踪与预测"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/02_path-search/04_kinodynamic-search.md",
+      "output": "src/content/docs/classical-planning-control/path-search/kinodynamic-search.md",
+      "slug": "classical-planning-control/path-search/kinodynamic-search",
+      "title": "运动学约束搜索（Kinodynamic Search）",
+      "label": "Kinodynamic 搜索",
+      "order": 4,
+      "status": "draft",
+      "description": "考虑动力学的前端搜索"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/05_trajectory-optimization-formulation.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/trajectory-optimization-formulation.md",
+      "slug": "classical-planning-control/trajectory-optimization/trajectory-optimization-formulation",
+      "title": "轨迹优化问题的一般建模",
+      "label": "优化问题建模",
+      "order": 5,
+      "status": "draft",
+      "description": "决策变量、目标函数与约束体系"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/06_minco-parameterization.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/minco-parameterization.md",
+      "slug": "classical-planning-control/trajectory-optimization/minco-parameterization",
+      "title": "MINCO 轨迹参数化",
+      "label": "MINCO 参数化",
+      "order": 6,
+      "status": "draft",
+      "description": "MINCO 表示与空间-时间联合优化"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/03_trajectory-optimization/10_replanning-and-trajectory-continuity.md",
+      "output": "src/content/docs/classical-planning-control/trajectory-optimization/replanning-and-trajectory-continuity.md",
+      "slug": "classical-planning-control/trajectory-optimization/replanning-and-trajectory-continuity",
+      "title": "重规划与轨迹连续性",
+      "label": "重规划与连续性",
+      "order": 10,
+      "status": "draft",
+      "description": "在线重规划与轨迹衔接"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/04_tracking-control/05_geometric-control-se3.md",
+      "output": "src/content/docs/classical-planning-control/tracking-control/geometric-control-se3.md",
+      "slug": "classical-planning-control/tracking-control/geometric-control-se3",
+      "title": "SE(3) 几何控制",
+      "label": "几何控制",
+      "order": 5,
+      "status": "draft",
+      "description": "李群上的姿态误差与级联控制"
+    },
+    {
+      "source": "tech_stack/02_classical-planning-control/04_tracking-control/06_tracking-latency-and-actuator-dynamics.md",
+      "output": "src/content/docs/classical-planning-control/tracking-control/tracking-latency-and-actuator-dynamics.md",
+      "slug": "classical-planning-control/tracking-control/tracking-latency-and-actuator-dynamics",
+      "title": "跟踪延迟与执行器动力学",
+      "label": "延迟与执行器",
+      "order": 6,
+      "status": "draft",
+      "description": "链路时延、执行器建模与补偿"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/05_feature-pyramid-multiscale.md",
+      "output": "src/content/docs/learning-based-planning/neural-network-architectures/feature-pyramid-multiscale.md",
+      "slug": "learning-based-planning/neural-network-architectures/feature-pyramid-multiscale",
+      "title": "特征金字塔与多尺度网络",
+      "label": "多尺度特征",
+      "order": 5,
+      "status": "draft",
+      "description": "FPN 与多尺度密集预测骨架"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/06_temporal-multimodal-fusion.md",
+      "output": "src/content/docs/learning-based-planning/neural-network-architectures/temporal-multimodal-fusion.md",
+      "slug": "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion",
+      "title": "时序与多模态融合",
+      "label": "时序多模态融合",
+      "order": 6,
+      "status": "draft",
+      "description": "时序网络与多传感器融合结构"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_value-based-rl-dqn.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/value-based-rl-dqn.md",
+      "slug": "learning-based-planning/rl-algorithms/value-based-rl-dqn",
+      "title": "值函数方法与 DQN",
+      "label": "值函数与 DQN",
+      "order": 3,
+      "status": "draft",
+      "description": "从 Q-learning 到深度 Q 网络"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/04_policy-gradient-actor-critic-gae.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/policy-gradient-actor-critic-gae.md",
+      "slug": "learning-based-planning/rl-algorithms/policy-gradient-actor-critic-gae",
+      "title": "策略梯度、Actor-Critic 与 GAE",
+      "label": "策略梯度与 GAE",
+      "order": 4,
+      "status": "draft",
+      "description": "从 REINFORCE 到优势估计"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/07_ddpg.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/ddpg.md",
+      "slug": "learning-based-planning/rl-algorithms/ddpg",
+      "title": "DDPG 与确定性策略梯度",
+      "label": "DDPG",
+      "order": 7,
+      "status": "draft",
+      "description": "确定性策略梯度与连续控制"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/10_pomdp-recurrent-rl.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/pomdp-recurrent-rl.md",
+      "slug": "learning-based-planning/rl-algorithms/pomdp-recurrent-rl",
+      "title": "POMDP 与循环策略",
+      "label": "POMDP",
+      "order": 10,
+      "status": "draft",
+      "description": "部分可观测与循环网络策略"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/11_model-based-and-model-free-rl.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-and-model-free-rl.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-and-model-free-rl",
+      "title": "有模型与无模型强化学习",
+      "label": "有模型 RL",
+      "order": 11,
+      "status": "draft",
+      "description": "样本效率与模型误差的权衡"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/05_observation-action-reward-design.md",
+      "output": "src/content/docs/learning-based-planning/engineering-practice/observation-action-reward-design.md",
+      "slug": "learning-based-planning/engineering-practice/observation-action-reward-design",
+      "title": "观测、动作与奖励设计",
+      "label": "观测与奖励设计",
+      "order": 5,
+      "status": "draft",
+      "description": "MDP 接口工程化设计"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/06_ppo-training-and-debugging.md",
+      "output": "src/content/docs/learning-based-planning/engineering-practice/ppo-training-and-debugging.md",
+      "slug": "learning-based-planning/engineering-practice/ppo-training-and-debugging",
+      "title": "PPO 训练与调试实录",
+      "label": "训练与调试",
+      "order": 6,
+      "status": "draft",
+      "description": "训练全流程的系统性调试方法"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/01_learning-based-planning-overview.md",
+      "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview.md",
+      "slug": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "title": "学习式轨迹规划总览",
+      "label": "规划总览",
+      "order": 1,
+      "status": "draft",
+      "description": "学习式规划的问题分类与路线"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/02_yopo.md",
+      "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/yopo.md",
+      "slug": "learning-based-planning/learning-based-trajectory-planning/yopo",
+      "title": "YOPO：一次性规划网络",
+      "label": "YOPO",
+      "order": 2,
+      "status": "draft",
+      "description": "感知骨干与轨迹候选生成网络"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/03_navrl.md",
+      "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/navrl.md",
+      "slug": "learning-based-planning/learning-based-trajectory-planning/navrl",
+      "title": "NavRL：导航强化学习",
+      "label": "NavRL",
+      "order": 3,
+      "status": "draft",
+      "description": "端到端导航策略学习"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/04_trajectory-candidate-selection.md",
+      "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection.md",
+      "slug": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
+      "title": "轨迹候选生成与选择",
+      "label": "候选轨迹选择",
+      "order": 4,
+      "status": "draft",
+      "description": "候选生成、打分与 RL 选择器"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/05_residual-trajectory-optimization.md",
+      "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization.md",
+      "slug": "learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization",
+      "title": "残差轨迹优化",
+      "label": "残差轨迹优化",
+      "order": 5,
+      "status": "draft",
+      "description": "学习与优化的互补结合"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/06_ros2.md",
+      "output": "src/content/docs/engineering-tools/ros2.md",
+      "slug": "engineering-tools/ros2",
+      "title": "ROS2 与 DDS 通信",
+      "label": "ROS2",
+      "order": 6,
+      "status": "draft",
+      "description": "DDS 中间件与 ROS1 迁移"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/07_px4-ros2-offboard-control.md",
+      "output": "src/content/docs/engineering-tools/px4-ros2-offboard-control.md",
+      "slug": "engineering-tools/px4-ros2-offboard-control",
+      "title": "PX4 ROS2 Offboard 控制",
+      "label": "PX4 Offboard",
+      "order": 7,
+      "status": "draft",
+      "description": "uXRCE-DDS 桥接与 offboard 指令流"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/08_docker-environment.md",
+      "output": "src/content/docs/engineering-tools/docker-environment.md",
+      "slug": "engineering-tools/docker-environment",
+      "title": "Docker 训练环境",
+      "label": "Docker 环境",
+      "order": 8,
+      "status": "draft",
+      "description": "容器化训练环境与 GPU 支持"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/09_profiling-debugging.md",
+      "output": "src/content/docs/engineering-tools/profiling-debugging.md",
+      "slug": "engineering-tools/profiling-debugging",
+      "title": "性能分析与调试",
+      "label": "性能与调试",
+      "order": 9,
+      "status": "draft",
+      "description": "系统观测与训练瓶颈定位"
+    },
+    {
+      "source": "tech_stack/04_engineering-tools/10_reproducible-experiments.md",
+      "output": "src/content/docs/engineering-tools/reproducible-experiments.md",
+      "slug": "engineering-tools/reproducible-experiments",
+      "title": "可复现实验管理",
+      "label": "可复现实验",
+      "order": 10,
+      "status": "draft",
+      "description": "seed、配置与实验追踪"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/01_simulation-platforms/01_simulator-overview.md",
+      "output": "src/content/docs/simulation-evaluation/simulation-platforms/simulator-overview.md",
+      "slug": "simulation-evaluation/simulation-platforms/simulator-overview",
+      "title": "仿真平台总览（Isaac Sim / Gazebo / AirSim）",
+      "label": "仿真平台总览",
+      "order": 1,
+      "status": "draft",
+      "description": "平台对比与选型"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/01_simulation-platforms/02_simulation-timing-and-interfaces.md",
+      "output": "src/content/docs/simulation-evaluation/simulation-timing-and-interfaces.md",
+      "slug": "simulation-evaluation/simulation-timing-and-interfaces",
+      "title": "仿真时序与接口",
+      "label": "仿真时序",
+      "order": 2,
+      "status": "draft",
+      "description": "sim time、步进与观测动作对齐"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/02_scenario-design/01_static-dynamic-scenarios.md",
+      "output": "src/content/docs/simulation-evaluation/scenario-design/static-dynamic-scenarios.md",
+      "slug": "simulation-evaluation/scenario-design/static-dynamic-scenarios",
+      "title": "静态与动态场景设计",
+      "label": "场景设计",
+      "order": 1,
+      "status": "draft",
+      "description": "障碍物、密度与课程序列"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/02_scenario-design/02_domain-randomization.md",
+      "output": "src/content/docs/simulation-evaluation/scenario-design/domain-randomization.md",
+      "slug": "simulation-evaluation/scenario-design/domain-randomization",
+      "title": "域随机化",
+      "label": "域随机化",
+      "order": 2,
+      "status": "draft",
+      "description": "外观与物理随机化策略"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/03_evaluation-methodology/01_navigation-metrics.md",
+      "output": "src/content/docs/simulation-evaluation/evaluation-methodology/navigation-metrics.md",
+      "slug": "simulation-evaluation/evaluation-methodology/navigation-metrics",
+      "title": "导航评估指标",
+      "label": "评估指标",
+      "order": 1,
+      "status": "draft",
+      "description": "成功率、效率与安全三类指标"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/03_evaluation-methodology/02_baselines-and-oracle-analysis.md",
+      "output": "src/content/docs/simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis.md",
+      "slug": "simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis",
+      "title": "基线与上界（Oracle）分析",
+      "label": "基线与 Oracle",
+      "order": 2,
+      "status": "draft",
+      "description": "用基线与上界定位改进空间"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/03_evaluation-methodology/03_generalization-and-ablation.md",
+      "output": "src/content/docs/simulation-evaluation/evaluation-methodology/generalization-and-ablation.md",
+      "slug": "simulation-evaluation/evaluation-methodology/generalization-and-ablation",
+      "title": "泛化性与消融实验",
+      "label": "泛化与消融",
+      "order": 3,
+      "status": "draft",
+      "description": "泛化维度与组件消融方法"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/04_sim-to-real/01_sim-to-real-gap.md",
+      "output": "src/content/docs/simulation-evaluation/sim-to-real/sim-to-real-gap.md",
+      "slug": "simulation-evaluation/sim-to-real/sim-to-real-gap",
+      "title": "Sim-to-Real 差距与迁移",
+      "label": "Sim-to-Real",
+      "order": 1,
+      "status": "draft",
+      "description": "差距来源、迁移方法与真机验证"
+    }
+  ]
+}
