@@ -20,9 +20,6 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-# 既有笔记原件：已迁移至 src/content/docs/，仅本地保留，不入库
-/rl/
-/trajectory/
-/workflow-tool/
-/px4-controller-attitude-rate.md
-/wp.md
+# tech_stack 知识库：知识内容入库；personal/（简历/照片等隐私材料）与 references/（第三方课程笔记/论文 PDF）仅本地保留，不入库
+/tech_stack/personal/
+/tech_stack/references/
