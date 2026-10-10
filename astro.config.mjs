@@ -25,7 +25,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'VicHxuan Knowledge Tree',
-			description: '数学、编程、机器学习、强化学习与机器人学的个人知识树',
+			description: '传统规划控制、强化学习端到端与工程工具链的个人知识树',
 
 			// 单语言站点：界面使用简体中文，URL 不带语言前缀
 			defaultLocale: 'root',
@@ -58,10 +58,9 @@ export default defineConfig({
 					],
 				},
 				docGroup('数学基础', 'mathematics'),
-				docGroup('编程与工程', 'programming'),
-				docGroup('机器学习', 'machine-learning'),
-				docGroup('机器人学', 'robotics'),
-				docGroup('科研与开源项目', 'projects'),
+				docGroup('传统规划控制', 'classical-planning-control'),
+				docGroup('强化学习端到端', 'rl-end-to-end'),
+				docGroup('工程工具链', 'engineering-tools'),
 				docGroup('学习路径', 'learning-paths'),
 			],
 		}),

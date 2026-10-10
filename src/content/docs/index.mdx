@@ -1,13 +1,13 @@
 ---
 title: Knowledge Tree
-description: 个人技术知识树：数学、编程、机器学习、强化学习与机器人学
+description: 个人技术知识树：传统规划控制、强化学习端到端与工程工具链
 template: splash
 hero:
   title: Knowledge Tree
-  tagline: 结构化整理 AI、强化学习、机器人学与自主系统的知识笔记与实践教程。Markdown 源文件驱动，持续更新。
+  tagline: 结构化整理无人机轨迹规划控制、强化学习端到端与工程工具链的知识笔记与实践教程。Markdown 源文件驱动，持续更新。
   actions:
     - text: 开始学习
-      link: /knowledge-tree/machine-learning/reinforcement-learning/
+      link: /knowledge-tree/classical-planning-control/
       icon: right-arrow
       variant: primary
     - text: GitHub 仓库
@@ -24,17 +24,14 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 	<Card title="数学基础" icon="open-book">
 		线性代数、概率论与最优化（规划中）。
 	</Card>
-	<Card title="编程与工程" icon="code-branch">
-		[Git 工作流](/knowledge-tree/programming/git-manual/)与[多服务器多 GPU 训练部署](/knowledge-tree/programming/multi-server-gpu-manual/)。
+	<Card title="传统规划控制" icon="code-branch">
+		sensor → SLAM → 路径搜索 → [轨迹优化](/knowledge-tree/classical-planning-control/trajectory-optimization/) → [跟踪控制](/knowledge-tree/classical-planning-control/tracking-control/)的经典管线。
 	</Card>
-	<Card title="机器学习" icon="rocket">
-		[强化学习](/knowledge-tree/machine-learning/reinforcement-learning/)：PPO、工程避坑指南、参数手册与 TensorBoard 指标体系。
+	<Card title="强化学习端到端" icon="rocket">
+		[特征提取网络](/knowledge-tree/rl-end-to-end/feature-extraction-networks/)、[PPO / SAC 等算法](/knowledge-tree/rl-end-to-end/rl-algorithms/)与[训练工程实践](/knowledge-tree/rl-end-to-end/engineering-practice/)。
 	</Card>
-	<Card title="机器人学" icon="desktop">
-		[轨迹表示与参数化](/knowledge-tree/robotics/planning/trajectory-representation-parameterization/)、轨迹优化与 [PX4 控制器](/knowledge-tree/robotics/control/px4-controller-attitude-rate/)。
-	</Card>
-	<Card title="科研与开源项目" icon="external">
-		[小脑 Work Pipeline](/knowledge-tree/projects/work-pipeline/) 等研究实践。
+	<Card title="工程工具链" icon="desktop">
+		[PX4 / MAVROS](/knowledge-tree/engineering-tools/px4-mavros/)、ROS1、[Git 手册](/knowledge-tree/engineering-tools/git-manual/)与[多服务器多 GPU 训练](/knowledge-tree/engineering-tools/multi-server-gpu-training/)。
 	</Card>
 	<Card title="学习路径" icon="right-arrow">
 		按推荐顺序串联知识点的[学习路线](/knowledge-tree/learning-paths/)。
