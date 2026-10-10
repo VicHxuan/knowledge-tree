@@ -30,8 +30,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check docs sync & links
-        run: npm run docs:check
+      # 全新 checkout 没有生成副本（untracked），先 sync 生成再 --check：
+      # 顺带验证同步的确定性（重复执行无漂移）
+      - name: Generate & check docs
+        run: |
+          npm run docs:sync
+          npm run docs:check
 
       - name: Privacy scan
         run: npm run privacy:check
