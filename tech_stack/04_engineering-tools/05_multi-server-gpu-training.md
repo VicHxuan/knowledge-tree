@@ -1,10 +1,12 @@
 # YOPO RL Selector：多服务器部署与单机多 GPU 训练操作手册
 
+## 1. 概述（Overview）
+
 本文总结当前项目已经采用的流程：在**每台服务器上分别部署**同一套 Docker 镜像和代码，再在该服务器内用 `torchrun` 做单机多 GPU 同步训练。多台服务器可以同时运行不同实验；当前脚本**不把不同服务器组成同一个跨节点进程组**。
 
 操作入口以 `docker/train.sh` 为准。以下命令中的 `USER`、`SERVER_IP`、`HOST_ID`、`DATA_ROOT`、`RUN_ID` 都是占位符，执行前替换；密码在 SSH 提示时交互输入，不写进命令、脚本、`.env` 或日志。全文中的服务器检查命令可先只读执行；Docker 根目录迁移必须有维护窗口和停止现有容器的授权。
 
-## 0. 总体流程和关键口径
+### 0. 总体流程和关键口径
 
 ```text
 逐台服务器只读审计
@@ -18,7 +20,17 @@
 
 每台服务器独立执行这条链。指定物理 GPU 后，容器内设备重编号为 `cuda:0..N-1`，每卡一个进程、一个 Isaac 实例和一份本地环境；Selector PPO 梯度通过 NCCL 同步，只有 rank 0 写公共日志和 checkpoint。`--num-envs` 是**该次训练的全局环境数**，必须能被 GPU 数整除；树和几何体的数量则是**每个 rank 的场景数量**，不是多卡合计。`--steps` 是每个环境并行推进的训练循环步数，训练 transition 总数约为 `steps × num-envs`；`--episode-steps` 才是单个 env 的回合 timeout 上限。
 
-## 1. 每台服务器先做只读审计
+## 2. 基础与定义（Foundations）
+
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+> 待补充。
+
+## 4. 实现与应用（Implementation & Applications）
+
+### 1. 每台服务器先做只读审计
 
 本地电脑登录：
 
@@ -53,7 +65,7 @@ systemctl is-active docker containerd
 
 先用 `findmnt -T DATA_ROOT` 确认真实文件系统和挂载来源。`HOST_ID` 可取 `hostname -s`，但同名主机仍要人为保证目录唯一。
 
-## 2. Docker/containerd 根目录迁移
+### 2. Docker/containerd 根目录迁移
 
 目标结构如下；`DATA_ROOT` 在共享盘机器可取 `/diff`，在独占盘机器可取实际挂载点：
 
@@ -96,7 +108,7 @@ docker ps -a
 
 前三项应分别指向本机专属 `docker`、`containerd`、正确的 ext4 挂载；迁移前的容器/镜像也应仍可见。若失败，停止服务并用**备份的配置**恢复原 root，再启动服务排查。旧 `/var/lib/docker`、`/var/lib/containerd` 暂时保留，验收、备份和回退窗口结束后再另行决定是否清理。本步骤不安装代理、VPN 或翻墙软件。
 
-## 3. 项目、权重、镜像与缓存部署
+### 3. 项目、权重、镜像与缓存部署
 
 推荐每台机器使用自己的项目和输出目录：
 
@@ -156,7 +168,7 @@ YOPO_IMAGE=yopo-rl-selector:isaac5.1-lab2.3-skrl2.1
 
 `YOPO_UID/GID` 应改为远端实际运行账号的 `id -u` / `id -g`，并确保输出和 cache 可写。对共享 `/diff`，`YOPO_CACHE_ROOT` 必须精确位于上述主机专属 `store/runtime-cache`，因为脚本会按此路径校验。由脚本建立 pip、OV、Kit、GL、compute 和各 run/rank 缓存目录；不要跨服务器共享 cache。`docker/.env` 不放密码或 W&B API key。可用 `./docker/train.sh init` 创建模板后逐项检查；该命令若发现 `.env` 已存在不会覆盖。
 
-## 4. 部署验收：从静态检查到目标负载
+### 4. 部署验收：从静态检查到目标负载
 
 在远端项目根目录运行：
 
@@ -183,7 +195,7 @@ YOPO_GPU_DEVICE_IDS=0 YOPO_CONTAINER_CUDA_VISIBLE_DEVICES=0 ./docker/train.sh sm
 
 容量计算用于选择 `mini-batches`：若全局 512 env、4 GPU、`rollouts=64`，则每 rank 有 128 env 和 `128×64=8192` transitions；`mini-batches=64` 时本地每批 128，全局等效约 512。环境数、rollout、PPO epoch 与场景物体数量都会影响吞吐和内存，先实测后放大；OOM 时优先检查每 rank 的环境和场景数量，再调整 rollout/minibatch。`--steps` 必须写整数（例如 `2000000`），不要传 `1e10` 字符串。
 
-## 5. 正式分布式训练示例
+### 5. 正式分布式训练示例
 
 以下是 YOPO-swarm 无 mask 权重、4 张指定 GPU、box-tree 的**模板**，不是所有服务器的固定最优参数。先确认权重位于 `YOPO_ARTIFACT_ROOT` 下、四张 GPU 空闲、输出盘容量充足；物理 GPU 编号和 `RUN_ID` 按服务器修改。
 
@@ -210,7 +222,7 @@ cd DATA_ROOT/yopo-runs/HOST_ID/project/YOPO_RL_SELECTOR
 
 `run-distributed` 自动添加 `--headless --mode train --output outputs/RUN_ID`，所以不要再手传这些参数中的 `--output`。宿主机上位于 `YOPO_ARTIFACT_ROOT` 内的 checkpoint 路径会自动转换成容器路径。若只用一张卡，改为 `./docker/train.sh run --gpu GPU_ID RUN_ID ...`，其余参数仍按单卡资源调整。多台服务器同时训练时，每台服务器各自运行 `run` 或 `run-distributed`，使用独立 `RUN_ID`、输出目录和缓存；当前不提供跨服务器联合梯度同步。
 
-## 6. 查看进度、资源和训练曲线
+### 6. 查看进度、资源和训练曲线
 
 远端在项目根目录：
 
@@ -237,7 +249,7 @@ ssh -N -L 6006:127.0.0.1:6006 USER@SERVER_IP
 
 本地浏览器访问 `http://127.0.0.1:6006`。多台服务器或多个 run 同时监控时，各 sidecar 与本地 SSH 隧道使用不同端口。若 SSH 出现 `connect failed: Connection refused`，先在远端检查 `yopo-tensorboard-RUN_ID` 是否运行、日志目录是否存在、端口是否已被占用；只建立隧道不会自动启动 TensorBoard。结束查看可运行 `./docker/train.sh tensorboard-stop RUN_ID`。离线 W&B 原始数据保存在 `outputs/RUN_ID/wandb/`，需要时再通过 `rsync` 拉回本地分析，不要把 `wandb sync` 当作严格离线实时查看方式。
 
-## 7. 更新、停止、恢复和交付检查
+### 7. 更新、停止、恢复和交付检查
 
 - **只改超参数**：用新 `RUN_ID` 启动；不重建镜像。
 - **修改项目 Python 代码**：同步新的项目快照，正常停止旧训练后重启新 run；源码是只读 bind mount，通常不重建镜像。运行中的进程不会自动采用新代码。
@@ -246,3 +258,11 @@ ssh -N -L 6006:127.0.0.1:6006 USER@SERVER_IP
 - **恢复训练**：先核对当前脚本是否提供与该 checkpoint 对应的恢复入口和训练状态契约，再用新 `RUN_ID` 验证恢复；不要只凭 `.pt` 文件存在就假设优化器、课程等级及 rollout 已完整恢复。
 
 每台服务器的最终验收记录至少包括：主机名及存储挂载、Docker/containerd root、镜像标签与源码版本、权重路径、物理 GPU 列表、`RUN_ID`、每 rank env 数、首个 PPO update、持续增长的 step、TensorBoard event 文件、W&B offline 目录、checkpoint、GPU/CPU/RAM/显存余量及已知异常。旧实验输出和镜像归档只有在明确目标、完成备份且确认不再使用之后才单独清理。
+
+## 5. 分析与总结（Analysis & Summary）
+
+> 待补充。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

@@ -1,25 +1,33 @@
 # TRPO (Trust Region Policy Optimization) 算法完整解析与代码实现
 
+## 1. 概述（Overview）
+
 TRPO（信任区域策略优化）是一种在理论上能够保证策略单调递增的强化学习算法。为了避免策略更新步长过大导致性能崩溃，TRPO 放弃了简单的一阶梯度下降，转而将策略更新建模为一个带 KL 散度硬约束的信任区域优化问题，并通过泰勒展开、共轭梯度法以及回溯线搜索等二阶优化技术进行求解。
 
 ---
 
-## 1. 完整的数学公式与算法流程
+## 2. 基础与定义（Foundations）
 
-### 步骤 1：构建替代目标函数 (Surrogate Objective)
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+### 1. 完整的数学公式与算法流程
+
+#### 步骤 1：构建替代目标函数 (Surrogate Objective)
 
 在当前策略 $\pi_{\theta_{old}}$ 的基础上，我们希望寻找一个更优的策略 $\pi_\theta$。TRPO 利用重要性采样（Importance Sampling）构建了局部的替代目标函数：
 $$ L(\theta) = \mathbb{E}*{s \sim \rho*{\theta_{old}}, a \sim \pi_{\theta_{old}}} \left[ \frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} A_{\theta_{old}}(s, a) \right] $$
 其中 $A_{\theta_{old}}(s, a)$ 是旧策略下的优势函数。
 
-### 步骤 2：引入信任区域约束 (Trust Region Constraint)
+#### 步骤 2：引入信任区域约束 (Trust Region Constraint)
 
 为了保证最大化替代目标函数能够真实反映期望回报的提升，必须限制新旧策略分布之间的差异。TRPO 引入了平均 KL 散度的硬约束 $\delta$（例如 0.01）：
 $$ \bar{D}*{KL}(\theta*{old}, \theta) = \mathbb{E}*{s \sim \rho*{\theta_{old}}} \left[ D_{KL}(\pi_{\theta_{old}}(\cdot|s) | \pi_\theta(\cdot|s)) \right] \le \delta $$
 优化问题转化为：
 $$ \max_\theta L(\theta) \quad \text{s.t.} \quad \bar{D}*{KL}(\theta*{old}, \theta) \le \delta $$
 
-### 步骤 3：泰勒展开与二次近似
+#### 步骤 3：泰勒展开与二次近似
 
 由于直接求解带有非线性约束的优化问题极其困难，TRPO 在 $\theta_{old}$ 处对目标函数进行一阶泰勒展开，对 KL 散度约束进行二阶泰勒展开：
 $$ L(\theta) \approx g^T (\theta - \theta_{old}) $$
@@ -29,20 +37,20 @@ $$ \bar{D}*{KL}(\theta*{old}, \theta) \approx \frac{1}{2} (\theta - \theta_{old}
 * $g = \nabla_\theta L(\theta)|*{\theta*{old}}$ 是目标函数的策略梯度向量。
 * $H = \nabla^2_\theta \bar{D}*{KL}|*{\theta_{old}}$ 是 KL 散度的海森矩阵（Hessian Matrix，即费雪信息矩阵 FIM）。
 
-### 步骤 4：共轭梯度法求搜索方向 (Conjugate Gradient)
+#### 步骤 4：共轭梯度法求搜索方向 (Conjugate Gradient)
 
 令搜索方向 $x = \theta - \theta_{old}$，由拉格朗日乘子法可知，解析解（自然梯度方向）为：
 $$ x \propto H^{-1}g $$
 在深度神经网络中，参数量极大，直接计算和求逆海森矩阵 $H$ 会导致内存和算力崩溃。TRPO 使用**共轭梯度法 (CG)**，通过多次迭代求解线性方程组 $Hx = g$ 来近似得到 $x$。CG 算法不需要直接生成 $H$，只需要计算海森矩阵与任意向量的乘积 (Hessian-Vector Product, $Hx$) 即可。
 
-### 步骤 5：计算最大更新步长
+#### 步骤 5：计算最大更新步长
 
 确定了搜索方向 $x$ 后，需要计算在这个方向上能走的最大步长比例 $\beta$，使其刚好到达信任区域的边界：
 $$ \frac{1}{2} (\beta x)^T H (\beta x) = \delta \implies \beta = \sqrt{\frac{2\delta}{x^T H x}} $$
 理论上的全步长更新量为：
 $$ \Delta \theta = \beta x $$
 
-### 步骤 6：回溯线搜索 (Backtracking Line Search)
+#### 步骤 6：回溯线搜索 (Backtracking Line Search)
 
 由于步骤 3 使用了泰勒局部近似，直接走全步长 $\Delta \theta$ 可能会导致目标函数下降，或者违反真实的 KL 散度约束。
 TRPO 引入步长衰减系数 $\alpha \in (0, 1)$，依次尝试更新量 $\alpha^0 \Delta \theta, \alpha^1 \Delta \theta, \alpha^2 \Delta \theta \dots$，直到满足以下两个条件：
@@ -53,7 +61,9 @@ TRPO 引入步长衰减系数 $\alpha \in (0, 1)$，依次尝试更新量 $\alph
 
 ---
 
-## 2. 核心代码架构实现
+## 4. 实现与应用（Implementation & Applications）
+
+### 2. 核心代码架构实现
 
 以下代码去除了环境交互与数据加载的冗余部分，专注于展示 TRPO 独有的二阶优化过程（共轭梯度法、HVP 计算与回溯线搜索），符合 Python 与 PyTorch 规范。
 
@@ -261,3 +271,11 @@ def main_training_loop(agent, env_rollout_data):
     # 触发 TRPO 核心更新
     agent.trpo_update(obs, actions, logprobs, returns, advantages)
 ```
+
+## 5. 分析与总结（Analysis & Summary）
+
+> 待补充。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

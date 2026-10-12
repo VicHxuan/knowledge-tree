@@ -1,10 +1,22 @@
-# 1. Dijkstra 算法
+# 启发式搜索（Dijkstra / A* / IDA* / JPS）
 
-## 1.1 基本介绍
+## 1. 概述（Overview）
+
+> 待补充。
+
+## 2. 基础与定义（Foundations）
+
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+### 1. Dijkstra 算法
+
+#### 1.1 基本介绍
 
 Dijkstra 算法由 Edsger W. Dijkstra 在 1956 年提出，是最经典的单源最短路径算法。它主要用于解决带权有向图或无向图中的最短路径问题。从本质上讲，它可以看作是启发函数 $h(n) \equiv 0$ 时的特殊 A* 算法。算法采用贪心策略，维护一个按起始点到当前点实际累计代价 $g(n)$ 排序的优先队列，像水波纹一样向四周均匀扩展，直到碰触到目标节点。
 
-## 1.2 伪代码流程图
+#### 1.2 伪代码流程图
 
 ```text
 Initialize distance array dist[] to Infinity for all nodes
@@ -34,7 +46,7 @@ WHILE PQ is not empty:
 RETURN Failure
 ```
 
-## 1.3 算法性质与证明
+#### 1.3 算法性质与证明
 
 1. **最优性 (Optimality)**
    在图中所有边的权值均非负（$w \ge 0$）的前提下，Dijkstra 算法保证能找到最短路径。
@@ -48,7 +60,7 @@ RETURN Failure
 3. **复杂度限制**
    由于没有任何方向性的启发信息，Dijkstra 会盲目地向所有方向展开搜索（形成圆形波前），导致在广阔的空旷地图中评估大量无关节点，时间复杂度为 $O((V+E)\log V)$。
 
-## 1.4 C++代码实现
+#### 1.4 C++代码实现
 
 ```cpp
 #include <iostream>
@@ -116,13 +128,13 @@ public:
 
 ---
 
-# 2. A* (A-Star) 算法
+### 2. A* (A-Star) 算法
 
-## 2.1 基本介绍
+#### 2.1 基本介绍
 
 A* 算法是当前最著名的启发式图搜索算法。它在 Dijkstra 算法的基础上，引入了一个启发式评估函数 $h(n)$，用于预估当前节点到目标节点的代价。A* 算法的评估公式为 $f(n) = g(n) + h(n)$，其中 $g(n)$ 是从起点到当前节点的实际代价值。通过按 $f(n)$ 值从小到大弹出节点，A* 算法能够使得搜索波前像水流一样“具有方向感”地朝终点蔓延，从而大幅减少无效的节点扩展。
 
-## 2.2 伪代码流程图
+#### 2.2 伪代码流程图
 
 ```text
 OpenList = empty PriorityQueue  // 按 f(n) 排序
@@ -159,7 +171,7 @@ WHILE OpenList is not empty:
 RETURN Failure
 ```
 
-## 2.3 算法性质与证明
+#### 2.3 算法性质与证明
 
 1. **启发函数的可采纳性 (Admissibility) 决定最优性**
    当且仅当启发函数 $h(n)$ 是可采纳的（即对于任意节点 $n$，$h(n) \le h^*(n)$，$h^*$ 为真实最小剩余代价，这意味着评估总是“乐观”的），A* 能保证找到最短路径。
@@ -170,7 +182,7 @@ RETURN Failure
 2. **一致性 (Consistency / Monotonicity)**
    如果启发函数满足三角不等式：$h(x) \le cost(x, y) + h(y)$。那么 A* 首次扩展某个节点时找到的路径即为它的最短路径（不会出现被重新放回 OpenList 的情况）。
 
-## 2.4 C++代码实现
+#### 2.4 C++代码实现
 
 ```cpp
 #include <iostream>
@@ -246,13 +258,13 @@ public:
 
 ---
 
-# 3. IDA* (Iterative Deepening A*)
+### 3. IDA* (Iterative Deepening A*)
 
-## 3.1 基本介绍
+#### 3.1 基本介绍
 
 标准的 A* 算法必须在内存中维护 OpenList 和 ClosedList，这使得它的空间复杂度随着搜索深度的增加呈指数级增长（$O(b^d)$）。IDA*（迭代加深 A*）将深度优先搜索（DFS）的低内存开销特性与 A* 的启发式剪枝结合起来。它以 A* 的 $f(n)$ 值作为 DFS 搜索的阈值。如果当前路径的 $f(n)$ 超过了阈值，就进行剪枝回溯；如果一轮搜索没有找到目标，则将阈值放宽为本轮被剪枝节点中最小的那个 $f(n)$，然后开始下一轮全新的迭代。
 
-## 3.2 伪代码流程图
+#### 3.2 伪代码流程图
 
 ```text
 Function IDA_Star(Start, Goal):
@@ -290,7 +302,7 @@ Function Search(path, g, bound, Goal):
     RETURN min_cost
 ```
 
-## 3.3 算法性质与证明
+#### 3.3 算法性质与证明
 
 1. **极低的空间复杂度**
    IDA* 不需要优先队列和访问状态表，它只需要在递归调用栈中维护当前正在探索的这一条路径。
@@ -302,7 +314,7 @@ Function Search(path, g, bound, Goal):
 3. **时间复杂度牺牲**
    每次增加阈值，IDA* 都要从头开始搜索，导致大量浅层节点被重复计算多次。然而在极高维树中，底层节点数量呈指数爆炸，顶层节点的重复计算占用的时间比例实际上可以忽略不计。
 
-## 3.4 C++代码实现
+#### 3.4 C++代码实现
 
 ```cpp
 #include <iostream>
@@ -375,13 +387,13 @@ public:
 
 ---
 
-# 4. JPS (Jump Point Search)
+### 4. JPS (Jump Point Search)
 
-## 4.1 基本介绍
+#### 4.1 基本介绍
 
 A* 算法在均匀网格（Grid Map）地图中由于大量平行的等价路径（Symmetric Paths），会将大量多余的节点放入 OpenList 从而造成性能浪费。JPS（跳点搜索）是专门针对均匀无权网格优化的 A* 算法。它引入了“强迫邻居”（Forced Neighbor）的概念。在搜索时，节点并非仅仅向周围一步一步扩展，而是沿着水平/垂直方向直线发射，直到撞到障碍物（或发现强迫邻居）才停下，把这个关键转折点（跳点 Jump Point）加入 OpenList。JPS 极大降低了堆操作的次数，速度可比 A* 快一到两个数量级。
 
-## 4.2 伪代码流程图
+#### 4.2 伪代码流程图
 
 ```text
 Function JPS_Search(Start, Goal):
@@ -417,7 +429,7 @@ Function jump(node, dir, Goal):
     RETURN jump(next_node, dir, Goal)
 ```
 
-## 4.3 算法性质与证明
+#### 4.3 算法性质与证明
 
 1. **路径对称性破除 (Symmetry Breaking)**
    在空旷网格中，从点 A 到点 B 有无数条走阶梯状的对角线路径。JPS 根据到达当前节点的方向，利用剪枝规则直接摒弃那些不需要绕过障碍物也能到达的邻居。
@@ -427,11 +439,11 @@ Function jump(node, dir, Goal):
    JPS 并未改变 A* 的启发式公式，它只是压缩了图的结构，将网格图抽象成了一个仅包含 Start、Goal 和所有 Jump Point 的宏观拓扑图。
    由于它只跳过了不需要转弯或没有选择分歧的直线节点，保留了所有关键的拓扑分岔口，因此它严格保持了 A* 算法的最优性和完备性。
 
-## 4.4 C++代码实现
+#### 4.4 C++代码实现
 
 JPS 的核心在于**“方向剪枝（Pruning）”**和**“跳跃（Jumping）”**规则。由于剪枝和寻找强迫邻居的条件判断分支极多，常规的示例代码往往会省略这些细节。下面这份代码严格实现了原版 JPS 中的 8 方向剪枝和对角线强迫邻居检查。
 
-### JPS 算法完整 C++ 代码实现
+##### JPS 算法完整 C++ 代码实现
 
 ```cpp
 #include <iostream>
@@ -689,4 +701,14 @@ int main() {
 }
 ```
 
+## 4. 实现与应用（Implementation & Applications）
 
+> 待补充。
+
+## 5. 分析与总结（Analysis & Summary）
+
+> 待补充。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

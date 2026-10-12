@@ -1,8 +1,18 @@
 # 强化学习工程避坑指南与注意事项手册
 
-## 1. 环境与回合管理
+## 1. 概述（Overview）
 
-### 1.1 Step 计数
+> 待补充。
+
+## 2. 基础与定义（Foundations）
+
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+### 1. 环境与回合管理
+
+#### 1.1 Step 计数
 
 区分：
 
@@ -12,7 +22,7 @@
 
 单环境 timeout 必须由 `episode_step[env]` 判断。
 
-### 1.2 Reset 类型
+#### 1.2 Reset 类型
 
 自然终止：
 
@@ -33,7 +43,7 @@ curriculum切换
 显式全局重初始化
 ```
 
-### 1.3 Synthetic Reset
+#### 1.3 Synthetic Reset
 
 课程切换等训练逻辑产生的 reset 不属于自然 termination 或 timeout。
 
@@ -48,7 +58,7 @@ curriculum切换
 
 必要时该步 reward 清零。
 
-### 1.4 环境连续性
+#### 1.4 环境连续性
 
 episode 内禁止无语义依据地刷新：
 
@@ -63,9 +73,9 @@ episode 内禁止无语义依据地刷新：
 
 ---
 
-# 2. 可观测性
+### 2. 可观测性
 
-## 2.1 终止因素
+#### 2.1 终止因素
 
 能够导致：
 
@@ -85,7 +95,7 @@ Actor可观测
 
 不可观测对象不应直接产生隐藏碰撞终止。
 
-## 2.2 多智能体交互
+#### 2.2 多智能体交互
 
 其他 Agent 的：
 
@@ -106,9 +116,9 @@ Actor可观测
 
 ---
 
-# 3. Observation / State
+### 3. Observation / State
 
-## 3.1 状态契约
+#### 3.1 状态契约
 
 每个输入变量应明确：
 
@@ -122,7 +132,7 @@ dtype
 reset行为
 ```
 
-## 3.2 时序信息
+#### 3.2 时序信息
 
 动态任务应提供必要历史信息，例如：
 
@@ -135,7 +145,7 @@ RNN hidden state
 
 历史长度应与目标运动时间尺度匹配。
 
-## 3.3 Ego-motion
+#### 3.3 Ego-motion
 
 多帧视觉/深度输入应考虑自身运动。
 
@@ -154,7 +164,7 @@ SE(3) compensation
 relative-pose embedding
 ```
 
-## 3.4 历史初始化
+#### 3.4 历史初始化
 
 reset 后不得使用旧 episode 历史。
 
@@ -168,7 +178,7 @@ previous_valid=0
 RNN hidden state清零
 ```
 
-## 3.5 Previous Plan 与 Actual State
+#### 3.5 Previous Plan 与 Actual State
 
 应区分：
 
@@ -181,9 +191,9 @@ RNN hidden state清零
 
 ---
 
-# 4. 坐标系与归一化
+### 4. 坐标系与归一化
 
-## 4.1 坐标系
+#### 4.1 坐标系
 
 常见坐标系：
 
@@ -198,7 +208,7 @@ sensor
 
 每个三维量必须明确其所属坐标系和转换顺序。
 
-## 4.2 坐标转换验证
+#### 4.2 坐标转换验证
 
 至少进行：
 
@@ -212,7 +222,7 @@ sensor
 
 验证位置、速度、加速度和方向一致性。
 
-## 4.3 数值尺度
+#### 4.3 数值尺度
 
 输入建议归一化到相近数量级。
 
@@ -231,9 +241,9 @@ score
 
 ---
 
-# 5. Action 设计
+### 5. Action 设计
 
-## 5.1 固定动作
+#### 5.1 固定动作
 
 传统离散动作：
 
@@ -243,7 +253,7 @@ $$
 
 每个 index 具有固定物理语义。
 
-## 5.2 Candidate Selection Action
+#### 5.2 Candidate Selection Action
 
 候选选择问题中：
 
@@ -266,7 +276,7 @@ $$
 
 离散 index 仅作为候选引用。
 
-## 5.3 Candidate 可观测性
+#### 5.3 Candidate 可观测性
 
 若 action 表示“选择当前候选 \(i\)”，则候选本身必须进入 Actor observation。
 
@@ -282,7 +292,7 @@ $$
 [l_1,\ldots,l_N]=f_\theta(o_t)
 $$
 
-## 5.4 Shared Scorer
+#### 5.4 Shared Scorer
 
 候选选择网络推荐：
 
@@ -296,7 +306,7 @@ candidate feature
 
 避免每个 candidate 使用独立固定输出神经元。
 
-## 5.5 Permutation Test
+#### 5.5 Permutation Test
 
 对已构造完成的 candidate tensor 随机排列：
 
@@ -320,7 +330,7 @@ reshape错位
 mask错位
 ```
 
-## 5.6 Candidate Representation Test
+#### 5.6 Candidate Representation Test
 
 检查：
 
@@ -344,9 +354,9 @@ alias rate
 
 ---
 
-# 6. Reward 设计
+### 6. Reward 设计
 
-## 6.1 Reward 分层
+#### 6.1 Reward 分层
 
 推荐分为：
 
@@ -367,7 +377,7 @@ r_{terminal}
 +r_{time}
 $$
 
-## 6.2 Dense Reward
+#### 6.2 Dense Reward
 
 每个 dense reward 应对应明确的学习目标。
 
@@ -382,7 +392,7 @@ dynamic risk
 
 对同一危险重复计权。
 
-## 6.3 Episode 累计量
+#### 6.3 Episode 累计量
 
 Reward 系数必须按 episode sum 检查。
 
@@ -401,7 +411,7 @@ step mean
 episode sum
 ```
 
-## 6.4 Progress Reward
+#### 6.4 Progress Reward
 
 推荐：
 
@@ -417,7 +427,7 @@ $$
 
 避免状态跳变或异常值产生过大回报。
 
-## 6.5 Timeout
+#### 6.5 Timeout
 
 timeout 应与 success 区分。
 
@@ -431,9 +441,9 @@ $$
 
 ---
 
-# 7. 动态风险
+### 7. 动态风险
 
-## 7.1 时空一致性
+#### 7.1 时空一致性
 
 动态碰撞判断应比较：
 
@@ -449,7 +459,7 @@ $$
 
 不能仅将未来轨迹与当前障碍位置比较。
 
-## 7.2 常用量
+#### 7.2 常用量
 
 推荐使用：
 
@@ -460,7 +470,7 @@ minimum future separation
 future collision envelope
 ```
 
-## 7.3 计算优化
+#### 7.3 计算优化
 
 大规模并行环境中避免直接计算：
 
@@ -486,7 +496,7 @@ analytic TTC
 batched GPU calculation
 ```
 
-## 7.4 Static / Dynamic 分离
+#### 7.4 Static / Dynamic 分离
 
 建议维护：
 
@@ -499,7 +509,7 @@ DynamicObstacleBatch
 
 ---
 
-# 8. Candidate Regret
+### 8. Candidate Regret
 
 对于每条候选定义：
 
@@ -539,9 +549,9 @@ discrete candidate ranking
 
 ---
 
-# 9. Collision 与安全尺度
+### 9. Collision 与安全尺度
 
-## 9.1 Collision Authority
+#### 9.1 Collision Authority
 
 训练中应指定唯一 termination authority，例如：
 
@@ -553,7 +563,7 @@ geometry
 
 其他碰撞信号仅用于诊断。
 
-## 9.2 安全距离
+#### 9.2 安全距离
 
 区分：
 
@@ -580,7 +590,7 @@ d_{centerline}
 -margin
 $$
 
-## 9.3 控制与规划分离
+#### 9.3 控制与规划分离
 
 碰撞诊断至少包含：
 
@@ -596,9 +606,9 @@ physics contact
 
 ---
 
-# 10. Actor / Critic
+### 10. Actor / Critic
 
-## 10.1 Shared Critic
+#### 10.1 Shared Critic
 
 结构：
 
@@ -616,7 +626,7 @@ shared encoder
 Actor/Critic共享梯度
 ```
 
-## 10.2 Independent Critic
+#### 10.2 Independent Critic
 
 结构：
 
@@ -632,7 +642,7 @@ Critic encoder → value
 显存与计算成本更高
 ```
 
-## 10.3 梯度契约
+#### 10.3 梯度契约
 
 必须明确：
 
@@ -643,7 +653,7 @@ Critic loss是否回传Actor encoder
 哪些层独立
 ```
 
-## 10.4 Privileged Critic
+#### 10.4 Privileged Critic
 
 若使用 simulator truth，应明确数据边界：
 
@@ -657,9 +667,9 @@ privileged information 不得进入部署时 Actor 路径。
 
 ---
 
-# 11. 网络训练稳定性
+### 11. 网络训练稳定性
 
-## 11.1 Dropout
+#### 11.1 Dropout
 
 PPO policy 网络推荐：
 
@@ -669,7 +679,7 @@ dropout = 0
 
 避免 rollout 与 update 阶段同一 observation 得到不同 logits。
 
-## 11.2 BatchNorm
+#### 11.2 BatchNorm
 
 若使用预训练 CNN：
 
@@ -679,7 +689,7 @@ dropout = 0
 
 避免 PPO 重算 log-prob 时发生分布漂移。
 
-## 11.3 Frozen Layer
+#### 11.3 Frozen Layer
 
 冻结配置应明确到：
 
@@ -697,9 +707,9 @@ BN running statistics
 
 ---
 
-# 12. PPO Batch 配置
+### 12. PPO Batch 配置
 
-## 12.1 基本量
+#### 12.1 基本量
 
 $$
 N_{transition}^{local}
@@ -728,7 +738,7 @@ N_{minibatch}^{local}
 \times WORLD\_SIZE
 $$
 
-## 12.2 参数语义
+#### 12.2 参数语义
 
 区分：
 
@@ -745,57 +755,7 @@ world size
 
 ---
 
-# 13. 分布式训练
-
-## 13.1 环境布局
-
-典型结构：
-
-```text
-1 rank
-= 1 GPU
-= 1 simulator process
-= 1 independent scene
-```
-
-不同 rank 不共享同一个物理场景。
-
-## 13.2 同步内容
-
-通常仅同步：
-
-```text
-gradients
-parameters
-curriculum state
-global statistics
-```
-
-## 13.3 随机种子
-
-推荐：
-
-```text
-seed_rank = base_seed + rank
-```
-
-## 13.4 NCCL Timeout
-
-出现 NCCL timeout 时优先查找：
-
-```text
-最早异常rank
-NaN / Inf
-CUDA error
-reward error
-observation error
-```
-
-通信超时通常是后续现象。
-
----
-
-# 14. 数值安全
+### 14. 数值安全
 
 以下数据建议统一 finite check：
 
@@ -822,9 +782,9 @@ step
 
 ---
 
-# 15. 统计与日志
+### 15. 统计与日志
 
-## 15.1 Rate 定义
+#### 15.1 Rate 定义
 
 任何 rate 必须明确：
 
@@ -837,7 +797,7 @@ aggregation scope
 
 例如 success rate 不应只有名称。
 
-## 15.2 Rollout / Episode / Latest Outcome
+#### 15.2 Rollout / Episode / Latest Outcome
 
 建议分开记录：
 
@@ -848,7 +808,7 @@ latest-outcome metrics
 curriculum metrics
 ```
 
-## 15.3 TensorBoard
+#### 15.3 TensorBoard
 
 诊断离散统计时：
 
@@ -858,7 +818,7 @@ Smoothing = 0
 
 平滑显示值不得直接作为原始计数解释。
 
-## 15.4 Reward 日志
+#### 15.4 Reward 日志
 
 每个主要 reward 项记录：
 
@@ -869,9 +829,9 @@ episode sum
 
 ---
 
-# 16. Curriculum
+### 16. Curriculum
 
-## 16.1 晋级条件
+#### 16.1 晋级条件
 
 除性能阈值外，应设置最小数据覆盖条件。
 
@@ -882,7 +842,7 @@ coverage >= threshold
 success_rate >= threshold
 ```
 
-## 16.2 晋级后统计
+#### 16.2 晋级后统计
 
 课程切换后应：
 
@@ -891,7 +851,7 @@ success_rate >= threshold
 重新统计coverage
 ```
 
-## 16.3 难度变化
+#### 16.3 难度变化
 
 每一级尽量只调整有限因素：
 
@@ -906,7 +866,7 @@ map density
 
 ---
 
-# 17. Checkpoint Contract
+### 17. Checkpoint Contract
 
 Checkpoint 应保存：
 
@@ -928,7 +888,7 @@ critic mode
 
 ---
 
-# 18. 感知预处理
+### 18. 感知预处理
 
 以下内容属于模型输入契约：
 
@@ -950,24 +910,7 @@ invalid-value handling
 
 ---
 
-# 19. 实验流程
-
-推荐顺序：
-
-```text
-单元测试
-→ 少量env
-→ 单GPU完整rollout
-→ 完整PPO update
-→ 小规模多GPU
-→ 正式训练
-```
-
-代码修改后不得直接启动大规模长时间训练。
-
----
-
-# 20. 推荐单元测试
+### 20. 推荐单元测试
 
 至少包含：
 
@@ -986,7 +929,78 @@ PPO recompute consistency test
 
 ---
 
-# 21. 训练评价指标
+## 4. 实现与应用（Implementation & Applications）
+
+### 13. 分布式训练
+
+#### 13.1 环境布局
+
+典型结构：
+
+```text
+1 rank
+= 1 GPU
+= 1 simulator process
+= 1 independent scene
+```
+
+不同 rank 不共享同一个物理场景。
+
+#### 13.2 同步内容
+
+通常仅同步：
+
+```text
+gradients
+parameters
+curriculum state
+global statistics
+```
+
+#### 13.3 随机种子
+
+推荐：
+
+```text
+seed_rank = base_seed + rank
+```
+
+#### 13.4 NCCL Timeout
+
+出现 NCCL timeout 时优先查找：
+
+```text
+最早异常rank
+NaN / Inf
+CUDA error
+reward error
+observation error
+```
+
+通信超时通常是后续现象。
+
+---
+
+### 19. 实验流程
+
+推荐顺序：
+
+```text
+单元测试
+→ 少量env
+→ 单GPU完整rollout
+→ 完整PPO update
+→ 小规模多GPU
+→ 正式训练
+```
+
+代码修改后不得直接启动大规模长时间训练。
+
+---
+
+## 5. 分析与总结（Analysis & Summary）
+
+### 21. 训练评价指标
 
 不得仅依赖：
 
@@ -1015,7 +1029,7 @@ task-specific metrics
 
 ---
 
-# 22. 训练性能指标
+### 22. 训练性能指标
 
 同时记录：
 
@@ -1033,9 +1047,9 @@ GPU memory
 
 ---
 
-# 23. 工程检查清单
+### 23. 工程检查清单
 
-## Environment
+#### Environment
 
 * [ ] global step 与 episode step 分离；
 * [ ] 普通终止使用 partial reset；
@@ -1044,7 +1058,7 @@ GPU memory
 * [ ] collision authority 唯一；
 * [ ] failure source 可观测。
 
-## State
+#### State
 
 * [ ] shape / dtype / unit 明确；
 * [ ] 坐标系明确；
@@ -1053,7 +1067,7 @@ GPU memory
 * [ ] 动态任务包含时序信息；
 * [ ] ego-motion 处理明确。
 
-## Action
+#### Action
 
 * [ ] action 物理语义明确；
 * [ ] candidate action 对 Actor 可见；
@@ -1061,7 +1075,7 @@ GPU memory
 * [ ] permutation test 通过；
 * [ ] train / play action contract 一致。
 
-## Reward
+#### Reward
 
 * [ ] 各 reward 项目标明确；
 * [ ] 无明显重复处罚；
@@ -1071,7 +1085,7 @@ GPU memory
 * [ ] synthetic reset 不污染 reward；
 * [ ] 所有 reward 有 finite check。
 
-## Actor / Critic
+#### Actor / Critic
 
 * [ ] Actor 仅使用可部署信息；
 * [ ] Critic 输入契约明确；
@@ -1080,7 +1094,7 @@ GPU memory
 * [ ] frozen layer 明确；
 * [ ] BN / dropout 行为明确。
 
-## PPO
+#### PPO
 
 * [ ] local/global env 数明确；
 * [ ] rollout size 明确；
@@ -1088,7 +1102,7 @@ GPU memory
 * [ ] KL / entropy / clip fraction 有记录；
 * [ ] 多卡初始化一致。
 
-## Distributed
+#### Distributed
 
 * [ ] WORLD_SIZE / RANK / LOCAL_RANK 正确；
 * [ ] env 数可被 world size 整除；
@@ -1096,14 +1110,14 @@ GPU memory
 * [ ] rank 0 负责公共输出；
 * [ ] NCCL 故障优先检查本地异常。
 
-## Logging
+#### Logging
 
 * [ ] rate 分母明确；
 * [ ] rollout / episode / curriculum 指标分离；
 * [ ] step mean / episode sum 同时记录；
 * [ ] TensorBoard smoothing 与 raw value 区分。
 
-## Deployment
+#### Deployment
 
 * [ ] checkpoint contract 完整；
 * [ ] runtime dependency 完整；
@@ -1114,7 +1128,7 @@ GPU memory
 
 ---
 
-# 24. 核心规则
+### 24. 核心规则
 
 1. 环境语义、State、Action、Reward 必须形成闭合契约。
 2. 终止因素应对 Actor 可观测。
@@ -1134,3 +1148,7 @@ GPU memory
 16. Checkpoint 必须携带完整训练与模型 Contract。
 17. 分布式通信异常应优先追踪最早本地错误。
 18. 训练效果必须使用任务指标、episode 指标和优化指标联合判断。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

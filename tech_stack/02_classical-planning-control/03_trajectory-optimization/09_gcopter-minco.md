@@ -1,6 +1,18 @@
-# 1. GCOPTER-MINCO 轨迹规划框架
+# GCOPTER-MINCO 框架
 
-## 1.1 数学定义与系统构造
+## 1. 概述（Overview）
+
+> 待补充。
+
+## 2. 基础与定义（Foundations）
+
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+### 1. GCOPTER-MINCO 轨迹规划框架
+
+#### 1.1 数学定义与系统构造
 
 GCOPTER 提出了一种能够将严格的几何约束与连续时间动力学约束转化为无约束优化的多旋翼轨迹生成框架。该框架的底层基石是 MINCO 轨迹类。
 
@@ -15,7 +27,7 @@ MINCO 定义为在给定中间航路点序列 $q$ 与对应时间分配 $T$ 下�
 最终的优化问题转化为在无约束欧氏空间中寻找最优的 $\xi$ 和 $\tau$：
 $$ \min_{\xi, \tau} J(q(\xi), T(\tau)) + I_G(q(\xi), T(\tau)) $$
 
-## 1.2 算法性质与证明
+#### 1.2 算法性质与证明
 
 1. **时空变形的线性计算复杂度**
    求解 MINCO 系数矩阵以及计算目标函数关于 $q$ 和 $T$ 的梯度，其时间与空间复杂度均为 $O(M)$，其中 $M$ 为轨迹段数。
@@ -25,7 +37,7 @@ $$ \min_{\xi, \tau} J(q(\xi), T(\tau)) + I_G(q(\xi), T(\tau)) $$
    通过微分同胚或平滑满射引入的代理变量 $\xi$ 和 $\tau$，不会在无约束空间中凭空引入虚假的局部极小值，也不会消除原约束空间中已有的局部极小值。
    证明：设原函数为 $F(x)$，经微分同胚映射 $G$ 后的新函数为 $H(y) = F(G(y))$。求导可知 $\nabla H(y) = J(y)^T \nabla F(x)$。由于雅可比矩阵 $J$ 在映射域内处处非奇异，$\nabla F(x) = 0$ 与 $\nabla H(y) = 0$ 严格等价。同理，其海森矩阵在极值点处合同，严格保留了一阶和二阶最优性条件。
 
-# 2. 算法伪代码
+### 2. 算法伪代码
 
 ```text
 Algorithm GCOPTER_MINCO(Start, Goal, Safe_Flight_Corridors):
@@ -70,7 +82,9 @@ Algorithm GCOPTER_MINCO(Start, Goal, Safe_Flight_Corridors):
     Return Construct_Trajectory(xi, tau)
 ```
 
-# 3. C++代码实现
+## 4. 实现与应用（Implementation & Applications）
+
+### 3. C++代码实现
 
 以下代码展示 GCOPTER 中最核心的 MINCO 时空变形梯度反向传播逻辑。为了突出 $O(M)$ 复杂度的带状矩阵求解思想，忽略了外部 L-BFGS 和微分同胚映射的封包细节。
 
@@ -148,3 +162,11 @@ private:
     Eigen::MatrixXd extractSegmentG(const Eigen::MatrixXd& G, int i) { return Eigen::MatrixXd(); }
 };
 ```
+
+## 5. 分析与总结（Analysis & Summary）
+
+> 待补充。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

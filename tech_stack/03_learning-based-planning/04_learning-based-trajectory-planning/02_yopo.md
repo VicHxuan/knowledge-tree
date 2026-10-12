@@ -1,20 +1,41 @@
 # YOPO：一次性规划网络
 
+## 1. 概述（Overview）
+
 > **状态：草稿** — Knowledge Tree V2 规划章节，正文撰写中。
 
 感知骨干与轨迹候选生成网络。本篇大纲先行，正文完成后进入正式发布：
 
-## 动机
+### 动机
+
 用网络替代迭代优化
 
-## 架构
+## 2. 基础与定义（Foundations）
+
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+### 架构
+
 感知骨干与轨迹候选生成
 
-## 训练与推理
+### 训练与推理
+
 监督与强化信号
 
-## 与经典方法对比
+## 4. 实现与应用（Implementation & Applications）
+
+> 待补充。
+
+## 5. 分析与总结（Analysis & Summary）
+
+### 与经典方法对比
+
 质量与时间对比
 
-## 生态
+## 6. 关联与参考（Related Topics & References）
+
+### 生态
+
 YOPO-swarm 变体与权重

@@ -1,10 +1,12 @@
 # Trajectory Representation and Parameterization
 
-## 1. Trajectory Generation Strategy
+## 1. 概述（Overview）
+
+### 1. Trajectory Generation Strategy
 
 轨迹生成描述的是轨迹从哪里来，以及轨迹参数如何获得。在当前讨论范围内，可以归纳为三类。
 
-### 1.1 Path + Time Parameterization
+#### 1.1 Path + Time Parameterization
 
 首先获得一条几何路径：
 
@@ -44,7 +46,7 @@ $$
 
 该方法将几何路径规划和时间分配分开完成。
 
-### 1.2 Direct Trajectory Parameter Generation
+#### 1.2 Direct Trajectory Parameter Generation
 
 直接生成某种轨迹参数：
 
@@ -69,7 +71,7 @@ $$
 
 参数可以由优化器、搜索算法或神经网络直接产生。
 
-### 1.3 Motion Primitive Selection / Composition
+#### 1.3 Motion Primitive Selection / Composition
 
 首先构造有限或参数化的候选轨迹集合：
 
@@ -108,7 +110,9 @@ Motion Primitive 本身不是一种独立的轨迹数学表示方式。每一个
 
 等轨迹表示或参数化形式。
 
-## 2. Trajectory Mathematical Representation
+## 2. 基础与定义（Foundations）
+
+### 2. Trajectory Mathematical Representation
 
 当前讨论统一采用：
 
@@ -264,11 +268,13 @@ $$
 
 共 $M$ 个时间参数。
 
-## 3. Polynomial Parameterization
+## 3. 核心原理（Core Principles）
 
-### 3.1 Direct Polynomial Coefficients
+### 3. Polynomial Parameterization
 
-#### 参数化方法
+#### 3.1 Direct Polynomial Coefficients
+
+##### 参数化方法
 
 直接使用每一段的 polynomial coefficients 作为轨迹参数：
 
@@ -302,7 +308,7 @@ $$
 \boldsymbol{\beta}_5(t)
 $$
 
-#### 3D PVA 实例
+##### 3D PVA 实例
 
 对于一个三维五次 polynomial segment：
 
@@ -328,7 +334,7 @@ $$
 
 对于多段轨迹，还需要进一步约束不同 segment 连接位置的连续性。
 
-#### 特性
+##### 特性
 
 * 最直接的 polynomial 表示方式
 * 参数就是最终的 polynomial coefficients
@@ -337,9 +343,9 @@ $$
 * PVA 边界条件需要显式施加
 * 多段轨迹的连续性需要显式约束
 
-### 3.2 Hermite Parameterization
+#### 3.2 Hermite Parameterization
 
-#### 参数化方法
+##### 参数化方法
 
 Hermite Parameterization 不直接给定 polynomial coefficients，而使用一个 segment 两端的状态描述轨迹。
 
@@ -375,7 +381,7 @@ $$
 \boldsymbol{\beta}_5(t)
 $$
 
-#### 3D PVA 实例
+##### 3D PVA 实例
 
 每个位置、速度和加速度均为三维向量：
 
@@ -429,7 +435,7 @@ $$
 
 由于相邻 segment 共享相同的 knot state，因此可以直接保证位置、速度和加速度在连接位置连续。
 
-#### 特性
+##### 特性
 
 * 参数具有明确的物理意义
 * PVA 边界条件可以直接定义
@@ -438,9 +444,9 @@ $$
 * 中间 knot 的速度和加速度必须显式给定或通过其他方法计算
 * 适合已知边界状态下的轨迹插值
 
-### 3.3 Bezier Parameterization
+#### 3.3 Bezier Parameterization
 
-#### 参数化方法
+##### 参数化方法
 
 五次 Bezier trajectory 使用 6 个三维 control points：
 
@@ -484,7 +490,7 @@ u^j
 (1-u)^{5-j}
 $$
 
-#### 3D PVA 实例
+##### 3D PVA 实例
 
 6 个三维 control points 可以组成参数矩阵：
 
@@ -591,7 +597,7 @@ $$
 
 因此给定两端 PVA 和 segment duration 后，可以唯一确定该五次 Bezier segment。
 
-#### 特性
+##### 特性
 
 * 使用 control points 代替 monomial coefficients
 * control points 具有较直观的几何意义
@@ -600,9 +606,9 @@ $$
 * PVA 边界可以转换为对应 control points
 * 多段 Bezier 需要进一步保证 segment 连接处的连续性
 
-### 3.4 B-Spline Parameterization
+#### 3.4 B-Spline Parameterization
 
-#### 参数化方法
+##### 参数化方法
 
 B-spline 主要由以下参数定义：
 
@@ -641,7 +647,7 @@ u_K
 ]
 $$
 
-#### 3D PVA 实例
+##### 3D PVA 实例
 
 采用五次 B-spline：
 
@@ -720,7 +726,7 @@ $$
 2\times3=6
 $$
 
-#### 特性
+##### 特性
 
 * B-spline 本身直接定义完整的 Piecewise Polynomial
 * 使用 control points 和 knot vector 进行参数化
@@ -730,9 +736,9 @@ $$
 * 适合局部轨迹形状调整
 * 适合局部避障优化
 
-### 3.5 MINCO Parameterization
+#### 3.5 MINCO Parameterization
 
-#### 参数化方法
+##### 参数化方法
 
 MINCO 不直接将所有 polynomial coefficients 作为自由参数，而是使用：
 
@@ -847,7 +853,7 @@ $$
 
 其对应的速度和加速度不需要显式定义，而是由 minimum-control optimality condition 自动确定。
 
-#### 3D PVA 实例
+##### 3D PVA 实例
 
 考虑两段 MINCO trajectory：
 
@@ -965,7 +971,7 @@ $$
 4M-3
 $$
 
-#### 特性
+##### 特性
 
 * 最终生成完整的 Piecewise Polynomial
 * 不直接优化所有 polynomial coefficients
@@ -976,7 +982,13 @@ $$
 * 多个 segment 之间存在耦合
 * 不具有 B-spline control point 那样严格的局部支撑特性
 
-## 4. Parameterization Summary
+## 4. 实现与应用（Implementation & Applications）
+
+> 待补充。
+
+## 5. 分析与总结（Analysis & Summary）
+
+### 4. Parameterization Summary
 
 | Parameterization  | 核心参数                            | 3D Quintic 示例               | 参数影响范围              | 是否内嵌优化目标 |
 | ----------------- | ------------------------------- | --------------------------- | ------------------- | -------- |
@@ -1006,3 +1018,7 @@ $$
 * 是否内嵌优化目标
 
 NURBS，即 Non-Uniform Rational B-Spline，属于 Piecewise Rational Polynomial，而不是严格意义上的 Piecewise Polynomial，因此不纳入当前分类主体。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

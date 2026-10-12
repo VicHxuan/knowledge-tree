@@ -1,5 +1,16 @@
-# PPO
-## 1.全文逻辑梳理
+# PPO 全流程走读与调参
+
+## 1. 概述（Overview）
+
+> 待补充。
+
+## 2. 基础与定义（Foundations）
+
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+### 1.全文逻辑梳理
 
 这份文件会完整的讲解PPO的算法
 
@@ -27,8 +38,13 @@ $$ \text{num\_envs}\times\text{rollout} = \text{num\_minibatches}\times\text{min
 
 所有 epoch 完成后，得到更新后的 policy，然后使用新 policy 开始下一轮 rollout。
 
+## 4. 实现与应用（Implementation & Applications）
 
-## 调参经验
+> 待补充。
+
+## 5. 分析与总结（Analysis & Summary）
+
+### 调参经验
 
 1.rollout、discount_gamma、lamda
 rollout表示每次更新前，每个env会收集多长的数据，即一段步长
@@ -37,7 +53,12 @@ lamda是PPO里面GAE估计使用的参数
 
 这些参数总体上体现了：我希望当前的step会受到多远的未来的评价，这里的“多远的未来”就受到这3个参数的影响
 
-## tips
+### tips
+
 1.PPO中训练失败但loss曲线趋近于0分析：
 当前发现这种情况限定于skrl算法库的PPO
 注意到skrl的loss计算采用平均loss
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

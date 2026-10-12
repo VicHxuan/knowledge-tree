@@ -1,7 +1,19 @@
 # 遥控器与接收机配置（QGC 校准）
 
+## 1. 概述（Overview）
+
 配置接收机和遥控器，实现遥控器→接收机→(pixhawk上的PPM/SBUS RC接口)→pixhawk→(pixhawk上的FMU PWM OUT接口)→PWM分线板→电调→旋翼，即可实现遥控器手控起飞
 具体的pixhawk内容单独整理
+
+## 2. 基础与定义（Foundations）
+
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+> 待补充。
+
+## 4. 实现与应用（Implementation & Applications）
 
 遥控器-接收器配置流程如下：
 
@@ -20,3 +32,11 @@
 
 确认已正确连接/对频：QGC上方会显示，即使not ready，在遥控器上切换对应飞行模式(自稳，定点，定高，也会同步修改)
 进入Vehicle Setup→Radio 点击 calibrate 开始校准，目前选择model2，按照右侧图像拨动摇杆，自动/手动next依次完成，拨动摇杆画面中会同步看到控制输出
+
+## 5. 分析与总结（Analysis & Summary）
+
+> 待补充。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

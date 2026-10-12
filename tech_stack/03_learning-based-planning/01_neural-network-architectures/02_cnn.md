@@ -1,6 +1,12 @@
 # 1. 卷积神经网络
 
-## 1.1 数学定义构造
+## 1. 概述（Overview）
+
+> 待补充。
+
+## 2. 基础与定义（Foundations）
+
+### 1.1 数学定义构造
 
 给定三维输入特征张量 $X \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$，卷积层通过滑动由 $C_{out}$ 个滤波器组成的卷积核组 $W \in \mathbb{R}^{K \times K \times C_{in} \times C_{out}}$，并加上偏置 $b \in \mathbb{R}^{C_{out}}$，生成输出特征张量 $Y \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}$。
 
@@ -14,7 +20,9 @@ $$H_{out} = \lfloor \frac{H_{in} - K}{S} \rfloor + 1, \quad W_{out} = \lfloor \f
 池化层通常紧随其后进行空间降采样。以最大池化为例，其操作定义为：
 $$P_{i,j,c} = \max_{m,n} Y_{i \cdot S + m, j \cdot S + n, c}$$
 
-## 1.2 层级架构性质
+## 3. 核心原理（Core Principles）
+
+### 1.2 层级架构性质
 
 1. **局部感受野**
    图像空间存在强烈的局部相关性。卷积层节点仅与输入特征图的一个局部窗口相连，负责提取边缘、角点等底层视觉模式，降低了全连接带来的冗余参数。
@@ -28,11 +36,13 @@ $$P_{i,j,c} = \max_{m,n} Y_{i \cdot S + m, j \cdot S + n, c}$$
 4. **层次化表征**
    随着网络层级加深与感受野扩大，浅层提取的局部几何纹理会逐层组合，在高维通道映射为具有全局语义信息的抽象特征向量。
 
-## 1.3 代码实现
+## 4. 实现与应用（Implementation & Applications）
+
+### 1.3 代码实现
 
 为保持核心逻辑凝练与代码完整性，以下构建一个极简端到端架构：包含一层二维卷积、ReLU激活、全局平均池化以及一层线性分类器。
 
-### 1.3.1 PyTorch实现
+#### 1.3.1 PyTorch实现
 
 ```python
 import torch
@@ -55,7 +65,7 @@ class CNN(nn.Module):
         return x
 ```
 
-### 1.3.2 C++ 标准库实现
+#### 1.3.2 C++ 标准库实现
 
 ```cpp
 #include <vector>
@@ -140,7 +150,7 @@ public:
 };
 ```
 
-### 1.3.3 C++ Eigen库实现
+#### 1.3.3 C++ Eigen库实现
 
 使用 `std::vector<Eigen::MatrixXf>` 表达多通道张量，利用矩阵块提取计算卷积以精简循环。
 
@@ -200,3 +210,11 @@ public:
     }
 };
 ```
+
+## 5. 分析与总结（Analysis & Summary）
+
+> 待补充。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

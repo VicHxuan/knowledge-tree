@@ -1,6 +1,18 @@
-# 1. FAST-Planner 轨迹规划框架
+# Fast-Planner 框架
 
-## 1.1 数学定义与系统构造
+## 1. 概述（Overview）
+
+> 待补充。
+
+## 2. 基础与定义（Foundations）
+
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+### 1. FAST-Planner 轨迹规划框架
+
+#### 1.1 数学定义与系统构造
 
 FAST-Planner 旨在解决无人机在复杂未知环境中的高速自主飞行问题。系统由前端动力学路径搜索、后端B样条轨迹优化以及迭代时间分配三个核心模块构成。
 
@@ -13,7 +25,7 @@ $$ f_{total} = \lambda_1 f_s + \lambda_2 f_c + \lambda_3 (f_v + f_a) $$
 
 在优化后，将轨迹转换为非均匀B样条。计算所有速度与加速度控制点，若存在超出物理极限的情况，计算最大超限比率 $\mu_v$ 和 $\mu_a$，并局部拉伸对应节点的时间跨度（Knot Span），以确保最终轨迹的动力学可行性。
 
-## 1.2 算法性质与证明
+#### 1.2 算法性质与证明
 
 1. 基于凸包性质的安全性与可行性保障
    B样条曲线严格包络在其控制点构成的凸包内部。
@@ -23,7 +35,7 @@ $$ f_{total} = \lambda_1 f_s + \lambda_2 f_c + \lambda_3 (f_v + f_a) $$
    对局部时间跨度进行放缩，可严格使不可行轨迹变为可行，且不破坏轨迹几何形状。
    证明：非均匀B样条的速度控制点与其所依赖的时间跨度成反比关系。若某维度最大超限速度为 $v_m$，将对应时间跨度乘以放缩系数 $\mu_v = v_m / v_{max}$。由于时间处于分母位置，新的速度控制点计算结果将精准变为原结果的 $1/\mu_v$。此时最大速度恰好等于 $v_{max}$。该方法精确压制了超限导数，避免了传统优化中对全局时间进行统一拉伸所导致的保守飞行行为。
 
-# 2. 算法伪代码
+### 2. 算法伪代码
 
 ```text
 Algorithm FAST_Planner(start_state, goal_state, ESDF_map):
@@ -71,7 +83,9 @@ Algorithm FAST_Planner(start_state, goal_state, ESDF_map):
     Return Non_Uniform_BSpline(control_points, knot_vector)
 ```
 
-# 3. C++代码实现
+## 4. 实现与应用（Implementation & Applications）
+
+### 3. C++代码实现
 
 以下代码展示 FAST-Planner 后端最核心的非均匀B样条时间调整算法逻辑。
 
@@ -165,3 +179,11 @@ public:
     }
 };
 ```
+
+## 5. 分析与总结（Analysis & Summary）
+
+> 待补充。
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

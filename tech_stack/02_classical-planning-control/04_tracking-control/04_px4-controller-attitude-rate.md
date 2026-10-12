@@ -1,6 +1,8 @@
 # PX4 Controller 代码讲解清单
 
-## 一. 代码功能简介
+## 1. 概述（Overview）
+
+### 一. 代码功能简介
 
 该代码实现一套基于 PX4 控制结构的无人机姿态与角速度控制器，支持批量并行环境计算。
 
@@ -93,9 +95,9 @@ last_achieved_wrench
 
 ---
 
-# 二. 模块拆分讲解
+## 2. 基础与定义（Foundations）
 
-## 二.1. 依赖模块
+### 二.1. 依赖模块
 
 ```python
 from __future__ import annotations
@@ -130,11 +132,11 @@ P300ProDynamics
 
 ---
 
-## 二.2. 四元数与旋转处理方法
+### 二.2. 四元数与旋转处理方法
 
 无人机姿态主要使用四元数表示，因此首先定义一系列四元数和坐标变换相关方法。
 
-### 二.2.1. 四元数乘法
+#### 二.2.1. 四元数乘法
 
 ```python
 def quat_multiply(q1: torch.Tensor, q2: torch.Tensor) -> torch.Tensor:
@@ -163,7 +165,7 @@ def quat_multiply(q1: torch.Tensor, q2: torch.Tensor) -> torch.Tensor:
 
 ---
 
-### 二.2.2. 四元数共轭
+#### 二.2.2. 四元数共轭
 
 ```python
 def quat_conjugate(q: torch.Tensor) -> torch.Tensor:
@@ -186,7 +188,7 @@ q* = [w, -x, -y, -z]
 
 ---
 
-### 二.2.3. 世界系向量旋转到机体系
+#### 二.2.3. 世界系向量旋转到机体系
 
 ```python
 def quat_rotate_inverse(q: torch.Tensor, vector_world: torch.Tensor) -> torch.Tensor:
@@ -208,7 +210,7 @@ Body Frame
 
 ---
 
-### 二.2.4. 计算机体系 Z 轴在世界系中的方向
+#### 二.2.4. 计算机体系 Z 轴在世界系中的方向
 
 ```python
 def body_z_world(q: torch.Tensor) -> torch.Tensor:
@@ -233,7 +235,7 @@ def body_z_world(q: torch.Tensor) -> torch.Tensor:
 
 ---
 
-### 二.2.5. 计算两个向量之间的旋转四元数
+#### 二.2.5. 计算两个向量之间的旋转四元数
 
 ```python
 def quat_from_two_vectors(source: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
@@ -267,7 +269,7 @@ target
 
 ---
 
-### 二.2.6. 欧拉角转换为四元数
+#### 二.2.6. 欧拉角转换为四元数
 
 ```python
 def quat_from_euler(roll: torch.Tensor, pitch: torch.Tensor, yaw: torch.Tensor) -> torch.Tensor:
@@ -305,9 +307,11 @@ yaw
 
 ---
 
-# 二.3. PX4Controller 本体类
+## 3. 核心原理（Core Principles）
 
-## 二.3.1. 控制器初始化
+### 二.3. PX4Controller 本体类
+
+#### 二.3.1. 控制器初始化
 
 ```python
 def __init__(self, cfg: ControllerConfig, dynamics: P300ProDynamics):
@@ -381,7 +385,7 @@ num_envs
 
 ---
 
-# 二.4. 姿态控制环
+### 二.4. 姿态控制环
 
 ```python
 def attitude_control(
@@ -556,7 +560,7 @@ P 控制
 
 ---
 
-# 二.5. 角速度控制环
+### 二.5. 角速度控制环
 
 ```python
 def rate_control(
@@ -726,7 +730,7 @@ P
 
 ---
 
-# 二.6. 控制分配
+### 二.6. 控制分配
 
 ```python
 def control_allocation(
@@ -848,7 +852,9 @@ P300ProDynamics
 
 ---
 
-# 二.7. 角速度命令接口
+## 4. 实现与应用（Implementation & Applications）
+
+### 二.7. 角速度命令接口
 
 ```python
 def compute_rate(
@@ -911,7 +917,7 @@ actuator_control
 
 ---
 
-# 二.8. 姿态命令接口
+### 二.8. 姿态命令接口
 
 ```python
 def compute_attitude(
@@ -1002,7 +1008,7 @@ desired_q
 
 ---
 
-# 二.9. 默认控制接口
+### 二.9. 默认控制接口
 
 ```python
 def compute(
@@ -1049,7 +1055,7 @@ compute_attitude
 
 ---
 
-# 二.10. 控制器状态复位
+### 二.10. 控制器状态复位
 
 ```python
 def reset(self, env_ids: torch.Tensor, angular_velocity_body: torch.Tensor | None = None) -> None:
@@ -1095,74 +1101,7 @@ previous_rate = angular_velocity_body
 
 ---
 
-# 三. 控制流程总结
-
-姿态命令接口：
-
-```text
-[roll, pitch, yaw, collective]
-                 │
-                 ▼
-          quat_from_euler
-                 │
-                 ▼
-         attitude_control
-                 │
-                 ▼
-          [p_sp, q_sp, r_sp]
-                 │
-                 ▼
-           rate_control
-                 │
-                 ▼
-       normalized_torque
-                 │
-        collective
-             │   │
-             └─┬─┘
-               ▼
-       control_allocation
-               │
-               ▼
-        actuator_control
-```
-
-角速度命令接口：
-
-```text
-[p_sp, q_sp, r_sp, collective]
-                 │
-                 ▼
-           rate_control
-                 │
-                 ▼
-       normalized_torque
-                 │
-        collective
-             │   │
-             └─┬─┘
-               ▼
-       control_allocation
-               │
-               ▼
-        actuator_control
-```
-
-控制器核心模块可以归纳为：
-
-```text
-四元数与坐标变换
-        ↓
-姿态控制环
-        ↓
-角速度控制环
-        ↓
-控制分配
-        ↓
-电机控制
-```
-
-# 四. 源代码
+### 四. 源代码
 
 ```python
 # Copyright (c) 2026 DR Sim contributors.
@@ -1490,3 +1429,76 @@ class PX4Controller:
         else:
             self.previous_rate[env_ids] = angular_velocity_body
 ```
+
+## 5. 分析与总结（Analysis & Summary）
+
+### 三. 控制流程总结
+
+姿态命令接口：
+
+```text
+[roll, pitch, yaw, collective]
+                 │
+                 ▼
+          quat_from_euler
+                 │
+                 ▼
+         attitude_control
+                 │
+                 ▼
+          [p_sp, q_sp, r_sp]
+                 │
+                 ▼
+           rate_control
+                 │
+                 ▼
+       normalized_torque
+                 │
+        collective
+             │   │
+             └─┬─┘
+               ▼
+       control_allocation
+               │
+               ▼
+        actuator_control
+```
+
+角速度命令接口：
+
+```text
+[p_sp, q_sp, r_sp, collective]
+                 │
+                 ▼
+           rate_control
+                 │
+                 ▼
+       normalized_torque
+                 │
+        collective
+             │   │
+             └─┬─┘
+               ▼
+       control_allocation
+               │
+               ▼
+        actuator_control
+```
+
+控制器核心模块可以归纳为：
+
+```text
+四元数与坐标变换
+        ↓
+姿态控制环
+        ↓
+角速度控制环
+        ↓
+控制分配
+        ↓
+电机控制
+```
+
+## 6. 关联与参考（Related Topics & References）
+
+> 待补充。

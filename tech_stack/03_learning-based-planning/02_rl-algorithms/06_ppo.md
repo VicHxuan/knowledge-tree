@@ -1,14 +1,22 @@
 # PPO 算法完整解析与代码实现
 
+## 1. 概述（Overview）
+
 PPO（Proximal Policy Optimization，近端策略优化）是一类同策略（On-Policy）Actor-Critic 算法。它从基础策略梯度出发，先用重要性采样比率描述新旧策略之间的变化，再用截断替代目标抑制过大的策略更新。这样既避免了 TRPO 的二阶约束优化，又允许对同一批同策略轨迹进行若干轮小批量更新。
 
 本文的符号和基础结论承接 [01_rl-foundations.md](./01_rl-foundations.md)，算法改造依据 [PPO 论文](../../references/papers/PPO.pdf)：策略网络记为 $\pi_\theta$，价值网络记为 $V_\phi$，折扣因子为 $\gamma$，终止标记为 $d_t\in\{0,1\}$。
 
 ---
 
-## 1. 从策略梯度到 PPO
+## 2. 基础与定义（Foundations）
 
-### 1.1 起点：优势形式的策略梯度
+> 待补充。
+
+## 3. 核心原理（Core Principles）
+
+### 1. 从策略梯度到 PPO
+
+#### 1.1 起点：优势形式的策略梯度
 
 基础策略梯度定理可写为
 
@@ -35,7 +43,7 @@ $$
 
 当 $\hat A_t>0$ 时，应提高动作 $a_t$ 的概率；当 $\hat A_t<0$ 时，应降低该动作的概率。问题在于：若在同一批轨迹上连续进行多轮更新，参数改变后，数据仍来自采样时的旧策略 $\pi_{\theta_{\mathrm{old}}}$，直接反复优化 $L^{\mathrm{PG}}$ 可能使新策略一次偏离过远，破坏训练稳定性。
 
-### 1.2 用重要性采样比率复用旧策略数据
+#### 1.2 用重要性采样比率复用旧策略数据
 
 采样阶段固定策略参数为 $\theta_{\mathrm{old}}$，并保存旧策略对实际动作给出的对数概率。更新时定义新旧策略的概率比率
 
@@ -72,7 +80,7 @@ $$
 
 在 $\theta=\theta_{\mathrm{old}}$ 处有 $r_t=1$，该目标的一阶梯度与原策略梯度一致。但是，只最大化该目标仍可能让概率比率发生过大的变化。
 
-### 1.3 从 TRPO 的硬约束到 PPO 的截断目标
+#### 1.3 从 TRPO 的硬约束到 PPO 的截断目标
 
 TRPO 通过平均 KL 散度显式限制新旧策略的距离：
 
@@ -124,16 +132,16 @@ L_{\pi}(\theta)
 -L^{\mathrm{CLIP}}(\theta).
 $$
 
-## 2. 优势估计、价值拟合与联合目标
+### 2. 优势估计、价值拟合与联合目标
 
-### 2.1 从优势定义推导 GAE 与 Critic target
+#### 2.1 从优势定义推导 GAE 与 Critic target
 
 这一部分要解决两个不同但相连的问题：
 
 1. Actor 需要估计优势 $A^{\pi_{\mathrm{old}}}(s_t,a_t)$，判断动作 $a_t$ 比旧策略在 $s_t$ 下的平均表现好还是差。
 2. Critic 需要一个回报目标 $\hat R_t$，使 $V_\phi(s_t)$ 向“从 $s_t$ 出发能够获得的折扣回报”拟合。
 
-#### 2.1.1 TD 残差为什么可以估计优势
+##### 2.1.1 TD 残差为什么可以估计优势
 
 优势函数的定义为
 
@@ -191,7 +199,7 @@ $$
 A^{\pi_{\mathrm{old}}}(s_t,a_t).
 $$
 
-#### 2.1.2 从单步 TD 残差到多步 GAE
+##### 2.1.2 从单步 TD 残差到多步 GAE
 
 只使用 $\delta_t$ 自举程度高、方差小，但会继承 Critic 的估计偏差。为了加入后续真实奖励，可将连续 TD 残差累加。为简化符号，以下将 $V_{\phi_{\mathrm{old}}}$ 简记为 $V_{\mathrm{old}}$。忽略中途终止时，前几项为
 
@@ -245,7 +253,7 @@ $$
 
 其中 $\lambda=0$ 时退化为单步 TD 优势；$\lambda\to1$ 时趋近当前 rollout 内的多步回报减去旧价值。如果轨迹在 rollout 末端尚未终止，最后仍使用 $V_{\phi_{\mathrm{old}}}(s_T)$ 自举；只有到达真正终止状态时，末端自举值才为 $0$。
 
-#### 2.1.3 Critic target 为什么是 $\hat A_t+V_{\mathrm{old}}(s_t)$
+##### 2.1.3 Critic target 为什么是 $\hat A_t+V_{\mathrm{old}}(s_t)$
 
 由前面的抵消关系，GAE 可以统一写成
 
@@ -277,7 +285,7 @@ $$
 - Actor 可以使用标准化后的优势，但 Critic target 必须由**未标准化**的 $\hat A_t$ 构造，否则会破坏回报的真实数值尺度。
 - 下方代码中的 `returns = advantages + values_buffer` 正是上述等式的实现。
 
-### 2.2 价值函数损失
+#### 2.2 价值函数损失
 
 最基本的价值拟合目标是
 
@@ -321,7 +329,7 @@ $$
 
 价值截断不是 PPO 论文中截断策略目标所必需的组成部分，而是许多工程实现用于限制 Critic 单次变化的附加措施。
 
-### 2.3 熵奖励与总损失
+#### 2.3 熵奖励与总损失
 
 策略熵为
 
@@ -351,13 +359,13 @@ L_\pi(\theta)
 -c_e\hat{\mathbb{E}}_t[\mathcal H_t].
 $$
 
-## 3. PPO-Clip 的完整训练流程
+### 3. PPO-Clip 的完整训练流程
 
-### 步骤 1：初始化网络与超参数
+#### 步骤 1：初始化网络与超参数
 
 初始化 Actor 参数 $\theta$、Critic 参数 $\phi$ 和优化器，并设置 rollout 长度 $T$、折扣因子 $\gamma$、GAE 参数 $\lambda$、PPO 截断系数 $\epsilon$、更新轮数 $K$、小批量大小 $M$、价值损失系数 $c_v$ 与熵系数 $c_e$。
 
-### 步骤 2：固定本轮旧策略并收集 rollout
+#### 步骤 2：固定本轮旧策略并收集 rollout
 
 将采样开始时的策略和价值函数记为 $\pi_{\theta_{\mathrm{old}}}$、$V_{\phi_{\mathrm{old}}}$，使用它们与环境交互 $T$ 步：
 
@@ -368,7 +376,7 @@ $$
 
 下方实现没有额外复制一套旧网络，而是在整个 rollout 结束前不更新参数；因此采样期间的当前网络就是旧网络。
 
-### 步骤 3：保存后续更新所需数据
+#### 步骤 3：保存后续更新所需数据
 
 对每个时间步保存
 
@@ -397,7 +405,7 @@ $$
 
 保存旧对数概率是为了在更新时固定重要性采样分母；保存旧价值是为了计算 GAE、回报 target 和价值截断。
 
-### 步骤 4：倒序计算 GAE 与 Critic target
+#### 步骤 4：倒序计算 GAE 与 Critic target
 
 若 rollout 的最后状态 $s_T$ 并非终止状态，则用旧 Critic 自举：
 
@@ -449,7 +457,7 @@ $$
 
 严格实现时应区分 `terminated` 与 `truncated`：真正的 MDP 终止通常令 $m_t=0$，仅由时间上限造成的截断通常仍应从截断状态自举。下方精简代码用逻辑或合并了二者，适合展示核心流程，但实际训练可按环境语义分别处理。
 
-### 步骤 5：标准化 Actor 优势并构造小批量
+#### 步骤 5：标准化 Actor 优势并构造小批量
 
 先打乱 $T$ 个索引并划分为大小为 $M$ 的小批量。下方代码在每个小批量 $\mathcal M$ 内，只对传入 Actor 损失的优势进行标准化：
 
@@ -480,7 +488,7 @@ $$
 
 其中 $\eta$ 是防止除零的小常数。Critic 仍使用步骤 4 中未改变尺度的 $\hat R_t$。有些实现会在整个 rollout 上统一标准化，作用相近；这里给出的是与下方代码一致的小批量标准化。
 
-### 步骤 6：在同一 rollout 上进行 $K$ 轮小批量更新
+#### 步骤 6：在同一 rollout 上进行 $K$ 轮小批量更新
 
 对每个小批量，先用更新中的当前网络重新计算
 
@@ -571,7 +579,7 @@ L_\pi+c_vL_V^{\mathrm{clip}}-c_e\bar{\mathcal H}
 }.
 $$
 
-### 步骤 7：裁剪梯度并更新参数
+#### 步骤 7：裁剪梯度并更新参数
 
 反向传播得到联合参数梯度 $g=\nabla_{\theta,\phi}L_{\mathrm{total}}$。若最大梯度范数为 $g_{\max}$，全局范数裁剪可表示为
 
@@ -584,11 +592,324 @@ $$
 
 然后使用 Adam 更新 Actor 与 Critic。随着每个 Epoch 的更新，$\ell_t^{\mathrm{new}}$ 和 $v_t^{\mathrm{new}}$ 会改变，但缓冲区中的 $\ell_t^{\mathrm{old}}$、$v_t^{\mathrm{old}}$、$\hat A_t$ 与 $\hat R_t$ 在本轮始终固定。
 
-### 步骤 8：丢弃旧 rollout 并重新采样
+#### 步骤 8：丢弃旧 rollout 并重新采样
 
 完成 $K$ 轮更新后丢弃本轮轨迹，用更新后的策略重新采样。旧数据只在本轮被有限复用，不能像经验回放数据那样跨多个策略版本长期使用，因此 PPO 仍是同策略算法。
 
-## 4. 公式与下方代码的对应关系
+### 6. 补充证明
+
+#### 6.1 重要性采样下两个期望相等的证明
+
+第 1.2 节使用了
+
+$$
+\mathbb{E}_{a_t\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid s_t)}
+\left[r_t(\theta)f(a_t)\right]
+=
+\mathbb{E}_{a_t\sim\pi_\theta(\cdot\mid s_t)}
+\left[f(a_t)\right],
+$$
+
+其中
+
+$$
+r_t(\theta)
+=
+\frac{\pi_\theta(a_t\mid s_t)}
+{\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)}.
+$$
+
+该等式是在**给定同一个状态 $s_t$** 时，对动作分布进行换测度。成立条件是：凡是 $\pi_\theta(a\mid s_t)f(a)\neq0$ 的动作，都必须满足 $\pi_{\theta_{\mathrm{old}}}(a\mid s_t)>0$，否则概率比率没有定义。也就是说，新策略需要在旧策略的动作分布支撑集内。
+
+##### 离散动作空间
+
+根据离散期望的定义，逐步代入概率比率：
+
+$$
+\begin{aligned}
+&\mathbb{E}_{a_t\sim\pi_{\theta_{\mathrm{old}}}}
+\left[r_t(\theta)f(a_t)\right]\\
+&=
+\sum_{a_t}
+\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)
+r_t(\theta)f(a_t)\\
+&=
+\sum_{a_t}
+\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)
+\frac{\pi_\theta(a_t\mid s_t)}
+{\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)}
+f(a_t)\\
+&=
+\sum_{a_t}
+\pi_\theta(a_t\mid s_t)f(a_t)\\
+&=
+\mathbb{E}_{a_t\sim\pi_\theta}
+\left[f(a_t)\right].
+\end{aligned}
+$$
+
+核心只是旧策略概率在乘积中被约掉，从而把旧策略下的期望转换成新策略下的期望。
+
+##### 连续动作空间
+
+连续动作空间将求和换为积分，证明完全相同：
+
+$$
+\begin{aligned}
+&\mathbb{E}_{a_t\sim\pi_{\theta_{\mathrm{old}}}}
+\left[r_t(\theta)f(a_t)\right]\\
+&=
+\int
+\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)
+\frac{\pi_\theta(a_t\mid s_t)}
+{\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)}
+f(a_t)\,\mathrm da_t\\
+&=
+\int
+\pi_\theta(a_t\mid s_t)f(a_t)\,\mathrm da_t\\
+&=
+\mathbb{E}_{a_t\sim\pi_\theta}
+\left[f(a_t)\right].
+\end{aligned}
+$$
+
+令 $f(a_t)=\hat A_t$，就得到 PPO 使用的替代目标
+
+$$
+\hat{\mathbb E}_t
+\left[r_t(\theta)\hat A_t\right].
+$$
+
+需要注意：上述严格等式只校正了固定状态下的**动作分布**。rollout 中的状态仍来自旧策略的访问分布 $\rho^{\pi_{\mathrm{old}}}(s)$，而不是新策略的 $\rho^{\pi_\theta}(s)$。TRPO/PPO 依赖“小步更新”使两种状态分布保持接近，因此使用旧策略采样状态构造局部替代目标；概率比率并没有精确校正整条轨迹的状态分布变化。
+
+#### 6.2 TRPO 中两个策略分布的期望 KL 散度
+
+##### 6.2.1 单个状态上的 KL 散度
+
+对固定状态 $s$，TRPO 使用从旧策略到新策略的 KL 散度
+
+$$
+D_{\mathrm{KL}}
+\left(
+\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)
+\,\|\,
+\pi_\theta(\cdot\mid s)
+\right)
+=
+\mathbb{E}_{a\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)}
+\left[
+\log
+\frac{\pi_{\theta_{\mathrm{old}}}(a\mid s)}
+{\pi_\theta(a\mid s)}
+\right].
+$$
+
+离散动作时，它等于
+
+$$
+\sum_a
+\pi_{\theta_{\mathrm{old}}}(a\mid s)
+\left[
+\log\pi_{\theta_{\mathrm{old}}}(a\mid s)
+-\log\pi_\theta(a\mid s)
+\right];
+$$
+
+连续动作时，只需将求和替换为对动作的积分。KL 散度满足 $D_{\mathrm{KL}}\geq0$，且仅当两个策略分布几乎处处相同时取 $0$。注意 KL 不对称，交换新旧策略后通常会得到不同结果；TRPO 约束采用这里写出的“旧策略 $\|$ 新策略”方向。
+
+##### 6.2.2 再对旧策略的状态分布取期望
+
+TRPO 不是只约束某一个状态，而是约束旧策略访问到的状态上的平均 KL：
+
+$$
+\begin{aligned}
+\bar D_{\mathrm{KL}}(\theta_{\mathrm{old}},\theta)
+&=
+\mathbb{E}_{s\sim\rho^{\pi_{\mathrm{old}}}}
+\left[
+D_{\mathrm{KL}}
+\left(
+\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)
+\,\|\,
+\pi_\theta(\cdot\mid s)
+\right)
+\right]\\
+&=
+\mathbb{E}_{\substack{s\sim\rho^{\pi_{\mathrm{old}}}\\
+a\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)}}
+\left[
+\log\pi_{\theta_{\mathrm{old}}}(a\mid s)
+-\log\pi_\theta(a\mid s)
+\right].
+\end{aligned}
+$$
+
+这就是“先在每个状态上对动作求 KL，再对状态访问分布求平均”的两层期望。TRPO 的约束为
+
+$$
+\bar D_{\mathrm{KL}}(\theta_{\mathrm{old}},\theta)
+\leq\delta.
+$$
+
+给定旧策略收集的 $N$ 个状态，若能直接计算两个完整策略分布的 KL，则经验估计为
+
+$$
+\widehat{\bar D}_{\mathrm{KL}}
+=
+\frac{1}{N}
+\sum_{t=1}^{N}
+D_{\mathrm{KL}}
+\left(
+\pi_{\theta_{\mathrm{old}}}(\cdot\mid s_t)
+\,\|\,
+\pi_\theta(\cdot\mid s_t)
+\right).
+$$
+
+若每个状态只使用 rollout 中实际采到的一个动作，则可作蒙特卡洛估计：
+
+$$
+\widehat{\bar D}_{\mathrm{KL}}^{\mathrm{MC}}
+=
+\frac{1}{N}
+\sum_{t=1}^{N}
+\left[
+\ell_t^{\mathrm{old}}-\ell_t^{\mathrm{new}}
+\right]
+=
+-\frac{1}{N}
+\sum_{t=1}^{N}\log r_t(\theta).
+$$
+
+单个样本的对数概率差可能为负，但其总体期望是非负的 KL 散度。常见的非负样本近似还可以写成
+
+$$
+\widehat{\bar D}_{\mathrm{KL}}^{\mathrm{approx}}
+=
+\frac{1}{N}
+\sum_{t=1}^{N}
+\left[
+r_t(\theta)-1-\log r_t(\theta)
+\right],
+$$
+
+因为对任意 $x>0$ 都有 $x-1-\log x\geq0$；同时在精确期望下 $\mathbb E_{a\sim\pi_{\mathrm{old}}}[r_t]=1$，所以它与 $-\mathbb E[\log r_t]$ 对应同一 KL 量。
+
+##### 6.2.3 对角高斯策略的 KL 闭式计算
+
+下方 PPO 代码的连续动作策略是对角高斯分布。先考虑一维情况：
+
+$$
+\pi_{\mathrm{old}}
+=
+\mathcal N(\mu_0,\sigma_0^2),
+\qquad
+\pi_{\mathrm{new}}
+=
+\mathcal N(\mu_1,\sigma_1^2).
+$$
+
+把两个高斯密度的对数代入 KL 定义：
+
+$$
+\begin{aligned}
+D_{\mathrm{KL}}(\pi_{\mathrm{old}}\|\pi_{\mathrm{new}})
+&=
+\mathbb E_{a\sim\pi_{\mathrm{old}}}
+\left[
+\log\frac{\sigma_1}{\sigma_0}
++\frac{(a-\mu_1)^2}{2\sigma_1^2}
+-\frac{(a-\mu_0)^2}{2\sigma_0^2}
+\right].
+\end{aligned}
+$$
+
+在旧分布下有
+
+$$
+\mathbb E[(a-\mu_0)^2]=\sigma_0^2,
+$$
+
+以及
+
+$$
+\mathbb E[(a-\mu_1)^2]
+=
+\sigma_0^2+(\mu_0-\mu_1)^2.
+$$
+
+因此
+
+$$
+\boxed{
+D_{\mathrm{KL}}(\pi_{\mathrm{old}}\|\pi_{\mathrm{new}})
+=
+\log\frac{\sigma_1}{\sigma_0}
++\frac{\sigma_0^2+(\mu_0-\mu_1)^2}{2\sigma_1^2}
+-\frac{1}{2}
+}.
+$$
+
+若动作有 $D$ 个相互独立的维度，对角高斯的联合 KL 等于各维 KL 之和：
+
+$$
+\boxed{
+D_{\mathrm{KL}}
+\left(
+\pi_{\mathrm{old}}(\cdot\mid s)
+\,\|\,
+\pi_{\mathrm{new}}(\cdot\mid s)
+\right)
+=
+\sum_{j=1}^{D}
+\left[
+\log\frac{\sigma_{1,j}(s)}{\sigma_{0,j}(s)}
++\frac{
+\sigma_{0,j}^2(s)
++\left(\mu_{0,j}(s)-\mu_{1,j}(s)\right)^2
+}{2\sigma_{1,j}^2(s)}
+-\frac{1}{2}
+\right]
+}.
+$$
+
+将每个状态上的闭式 KL 对 rollout 状态求算术平均，就得到 TRPO 约束中的经验期望：
+
+$$
+\boxed{
+\widehat{\bar D}_{\mathrm{KL}}
+=
+\frac{1}{N}
+\sum_{t=1}^{N}
+\sum_{j=1}^{D}
+\left[
+\log\frac{\sigma_{1,j}(s_t)}{\sigma_{0,j}(s_t)}
++\frac{
+\sigma_{0,j}^2(s_t)
++\left(\mu_{0,j}(s_t)-\mu_{1,j}(s_t)\right)^2
+}{2\sigma_{1,j}^2(s_t)}
+-\frac{1}{2}
+\right]
+}.
+$$
+
+若新旧策略的标准差完全相同，即 $\sigma_{0,j}=\sigma_{1,j}=\sigma_j$，单个状态上的公式进一步化为
+
+$$
+D_{\mathrm{KL}}
+=
+\frac{1}{2}
+\sum_{j=1}^{D}
+\frac{
+\left(\mu_{0,j}(s)-\mu_{1,j}(s)\right)^2
+}{\sigma_j^2}.
+$$
+
+PPO-Clip 不需要像 TRPO 一样把平均 KL 写成硬约束，所以下方核心代码没有显式计算该量；实际工程中仍可监控经验 KL，并在它超过预设阈值时提前结束本轮 Epoch。
+
+## 4. 实现与应用（Implementation & Applications）
+
+### 4. 公式与下方代码的对应关系
 
 | 数学量或步骤 | 代码中的对应实现 | 作用 |
 | --- | --- | --- |
@@ -607,7 +928,7 @@ $$
 
 ---
 
-## 5. 核心代码架构实现
+### 5. 核心代码架构实现
 
 以下代码剔除了所有日志记录、命令行参数解析及环境包裹器的冗余代码，高度抽象了算法核心逻辑，完全符合 Python 规范与 PyTorch 工作流，用于展示连续动作空间下 PPO 算法的本质架构。
 
@@ -799,313 +1120,10 @@ def ppo_training_loop(env, num_iterations, num_steps, batch_size, minibatch_size
 
 ---
 
-## 6. 补充证明
+## 5. 分析与总结（Analysis & Summary）
 
-### 6.1 重要性采样下两个期望相等的证明
+> 待补充。
 
-第 1.2 节使用了
+## 6. 关联与参考（Related Topics & References）
 
-$$
-\mathbb{E}_{a_t\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid s_t)}
-\left[r_t(\theta)f(a_t)\right]
-=
-\mathbb{E}_{a_t\sim\pi_\theta(\cdot\mid s_t)}
-\left[f(a_t)\right],
-$$
-
-其中
-
-$$
-r_t(\theta)
-=
-\frac{\pi_\theta(a_t\mid s_t)}
-{\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)}.
-$$
-
-该等式是在**给定同一个状态 $s_t$** 时，对动作分布进行换测度。成立条件是：凡是 $\pi_\theta(a\mid s_t)f(a)\neq0$ 的动作，都必须满足 $\pi_{\theta_{\mathrm{old}}}(a\mid s_t)>0$，否则概率比率没有定义。也就是说，新策略需要在旧策略的动作分布支撑集内。
-
-#### 离散动作空间
-
-根据离散期望的定义，逐步代入概率比率：
-
-$$
-\begin{aligned}
-&\mathbb{E}_{a_t\sim\pi_{\theta_{\mathrm{old}}}}
-\left[r_t(\theta)f(a_t)\right]\\
-&=
-\sum_{a_t}
-\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)
-r_t(\theta)f(a_t)\\
-&=
-\sum_{a_t}
-\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)
-\frac{\pi_\theta(a_t\mid s_t)}
-{\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)}
-f(a_t)\\
-&=
-\sum_{a_t}
-\pi_\theta(a_t\mid s_t)f(a_t)\\
-&=
-\mathbb{E}_{a_t\sim\pi_\theta}
-\left[f(a_t)\right].
-\end{aligned}
-$$
-
-核心只是旧策略概率在乘积中被约掉，从而把旧策略下的期望转换成新策略下的期望。
-
-#### 连续动作空间
-
-连续动作空间将求和换为积分，证明完全相同：
-
-$$
-\begin{aligned}
-&\mathbb{E}_{a_t\sim\pi_{\theta_{\mathrm{old}}}}
-\left[r_t(\theta)f(a_t)\right]\\
-&=
-\int
-\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)
-\frac{\pi_\theta(a_t\mid s_t)}
-{\pi_{\theta_{\mathrm{old}}}(a_t\mid s_t)}
-f(a_t)\,\mathrm da_t\\
-&=
-\int
-\pi_\theta(a_t\mid s_t)f(a_t)\,\mathrm da_t\\
-&=
-\mathbb{E}_{a_t\sim\pi_\theta}
-\left[f(a_t)\right].
-\end{aligned}
-$$
-
-令 $f(a_t)=\hat A_t$，就得到 PPO 使用的替代目标
-
-$$
-\hat{\mathbb E}_t
-\left[r_t(\theta)\hat A_t\right].
-$$
-
-需要注意：上述严格等式只校正了固定状态下的**动作分布**。rollout 中的状态仍来自旧策略的访问分布 $\rho^{\pi_{\mathrm{old}}}(s)$，而不是新策略的 $\rho^{\pi_\theta}(s)$。TRPO/PPO 依赖“小步更新”使两种状态分布保持接近，因此使用旧策略采样状态构造局部替代目标；概率比率并没有精确校正整条轨迹的状态分布变化。
-
-### 6.2 TRPO 中两个策略分布的期望 KL 散度
-
-#### 6.2.1 单个状态上的 KL 散度
-
-对固定状态 $s$，TRPO 使用从旧策略到新策略的 KL 散度
-
-$$
-D_{\mathrm{KL}}
-\left(
-\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)
-\,\|\,
-\pi_\theta(\cdot\mid s)
-\right)
-=
-\mathbb{E}_{a\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)}
-\left[
-\log
-\frac{\pi_{\theta_{\mathrm{old}}}(a\mid s)}
-{\pi_\theta(a\mid s)}
-\right].
-$$
-
-离散动作时，它等于
-
-$$
-\sum_a
-\pi_{\theta_{\mathrm{old}}}(a\mid s)
-\left[
-\log\pi_{\theta_{\mathrm{old}}}(a\mid s)
--\log\pi_\theta(a\mid s)
-\right];
-$$
-
-连续动作时，只需将求和替换为对动作的积分。KL 散度满足 $D_{\mathrm{KL}}\geq0$，且仅当两个策略分布几乎处处相同时取 $0$。注意 KL 不对称，交换新旧策略后通常会得到不同结果；TRPO 约束采用这里写出的“旧策略 $\|$ 新策略”方向。
-
-#### 6.2.2 再对旧策略的状态分布取期望
-
-TRPO 不是只约束某一个状态，而是约束旧策略访问到的状态上的平均 KL：
-
-$$
-\begin{aligned}
-\bar D_{\mathrm{KL}}(\theta_{\mathrm{old}},\theta)
-&=
-\mathbb{E}_{s\sim\rho^{\pi_{\mathrm{old}}}}
-\left[
-D_{\mathrm{KL}}
-\left(
-\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)
-\,\|\,
-\pi_\theta(\cdot\mid s)
-\right)
-\right]\\
-&=
-\mathbb{E}_{\substack{s\sim\rho^{\pi_{\mathrm{old}}}\\
-a\sim\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)}}
-\left[
-\log\pi_{\theta_{\mathrm{old}}}(a\mid s)
--\log\pi_\theta(a\mid s)
-\right].
-\end{aligned}
-$$
-
-这就是“先在每个状态上对动作求 KL，再对状态访问分布求平均”的两层期望。TRPO 的约束为
-
-$$
-\bar D_{\mathrm{KL}}(\theta_{\mathrm{old}},\theta)
-\leq\delta.
-$$
-
-给定旧策略收集的 $N$ 个状态，若能直接计算两个完整策略分布的 KL，则经验估计为
-
-$$
-\widehat{\bar D}_{\mathrm{KL}}
-=
-\frac{1}{N}
-\sum_{t=1}^{N}
-D_{\mathrm{KL}}
-\left(
-\pi_{\theta_{\mathrm{old}}}(\cdot\mid s_t)
-\,\|\,
-\pi_\theta(\cdot\mid s_t)
-\right).
-$$
-
-若每个状态只使用 rollout 中实际采到的一个动作，则可作蒙特卡洛估计：
-
-$$
-\widehat{\bar D}_{\mathrm{KL}}^{\mathrm{MC}}
-=
-\frac{1}{N}
-\sum_{t=1}^{N}
-\left[
-\ell_t^{\mathrm{old}}-\ell_t^{\mathrm{new}}
-\right]
-=
--\frac{1}{N}
-\sum_{t=1}^{N}\log r_t(\theta).
-$$
-
-单个样本的对数概率差可能为负，但其总体期望是非负的 KL 散度。常见的非负样本近似还可以写成
-
-$$
-\widehat{\bar D}_{\mathrm{KL}}^{\mathrm{approx}}
-=
-\frac{1}{N}
-\sum_{t=1}^{N}
-\left[
-r_t(\theta)-1-\log r_t(\theta)
-\right],
-$$
-
-因为对任意 $x>0$ 都有 $x-1-\log x\geq0$；同时在精确期望下 $\mathbb E_{a\sim\pi_{\mathrm{old}}}[r_t]=1$，所以它与 $-\mathbb E[\log r_t]$ 对应同一 KL 量。
-
-#### 6.2.3 对角高斯策略的 KL 闭式计算
-
-下方 PPO 代码的连续动作策略是对角高斯分布。先考虑一维情况：
-
-$$
-\pi_{\mathrm{old}}
-=
-\mathcal N(\mu_0,\sigma_0^2),
-\qquad
-\pi_{\mathrm{new}}
-=
-\mathcal N(\mu_1,\sigma_1^2).
-$$
-
-把两个高斯密度的对数代入 KL 定义：
-
-$$
-\begin{aligned}
-D_{\mathrm{KL}}(\pi_{\mathrm{old}}\|\pi_{\mathrm{new}})
-&=
-\mathbb E_{a\sim\pi_{\mathrm{old}}}
-\left[
-\log\frac{\sigma_1}{\sigma_0}
-+\frac{(a-\mu_1)^2}{2\sigma_1^2}
--\frac{(a-\mu_0)^2}{2\sigma_0^2}
-\right].
-\end{aligned}
-$$
-
-在旧分布下有
-
-$$
-\mathbb E[(a-\mu_0)^2]=\sigma_0^2,
-$$
-
-以及
-
-$$
-\mathbb E[(a-\mu_1)^2]
-=
-\sigma_0^2+(\mu_0-\mu_1)^2.
-$$
-
-因此
-
-$$
-\boxed{
-D_{\mathrm{KL}}(\pi_{\mathrm{old}}\|\pi_{\mathrm{new}})
-=
-\log\frac{\sigma_1}{\sigma_0}
-+\frac{\sigma_0^2+(\mu_0-\mu_1)^2}{2\sigma_1^2}
--\frac{1}{2}
-}.
-$$
-
-若动作有 $D$ 个相互独立的维度，对角高斯的联合 KL 等于各维 KL 之和：
-
-$$
-\boxed{
-D_{\mathrm{KL}}
-\left(
-\pi_{\mathrm{old}}(\cdot\mid s)
-\,\|\,
-\pi_{\mathrm{new}}(\cdot\mid s)
-\right)
-=
-\sum_{j=1}^{D}
-\left[
-\log\frac{\sigma_{1,j}(s)}{\sigma_{0,j}(s)}
-+\frac{
-\sigma_{0,j}^2(s)
-+\left(\mu_{0,j}(s)-\mu_{1,j}(s)\right)^2
-}{2\sigma_{1,j}^2(s)}
--\frac{1}{2}
-\right]
-}.
-$$
-
-将每个状态上的闭式 KL 对 rollout 状态求算术平均，就得到 TRPO 约束中的经验期望：
-
-$$
-\boxed{
-\widehat{\bar D}_{\mathrm{KL}}
-=
-\frac{1}{N}
-\sum_{t=1}^{N}
-\sum_{j=1}^{D}
-\left[
-\log\frac{\sigma_{1,j}(s_t)}{\sigma_{0,j}(s_t)}
-+\frac{
-\sigma_{0,j}^2(s_t)
-+\left(\mu_{0,j}(s_t)-\mu_{1,j}(s_t)\right)^2
-}{2\sigma_{1,j}^2(s_t)}
--\frac{1}{2}
-\right]
-}.
-$$
-
-若新旧策略的标准差完全相同，即 $\sigma_{0,j}=\sigma_{1,j}=\sigma_j$，单个状态上的公式进一步化为
-
-$$
-D_{\mathrm{KL}}
-=
-\frac{1}{2}
-\sum_{j=1}^{D}
-\frac{
-\left(\mu_{0,j}(s)-\mu_{1,j}(s)\right)^2
-}{\sigma_j^2}.
-$$
-
-PPO-Clip 不需要像 TRPO 一样把平均 KL 写成硬约束，所以下方核心代码没有显式计算该量；实际工程中仍可监控经验 KL，并在它超过预设阈值时提前结束本轮 Epoch。
+> 待补充。
