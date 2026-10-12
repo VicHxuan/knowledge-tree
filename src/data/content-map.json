@@ -212,12 +212,22 @@
       "description": "序列建模与长短期记忆"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/04_attention-transformer.md",
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/04_encoder-decoder.md",
+      "output": "src/content/docs/learning-based-planning/neural-network-architectures/encoder-decoder.md",
+      "slug": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "title": "Encoder–Decoder：基础架构、时序状态重建与辅助监督学习",
+      "label": "Encoder–Decoder",
+      "order": 4,
+      "status": "published",
+      "description": "编码器–解码器结构与辅助监督学习"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/05_attention-transformer.md",
       "output": "src/content/docs/learning-based-planning/neural-network-architectures/attention-transformer.md",
       "slug": "learning-based-planning/neural-network-architectures/attention-transformer",
       "title": "注意力机制与 Transformer",
       "label": "注意力与 Transformer",
-      "order": 4,
+      "order": 5,
       "status": "published",
       "description": "自注意力与 Transformer 结构"
     },
@@ -582,22 +592,22 @@
       "description": "链路时延、执行器建模与补偿"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/05_feature-pyramid-multiscale.md",
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/06_feature-pyramid-multiscale.md",
       "output": "src/content/docs/learning-based-planning/neural-network-architectures/feature-pyramid-multiscale.md",
       "slug": "learning-based-planning/neural-network-architectures/feature-pyramid-multiscale",
       "title": "特征金字塔与多尺度网络",
       "label": "多尺度特征",
-      "order": 5,
+      "order": 6,
       "status": "draft",
       "description": "FPN 与多尺度密集预测骨架"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/06_temporal-multimodal-fusion.md",
+      "source": "tech_stack/03_learning-based-planning/01_neural-network-architectures/07_temporal-multimodal-fusion.md",
       "output": "src/content/docs/learning-based-planning/neural-network-architectures/temporal-multimodal-fusion.md",
       "slug": "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion",
       "title": "时序与多模态融合",
       "label": "时序多模态融合",
-      "order": 6,
+      "order": 7,
       "status": "draft",
       "description": "时序网络与多传感器融合结构"
     },

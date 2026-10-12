@@ -212,6 +212,16 @@
       "order": 3
     },
     {
+      "id": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "label": "Encoder–Decoder",
+      "title": "Encoder–Decoder：基础架构、时序状态重建与辅助监督学习",
+      "domain": "learning-based-planning",
+      "domainLabel": "学习式规划",
+      "group": "neural-network-architectures",
+      "status": "published",
+      "order": 4
+    },
+    {
       "id": "learning-based-planning/neural-network-architectures/attention-transformer",
       "label": "注意力与 Transformer",
       "title": "注意力机制与 Transformer",
@@ -219,7 +229,7 @@
       "domainLabel": "学习式规划",
       "group": "neural-network-architectures",
       "status": "published",
-      "order": 4
+      "order": 5
     },
     {
       "id": "learning-based-planning/rl-algorithms/rl-foundations",
@@ -589,7 +599,7 @@
       "domainLabel": "学习式规划",
       "group": "neural-network-architectures",
       "status": "draft",
-      "order": 5
+      "order": 6
     },
     {
       "id": "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion",
@@ -599,7 +609,7 @@
       "domainLabel": "学习式规划",
       "group": "neural-network-architectures",
       "status": "draft",
-      "order": 6
+      "order": 7
     },
     {
       "id": "learning-based-planning/rl-algorithms/value-based-rl-dqn",
@@ -1036,6 +1046,16 @@
     {
       "from": "learning-based-planning/neural-network-architectures/cnn",
       "to": "learning-based-planning/neural-network-architectures/rnn-lstm",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/rnn-lstm",
+      "to": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "to": "learning-based-planning/neural-network-architectures/attention-transformer",
       "type": "related"
     },
     {
