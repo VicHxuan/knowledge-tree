@@ -1,0 +1,130 @@
+---
+/**
+ * LocalLibrary —— 书签与最近阅读渲染器（纯客户端）。
+ * 数据来自 Footer 脚本写入的 localStorage：
+ *   kt-bookmarks: [{slug,title,href,added}]   （文章页「☆ 收藏」按钮写入）
+ *   kt-recent:    [{slug,title,href,at}]      （已发布文章页加载时自动记录）
+ * 跨标签页通过 storage 事件同步刷新；存储不可用时显示空态。
+ * 渲染为 <kt-library> 自定义元素，无框架开销，与 kt-actions 同一套模式。
+ */
+---
+
+<kt-library>
+	<p class="kt-lib-loading">正在读取本地数据…</p>
+</kt-library>
+
+<script>
+	const BOOKMARK_KEY = 'kt-bookmarks';
+	const RECENT_KEY = 'kt-recent';
+
+	function readJSON(key, fallback) {
+		try {
+			return JSON.parse(localStorage.getItem(key)) ?? fallback;
+		} catch {
+			return fallback;
+		}
+	}
+	function writeJSON(key, value) {
+		try {
+			localStorage.setItem(key, JSON.stringify(value));
+		} catch {
+			/* 存储不可用：忽略 */
+		}
+	}
+	function fmtDate(ts) {
+		const d = new Date(ts);
+		if (Number.isNaN(d.getTime())) return '';
+		const mm = String(d.getMonth() + 1).padStart(2, '0');
+		const dd = String(d.getDate()).padStart(2, '0');
+		return `${d.getFullYear()}-${mm}-${dd}`;
+	}
+	function h(tag, props = {}, ...kids) {
+		const el = document.createElement(tag);
+		for (const [k, v] of Object.entries(props)) {
+			if (v == null) continue;
+			if (k === 'text') el.textContent = v;
+			else if (k === 'class') el.className = v;
+			else el.setAttribute(k, v);
+		}
+		for (const kid of kids) if (kid != null) el.append(kid);
+		return el;
+	}
+
+	class KTLibrary extends HTMLElement {
+		connectedCallback() {
+			if (this._init) return;
+			this._init = true;
+			this.render();
+			window.addEventListener('storage', (e) => {
+				if (e.key === BOOKMARK_KEY || e.key === RECENT_KEY || e.key === null) this.render();
+			});
+		}
+
+		render() {
+			const bookmarks = readJSON(BOOKMARK_KEY, []);
+			const recent = readJSON(RECENT_KEY, []);
+			this.replaceChildren(
+				this.section('书签', bookmarks.length, bookmarks, false, true),
+				this.section('最近阅读', recent.length, recent, true, false),
+			);
+		}
+
+		/** @param {boolean} removable 书签支持单条移除；最近阅读不支持 */
+		section(heading, count, items, recentMode, removable) {
+			const sec = h('section', { class: 'kt-lib-sec', 'data-mode': recentMode ? 'recent' : 'bookmarks' });
+			const head = h('h2', {}, h('span', { text: heading }), h('small', { text: count ? `${count} 条` : '' }));
+			sec.append(head);
+
+			if (!items.length) {
+				sec.append(
+					h('p', {
+						class: 'kt-lib-empty',
+						text: recentMode
+							? '还没有阅读记录。打开任意已发布文章即会自动记录。'
+							: '还没有收藏。打开任意文章页，点击标题下方的「☆ 收藏」即可加入书签。',
+					}),
+				);
+				return sec;
+			}
+
+			const list = h('ul', { class: 'kt-lib-list' });
+			for (const item of items) {
+				const li = h('li', {});
+				li.append(
+					h('a', { href: item.href ?? '#', text: item.title ?? item.slug ?? '' }),
+					h('time', { class: 'kt-lib-date', text: fmtDate(item.added ?? item.at) }),
+				);
+				if (removable) {
+					const rm = h('button', {
+						type: 'button',
+						class: 'kt-lib-remove',
+						title: '移除',
+						'aria-label': `移除书签：${item.title ?? item.slug}`,
+						text: '×',
+					});
+					rm.addEventListener('click', () => {
+						writeJSON(
+							BOOKMARK_KEY,
+							readJSON(BOOKMARK_KEY, []).filter((b) => b.slug !== item.slug),
+						);
+						this.render();
+					});
+					li.append(rm);
+				}
+				list.append(li);
+			}
+			sec.append(list);
+
+			if (removable) {
+				const clear = h('button', { type: 'button', class: 'kt-lib-clear', text: '清空全部书签' });
+				clear.addEventListener('click', () => {
+					writeJSON(BOOKMARK_KEY, []);
+					this.render();
+				});
+				sec.append(clear);
+			}
+			return sec;
+		}
+	}
+	if (!customElements.get('kt-library')) customElements.define('kt-library', KTLibrary);
+</script>

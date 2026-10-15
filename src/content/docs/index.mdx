@@ -1,10 +1,10 @@
 ---
 title: Knowledge Tree
-description: 个人技术知识树：数学基础、经典规划控制、学习式规划、工程工具与仿真评估
+description: 个人技术知识树：数学基础、传统规划控制、学习式规划、工程工具链、仿真与评估、真机飞行
 template: splash
 hero:
   title: Knowledge Tree
-  tagline: 结构化整理无人机轨迹规划控制的知识笔记与实践教程：从数学底座与经典管线，到强化学习与学习式规划。tech_stack 原件驱动，确定性构建，持续更新。
+  tagline: 无人机轨迹规划控制的知识体系：从数学底座与经典管线，到强化学习与真机飞行。Markdown 原件驱动，确定性构建，持续更新。
   actions:
     - text: 浏览知识体系
       link: /knowledge-tree/classical-planning-control/
@@ -14,78 +14,89 @@ hero:
       link: /knowledge-tree/learning-paths/
       icon: list-format
       variant: secondary
-    - text: GitHub 仓库
-      link: https://github.com/VicHxuan/knowledge-tree
-      icon: github
-      variant: minimal
+    - text: 知识图谱
+      link: /knowledge-tree/knowledge-map/
+      icon: puzzle
+      variant: secondary
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import { DOMAINS, DOMAIN_BY_ID } from '../../data/domains.mjs';
 import stats from '../../data/content-stats.json';
 
 ## 知识体系
 
-五大知识领域，共 <b>{stats.published}</b> 篇已发布、{stats.draft} 篇撰写中。
+六大知识领域，共 <b>{stats.published}</b> 篇已发布、{stats.draft} 篇撰写中。
 
 <CardGrid stagger>
-	<Card title="数学基础" icon="open-book">
-		线性代数与几何、微积分与优化、概率统计、动力学、最优控制——整棵知识树的根。
-		<span class="domain-count"><b>{stats.domains.mathematics.published}</b> 篇已发布 · {stats.domains.mathematics.draft} 篇撰写中</span>
-		[进入板块 →](/knowledge-tree/mathematics/)
-	</Card>
-	<Card title="传统规划控制" icon="code-branch">
-		sensor → SLAM → 搜索 → 轨迹优化 → 跟踪控制的经典管线。
-		<span class="domain-count"><b>{stats.domains['classical-planning-control'].published}</b> 篇已发布 · {stats.domains['classical-planning-control'].draft} 篇撰写中</span>
-		[进入板块 →](/knowledge-tree/classical-planning-control/)
-	</Card>
-	<Card title="学习式规划" icon="rocket">
-		sensor → 特征提取 → RL 推理 → control 的学习式管线：从网络骨干、PPO/SAC 到学习式轨迹规划。
-		<span class="domain-count"><b>{stats.domains['learning-based-planning'].published}</b> 篇已发布 · {stats.domains['learning-based-planning'].draft} 篇撰写中</span>
-		[进入板块 →](/knowledge-tree/learning-based-planning/)
-	</Card>
-	<Card title="工程工具链" icon="desktop">
-		PX4 / MAVROS、ROS、Docker、Git 与多服务器多 GPU 训练。
-		<span class="domain-count"><b>{stats.domains['engineering-tools'].published}</b> 篇已发布 · {stats.domains['engineering-tools'].draft} 篇撰写中</span>
-		[进入板块 →](/knowledge-tree/engineering-tools/)
-	</Card>
-	<Card title="仿真与评估" icon="document">
-		仿真平台、场景设计、评估方法与 sim-to-real（V2 新增，撰写中）。
-		<span class="domain-count"><b>{stats.domains['simulation-evaluation'].published}</b> 篇已发布 · {stats.domains['simulation-evaluation'].draft} 篇撰写中</span>
-		[进入板块 →](/knowledge-tree/simulation-evaluation/)
-	</Card>
-	<Card title="学习路径" icon="list-format">
-		按依赖关系串联知识点的推荐学习顺序。
-		[查看路径 →](/knowledge-tree/learning-paths/)
-	</Card>
+	{DOMAINS.map((d) => (
+		<Card title={d.label} icon={d.icon}>
+			{d.blurb}
+			<span class="domain-count"><b>{stats.domains[d.id].published}</b> 篇已发布 · {stats.domains[d.id].draft} 篇撰写中</span>
+			<a href={`/knowledge-tree/${d.id}/`}>进入板块 →</a>
+		</Card>
+	))}
 </CardGrid>
 
 ## 核心管线
 
-两条技术主线贯穿全站：
+两条技术主线贯穿全站（点击节点直达对应文章）：
 
 <div class="pipeline">
-	<span class="node">经典</span>
+	<span class="tag">经典</span>
 	<span class="node">sensor</span><span class="arrow">→</span>
-	<span class="node">SLAM</span><span class="arrow">→</span>
-	<span class="node">搜索</span><span class="arrow">→</span>
-	<span class="node">轨迹优化</span><span class="arrow">→</span>
-	<span class="node">跟踪控制</span>
+	<a class="node" href="/knowledge-tree/classical-planning-control/perception-slam/kalman-filters/">SLAM</a><span class="arrow">→</span>
+	<a class="node" href="/knowledge-tree/classical-planning-control/path-search/heuristic-search/">搜索</a><span class="arrow">→</span>
+	<a class="node" href="/knowledge-tree/classical-planning-control/trajectory-optimization/gcopter-minco/">轨迹优化</a><span class="arrow">→</span>
+	<a class="node" href="/knowledge-tree/classical-planning-control/tracking-control/mpc/">跟踪控制</a>
 </div>
 
 <div class="pipeline">
-	<span class="node">学习式</span>
+	<span class="tag">学习式</span>
 	<span class="node">sensor</span><span class="arrow">→</span>
-	<span class="node">特征提取</span><span class="arrow">→</span>
-	<span class="node">RL 推理</span><span class="arrow">→</span>
-	<span class="node">control</span>
+	<a class="node" href="/knowledge-tree/learning-based-planning/neural-network-architectures/cnn/">特征提取</a><span class="arrow">→</span>
+	<a class="node" href="/knowledge-tree/learning-based-planning/rl-algorithms/ppo/">RL 推理</a><span class="arrow">→</span>
+	<a class="node" href="/knowledge-tree/classical-planning-control/tracking-control/">control</a>
 </div>
+
+## 知识探索
+
+<CardGrid>
+	<Card title="学习路径" icon="list-format">
+		按前置依赖关系串联知识点的推荐学习顺序，进度保存在本地浏览器。
+		<a href="/knowledge-tree/learning-paths/">查看路径 →</a>
+	</Card>
+	<Card title="知识图谱" icon="puzzle">
+		全部知识点的依赖关系与领域视图：搜索、筛选、聚焦前置与相关主题。
+		<a href="/knowledge-tree/knowledge-map/">打开图谱 →</a>
+	</Card>
+	<Card title="书签与最近阅读" icon="star">
+		收藏文章、回顾最近读过什么——数据只保存在你自己的浏览器里。
+		<a href="/knowledge-tree/bookmarks/">查看书签 →</a>
+	</Card>
+	<Card title="研究项目" icon="rocket">
+		知识体系支撑的研究实践：MINCO 规划、RL 轨迹选择器、YOPO。
+		<a href="/knowledge-tree/projects/">浏览项目 →</a>
+	</Card>
+</CardGrid>
+
+## 最近更新
+
+<ul class="recent-list">
+	{stats.recent.map((r) => (
+		<li>
+			<a href={`/knowledge-tree/${r.slug}/`}>{r.title}</a>
+			<span class="recent-meta">{DOMAIN_BY_ID[r.domain]?.label ?? r.domain} · {r.date}</span>
+		</li>
+	))}
+</ul>
 
 ## 关于本站
 
 本站由 Markdown 原件驱动：知识笔记维护在仓库的 `tech_stack/` 目录，
 [同步脚本](https://github.com/VicHxuan/knowledge-tree/blob/main/scripts/sync-docs.mjs)
 按 `src/data/content-map.json` 确定性生成 Starlight 页面——正文只改一处，网站自动跟进。
-每个页面右上角的编辑链接会直接跳转到对应原件。
+每个页面底部的「编辑此页」链接会直接跳转到对应原件。
 
 发现错误或想补充内容，欢迎在 [GitHub 仓库](https://github.com/VicHxuan/knowledge-tree)提交 Issue 或 Pull Request。
 代码采用 MIT 许可，文档内容采用 CC BY 4.0 许可。

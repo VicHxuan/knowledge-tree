@@ -7,6 +7,10 @@ import starlight from '@astrojs/starlight';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
+import { DOMAINS } from './src/data/domains.mjs';
+import rehypeMermaid from './scripts/rehype-mermaid.mjs';
+import rehypeArticleTools from './scripts/rehype-article-tools.mjs';
+
 const repository = 'https://github.com/VicHxuan/knowledge-tree';
 const homepage = 'https://vichxuan.github.io/';
 
@@ -53,8 +57,10 @@ export default defineConfig({
 			favicon: 'favicon.svg',
 
 			// V2：目录栏覆盖 —— 右侧目录上方叠加「前置知识 / 相关主题」知识关联区
+			// V2：页脚覆盖 —— 保留默认页脚，追加 Mermaid 懒渲染 / 书签 / 反馈 / 最近阅读脚本
 			components: {
 				TableOfContents: './src/components/TableOfContents.astro',
+				Footer: './src/components/Footer.astro',
 			},
 
 			social: [
@@ -72,16 +78,13 @@ export default defineConfig({
 						{ slug: '' },
 						{ slug: 'learning-paths' },
 						{ slug: 'knowledge-map' },
+						{ slug: 'bookmarks' },
 						{ label: '个人主页', link: homepage },
 						{ label: 'GitHub 仓库', link: repository },
 					],
 				},
-				docGroup('数学基础', 'mathematics'),
-				docGroup('传统规划控制', 'classical-planning-control'),
-				docGroup('学习式规划', 'learning-based-planning'),
-				docGroup('工程工具链', 'engineering-tools'),
-				docGroup('仿真与评估', 'simulation-evaluation'),
-				docGroup('真机飞行', 'real-flight'),
+				// 六大内容域由 src/data/domains.mjs 派生（单一事实源）
+				...DOMAINS.map((d) => docGroup(d.label, d.id)),
 				docGroup('研究项目', 'projects'),
 			],
 		}),
@@ -89,6 +92,7 @@ export default defineConfig({
 
 	markdown: {
 		remarkPlugins: [remarkMath],
-		rehypePlugins: [rehypeKatex],
+		rehypePlugins: [rehypeKatex, rehypeMermaid, rehypeArticleTools],
+		syntaxHighlight: { type: 'shiki', excludeLangs: ['mermaid'] },
 	},
 });

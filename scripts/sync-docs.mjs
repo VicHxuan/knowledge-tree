@@ -16,10 +16,12 @@
  * Flags: --check  verify freshness without writing (exit 1 on drift)
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, unlinkSync, readdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { posix } from 'node:path';
+import { DOMAINS } from '../src/data/domains.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const TS = join(ROOT, 'tech_stack');
@@ -28,8 +30,9 @@ const MAP_PATH = join(ROOT, 'src/data/content-map.json');
 const STATS_PATH = join(ROOT, 'src/data/content-stats.json');
 const REPO = 'https://github.com/VicHxuan/knowledge-tree';
 const SITE_BASE = '/knowledge-tree';
-const TS_DOMAINS = ['01_math-physic-base', '02_classical-planning-control', '03_learning-based-planning', '04_engineering-tools', '05_simulation-evaluation'];
-const SITE_DOMAIN_DIRS = ['mathematics', 'classical-planning-control', 'learning-based-planning', 'engineering-tools', 'simulation-evaluation', 'real-flight'];
+// 六大知识域目录由 src/data/domains.mjs 统一登记（单一事实源）
+const TS_DOMAINS = DOMAINS.map((d) => d.tsDir);
+const SITE_DOMAIN_DIRS = DOMAINS.map((d) => d.id);
 const LEGACY_SITE_DIRS = ['rl-end-to-end', 'machine-learning', 'robotics', 'programming'];
 
 // curated external link overrides: tech_stack-relative resolved path -> URL
@@ -70,7 +73,7 @@ function loadMap() {
     bySource.set(e.source.slice('tech_stack/'.length), e);
     bySlug.set(e.slug, e);
   }
-  // coverage: every original in the five domains is mapped, and vice versa
+  // coverage: every original in the six domains is mapped, and vice versa
   const onDisk = new Set();
   for (const d of TS_DOMAINS) {
     const dir = join(TS, d);
@@ -200,7 +203,7 @@ function housekeep(written) {
     if (existsSync(p)) { rmSync(p, { recursive: true }); removedLegacy.push(d); }
   }
 
-  // stale generated pages inside the five site domains
+  // stale generated pages inside the six site domains
   const stale = [];
   for (const d of SITE_DOMAIN_DIRS) {
     const dir = join(DOCS, d);
@@ -243,14 +246,40 @@ function writeAll(written, house) {
   }
 }
 
+/** 原件最近一次提交的 author-date（YYYY-MM-DD）；无 git 历史时返回 null。 */
+function gitAuthorDate(source) {
+  try {
+    const out = execFileSync('git', ['log', '-1', '--format=%aI', '--', source], {
+      cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    return /^\d{4}-\d{2}-\d{2}/.test(out) ? out.slice(0, 10) : null;
+  } catch {
+    return null;
+  }
+}
+
 function stats(written) {
   const domains = {};
+  const lastModified = {};
   for (const w of written) {
     const top = w.entry.slug.split('/')[0];
     domains[top] ??= { published: 0, draft: 0, total: 0 };
     domains[top][w.entry.status] += 1;
     domains[top].total += 1;
+    const iso = gitAuthorDate(w.entry.source);
+    if (iso) lastModified[w.entry.slug] = iso;
   }
+  // 首页「最近更新」：已发布且能取到提交日期的前 5 篇，按日期倒序、slug 正序破平
+  const recent = written
+    .filter((w) => w.entry.status === 'published' && lastModified[w.entry.slug])
+    .map((w) => ({
+      slug: w.entry.slug,
+      title: w.entry.title,
+      domain: w.entry.slug.split('/')[0],
+      date: lastModified[w.entry.slug],
+    }))
+    .sort((a, b) => (a.date === b.date ? a.slug.localeCompare(b.slug) : a.date < b.date ? 1 : -1))
+    .slice(0, 5);
   const hash = md5(written.map((w) => w.entry.slug + ':' + md5(w.text)).sort().join('\n'));
   return {
     version: 2,
@@ -258,6 +287,8 @@ function stats(written) {
     published: written.filter((w) => w.entry.status === 'published').length,
     draft: written.filter((w) => w.entry.status === 'draft').length,
     domains,
+    recent,
+    lastModified,
     contentHash: hash,
   };
 }

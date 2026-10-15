@@ -12,15 +12,19 @@
 ## 新增或修改章节
 
 1. 原始笔记放在 `tech_stack/` 对应领域目录下，文件名使用小写英文与连字符（kebab-case）；
-2. 在 `src/data/content-map.json` 注册一条映射（source / output / slug / title / label / order / status）；
+2. 运行 `npm run docs:add -- tech_stack/<域>/<板块>/<文件>.md` 注册文章：自动校验路径、从首个 H1 推导标题、生成 slug 并同时写入 `content-map.json` 与 `knowledge-relations.json`（可用 `--title` / `--label` / `--status` / `--order` / `--description` 覆盖默认值）。也可以手工在 `src/data/content-map.json` 注册映射（source / output / slug / title / label / order / status）；
 3. 运行 `npm run docs:sync` 生成页面；状态为 `draft` 的条目会带 `draft: true`，只在开发服务器可见、不进生产构建；
-4. 正文从二级标题 `##` 开始组织，**不要**写一级标题——页面大标题由映射表的 `title` 渲染（与标题相同的 H1 会被自动吸收）；
+4. 正文从二级标题 `##` 开始组织，**不要**写一级标题——页面大标题由映射表的 `title` 渲染（与标题相同的 H1 会被自动吸收）；已发布文章须符合**六模块结构**（见下文写作规范），`docs:check` 会逐篇校验；
 5. 数学公式使用 `$...$`（行内）与 `$$...$$`（块级），由 KaTeX 渲染；
-6. 原始笔记中的站内相对链接会被同步脚本自动转换；站内跳转写完整路径并带 `/knowledge-tree` 前缀，例如：
+6. 架构与流程图使用 ` ```mermaid ` 代码块书写（flowchart、sequenceDiagram、graph 等），构建时保留源码并在页面加载后按当前主题客户端渲染——只在不影响文章正文的场合使用，复杂图示仍优先手绘图片；
+7. 原始笔记中的站内相对链接会被同步脚本自动转换；站内跳转写完整路径并带 `/knowledge-tree` 前缀，例如：
 
    ```md
    [PPO](/knowledge-tree/learning-based-planning/rl-algorithms/ppo/)
    ```
+
+移动 / 重命名已有文章：先 `git mv` 原件到新路径，再运行
+`npm run docs:rename -- --from <旧slug> --to tech_stack/<新路径>.md`。脚本会同步改写映射条目与关系边端点，旧文曾发布过时还会自动在 `redirects.json` 登记旧 slug 的兜底跳转。
 
 ## 新增手写页面
 
@@ -68,9 +72,11 @@ sidebar:
 
 同步关系（依据 `scripts/` 的实际实现）：
 
-- `scripts/sync-docs.mjs` 按 `src/data/content-map.json` 的映射，把 `tech_stack/` 原件确定性生成为 Starlight 页面（注入 frontmatter、吸收与页面标题一致的 H1、转换站内链接、`draft` 状态只在开发态可见）；`predev` / `prebuild` 钩子在每次 `dev` / `build` 前自动执行，`--check` 模式用于检测漂移；
-- `scripts/validate-docs.mjs` 校验站内链接与重定向的合法性；
-- `scripts/privacy-check.mjs` 在提交前扫描可发布文件中的个人隐私数据。
+- `scripts/sync-docs.mjs` 按 `src/data/content-map.json` 的映射，把 `tech_stack/` 原件确定性生成为 Starlight 页面（注入 frontmatter、吸收与页面标题一致的 H1、转换站内链接、`draft` 状态只在开发态可见），并统计各域文章数、最近更新与每篇的最近维护日期（取原件的 git author-date）；`predev` / `prebuild` 钩子在每次 `dev` / `build` 前自动执行，`--check` 模式用于检测漂移；
+- `scripts/validate-docs.mjs` 校验站内链接与重定向（含重定向环检测）、已发布文章的六模块标题结构，以及 content-map / knowledge-relations / redirects 之间的数据一致性（slug 唯一、边端点存在、前置依赖成无环 DAG 等）；
+- `scripts/docs-add.mjs` / `scripts/docs-rename.mjs` 是新增 / 移动文章的登记器（见上文用法），注册后仍需人工补充 `knowledge-relations.json` 的前置 / 相关边；
+- `scripts/privacy-check.mjs` 在提交前扫描可发布文件中的个人隐私数据；
+- 六大领域的目录名、名称与配色统一登记在 `src/data/domains.mjs`（侧栏分组、同步、校验、知识图谱共用）；新增领域时先在这里注册，再建目录。
 
 因此：**技术正文一律修改 `tech_stack/` 原件**，网站副本由脚本重新生成；手改生成页面会在下次同步时被覆盖。
 
@@ -118,9 +124,16 @@ sidebar:
 ## 本地验证
 
 ```bash
-npm run docs:check    # 同步无漂移 + 链接与重定向合法
+npm run docs:check    # 同步无漂移 + 链接/重定向合法 + 六模块结构 + 数据一致性
 npm run privacy:check # 确认可发布文件不含个人隐私数据
 npm run build         # 构建验证：frontmatter、图标的问题都会在这里暴露
+```
+
+新增 / 移动文章的登记命令：
+
+```bash
+npm run docs:add -- tech_stack/<域>/<板块>/<文件>.md [--title …] [--status published|draft]
+npm run docs:rename -- --from <旧slug> --to tech_stack/<新路径>.md
 ```
 
 ## 提交变更

@@ -1,0 +1,145 @@
+---
+/**
+ * LearningPathsOverview — 学习路径进度总览（学习路径首页用）。
+ * 每条路径一行：标题 + 概要 + 进度条（读取本浏览器 kt-lp:<pathId> 的保存值）。
+ * 步骤总数直接取保存数组的长度，无需与路径页共享数据。
+ * 无保存进度时显示「尚未开始」，点击卡片进入路径页。
+ */
+interface PathMeta {
+	id: string;
+	title: string;
+	href: string;
+	blurb: string;
+}
+interface Props {
+	paths: PathMeta[];
+}
+const { paths } = Astro.props;
+---
+
+<div class="lpo">
+	{
+		paths.map((p) => (
+			<a class="lpo-row" href={p.href} data-lp-id={p.id}>
+				<div class="lpo-main">
+					<span class="lpo-title">{p.title}</span>
+					<span class="lpo-blurb">{p.blurb}</span>
+				</div>
+				<div class="lpo-progress">
+					<div class="lpo-bar" aria-hidden="true"><span class="lpo-fill"></span></div>
+					<span class="lpo-pct">尚未开始</span>
+				</div>
+			</a>
+		))
+	}
+	<p class="lpo-note">进度数据来自本浏览器 localStorage；在路径页内可导出 / 导入进度文件，跨设备迁移。</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.lpo-row[data-lp-id]').forEach((row) => {
+		const id = row.dataset.lpId;
+		if (!id) return;
+		let arr: unknown = null;
+		try {
+			arr = JSON.parse(localStorage.getItem(`kt-lp:${id}`) ?? 'null');
+		} catch {
+			arr = null;
+		}
+		if (!Array.isArray(arr) || arr.length === 0) return;
+		const done = arr.filter((s) => s === 2).length;
+		const pct = Math.round((done / arr.length) * 100);
+		const fill = row.querySelector<HTMLElement>('.lpo-fill');
+		const pctEl = row.querySelector<HTMLElement>('.lpo-pct');
+		if (fill) fill.style.width = `${pct}%`;
+		if (pctEl) {
+			if (done === arr.length) pctEl.textContent = `🎉 已完成 ${done}/${arr.length}`;
+			else if (done > 0 || arr.some((s) => s === 1)) {
+				pctEl.textContent = `进行中 ${done}/${arr.length}（${pct}%）`;
+				row.classList.add('lpo-started');
+			} else pctEl.textContent = `0/${arr.length}`;
+		}
+	});
+</script>
+
+<style>
+	.lpo {
+		display: grid;
+		gap: 0.625rem;
+		margin: 1rem 0;
+	}
+	.lpo-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 0.5rem;
+		text-decoration: none;
+		transition: border-color 150ms ease, transform 150ms ease;
+	}
+	.lpo-row:hover {
+		border-color: color-mix(in oklab, var(--sl-color-accent) 55%, var(--sl-color-hairline));
+		transform: translateY(-1px);
+	}
+	.lpo-main {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		min-width: 0;
+	}
+	.lpo-title {
+		font-weight: 600;
+		color: var(--sl-color-text);
+	}
+	.lpo-blurb {
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.lpo-progress {
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+		flex: none;
+	}
+	.lpo-bar {
+		width: 7rem;
+		height: 4px;
+		border-radius: 999px;
+		background: var(--sl-color-hairline-light);
+		overflow: hidden;
+	}
+	.lpo-fill {
+		display: block;
+		height: 100%;
+		width: 0;
+		border-radius: inherit;
+		background: linear-gradient(90deg, var(--sl-color-accent), #22c55e);
+		transition: width 250ms ease;
+	}
+	.lpo-pct {
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+		white-space: nowrap;
+	}
+	.lpo-row.lpo-started .lpo-pct {
+		color: var(--sl-color-text-accent);
+	}
+	.lpo-note {
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-4);
+		margin: 0;
+	}
+	@media (max-width: 40rem) {
+		.lpo-row {
+			flex-direction: column;
+			align-items: stretch;
+		}
+		.lpo-progress {
+			justify-content: space-between;
+		}
+		.lpo-bar {
+			flex: 1;
+		}
+	}
+</style>

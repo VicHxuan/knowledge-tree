@@ -26,3 +26,7 @@ pnpm-debug.log*
 
 # privacy checker local patterns (never push)
 /scripts/.privacy-patterns.json
+
+# 本地评审文档（仅限本地，永不入库）
+/SITE-AND-WORKFLOW.md
+/MIGRATION_REPORT.md

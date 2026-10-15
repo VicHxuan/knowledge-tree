@@ -1,0 +1,130 @@
+---
+/**
+ * Footer 覆盖件 —— 完整保留 Starlight 默认页脚（上一页/下一页 + 编辑此页），
+ * 追加全站客户端行为：
+ *   1. Mermaid 按需渲染：仅当页面存在 .kt-mermaid 图时动态 import('mermaid')
+ *      （Vite 拆独立 chunk，无图页面零开销）；主题切换时随 data-theme 重渲染。
+ *   2. <kt-actions> 自定义元素：书签收藏（localStorage）+ GitHub Issue 反馈链接。
+ *      由 scripts/rehype-article-tools.mjs 注入到已发布文章的信息条中。
+ *   3. 最近阅读：已发布文章页加载时记录到 localStorage，供书签页消费。
+ * 站点为纯 MPA（无 ClientRouter），本脚本随每次页面加载重新执行；
+ * 自定义元素定义做了幂等保护。
+ */
+import DefaultFooter from '@astrojs/starlight/components/Footer.astro';
+---
+
+<DefaultFooter />
+
+<script>
+	// ---------- localStorage 小工具（隐私模式/存储被禁时静默降级） ----------
+	function readJSON(key, fallback) {
+		try {
+			return JSON.parse(localStorage.getItem(key)) ?? fallback;
+		} catch {
+			return fallback;
+		}
+	}
+	function writeJSON(key, value) {
+		try {
+			localStorage.setItem(key, JSON.stringify(value));
+		} catch {
+			/* 存储不可用：功能静默失效 */
+		}
+	}
+
+	const REPO = 'https://github.com/VicHxuan/knowledge-tree';
+	const BOOKMARK_KEY = 'kt-bookmarks';
+	const RECENT_KEY = 'kt-recent';
+	const RECENT_MAX = 12;
+
+	// ---------- Mermaid：按需渲染 + 主题联动 ----------
+	if (document.querySelector('.kt-mermaid')) {
+		const CJK_FONT = '"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif';
+		let renderSeq = 0;
+		let queued = null;
+
+		async function renderMermaid() {
+			const { default: mermaid } = await import('mermaid');
+			mermaid.initialize({
+				startOnLoad: false,
+				securityLevel: 'strict',
+				theme: document.documentElement.dataset.theme === 'light' ? 'default' : 'dark',
+				fontFamily: CJK_FONT,
+				flowchart: { curve: 'basis' },
+			});
+			const figures = document.querySelectorAll('.kt-mermaid');
+			for (const fig of figures) {
+				const src = fig.querySelector('.kt-mermaid-src')?.textContent ?? '';
+				const out = fig.querySelector('.kt-mermaid-out');
+				if (!src || !out) continue;
+				try {
+					const { svg } = await mermaid.render(`kt-mmd-${renderSeq++}`, src);
+					out.innerHTML = svg;
+					fig.classList.remove('kt-mermaid-error');
+				} catch (err) {
+					fig.classList.add('kt-mermaid-error');
+					out.textContent = src;
+					console.warn('[knowledge-tree] mermaid render failed:', err);
+				}
+			}
+		}
+
+		renderMermaid();
+		// 主题切换 → 防抖重渲染（深浅色各有一套 mermaid 主题）
+		new MutationObserver(() => {
+			if (queued) clearTimeout(queued);
+			queued = setTimeout(renderMermaid, 150);
+		}).observe(document.documentElement, { attributeFilter: ['data-theme'] });
+	}
+
+	// ---------- <kt-actions>：书签 + 反馈 ----------
+	class KTActions extends HTMLElement {
+		connectedCallback() {
+			if (this._init) return;
+			this._init = true;
+			const slug = this.getAttribute('slug') ?? '';
+			const title = this.getAttribute('title') ?? document.title;
+
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = 'kt-bookmark-btn';
+			btn.setAttribute('aria-label', '收藏本书签');
+			const sync = () => {
+				const on = readJSON(BOOKMARK_KEY, []).some((b) => b.slug === slug);
+				btn.classList.toggle('on', on);
+				btn.setAttribute('aria-pressed', String(on));
+				btn.title = on ? '移出书签' : '加入书签';
+				btn.textContent = on ? '★ 已收藏' : '☆ 收藏';
+			};
+			btn.addEventListener('click', () => {
+				const list = readJSON(BOOKMARK_KEY, []);
+				const idx = list.findIndex((b) => b.slug === slug);
+				if (idx >= 0) list.splice(idx, 1);
+				else list.push({ slug, title, href: location.pathname, added: Date.now() });
+				writeJSON(BOOKMARK_KEY, list);
+				sync();
+			});
+			sync();
+
+			const issue = document.createElement('a');
+			issue.className = 'kt-feedback-link';
+			issue.href = `${REPO}/issues/new?title=${encodeURIComponent(`[文章反馈] ${title}`)}`;
+			issue.target = '_blank';
+			issue.rel = 'noopener noreferrer';
+			issue.textContent = '反馈';
+
+			this.append(btn, issue);
+		}
+	}
+	if (!customElements.get('kt-actions')) customElements.define('kt-actions', KTActions);
+
+	// ---------- 最近阅读（只在带文章信息条的页面记录） ----------
+	const actionsEl = document.querySelector('kt-actions[slug]');
+	if (actionsEl) {
+		const slug = actionsEl.getAttribute('slug') ?? '';
+		const title = actionsEl.getAttribute('title') ?? document.title;
+		const list = readJSON(RECENT_KEY, []).filter((r) => r.slug !== slug);
+		list.unshift({ slug, title, href: location.pathname, at: Date.now() });
+		writeJSON(RECENT_KEY, list.slice(0, RECENT_MAX));
+	}
+</script>

@@ -2,7 +2,7 @@
 
 [![Deploy](https://github.com/VicHxuan/knowledge-tree/actions/workflows/deploy.yml/badge.svg)](https://github.com/VicHxuan/knowledge-tree/actions/workflows/deploy.yml)
 
-> 个人技术知识树：数学基础、传统规划控制、学习式规划、工程工具与仿真评估的结构化笔记与开源教学。
+> 个人技术知识树：数学基础、传统规划控制、学习式规划、工程工具、仿真评估与真机飞行的结构化笔记与开源教学。
 > Markdown 原件驱动，确定性构建，部署在 GitHub Pages。
 
 **在线地址**：<https://vichxuan.github.io/knowledge-tree/>
@@ -17,7 +17,8 @@ tech_stack/                        # ← 在这里写笔记（tracked，事实�
 ├── 02_classical-planning-control/ #    传统规划控制
 ├── 03_learning-based-planning/    #    学习式规划
 ├── 04_engineering-tools/          #    工程工具链
-└── 05_simulation-evaluation/      #    仿真与评估
+├── 05_simulation-evaluation/      #    仿真与评估
+└── 06_real-flight/                #    真机飞行
 
         │  scripts/sync-docs.mjs（按 src/data/content-map.json 生成标题、
         │  sidebar、草稿标记，转换相对链接）
@@ -25,13 +26,14 @@ tech_stack/                        # ← 在这里写笔记（tracked，事实�
 
 src/content/docs/                  # → 生成产物（untracked）+ 少量手写页
 ├── index.mdx                      #    首页（Splash）
-├── <五大领域>/                     #    生成的章节页 + 手写的板块首页
+├── <六大领域>/                     #    生成的章节页 + 手写的板块首页
 ├── learning-paths/                #    学习路径（手写，含进度追踪）
 ├── knowledge-map/                 #    知识图谱（React Flow 交互页）
+├── bookmarks/                     #    书签与最近阅读（本地数据）
 └── projects/                      #    研究项目页（手写）
 ```
 
-`astro.config.mjs` 的 sidebar 用 `autogenerate` 按目录结构自动生成侧栏分组，无需维护独立的目录数据库。
+领域注册表在 `src/data/domains.mjs`（侧栏分组、首页卡片、图谱域色共用的单一事实源）；`astro.config.mjs` 的 sidebar 用 `autogenerate` 按目录结构自动生成侧栏分组，无需维护独立的目录数据库。
 
 ## 本地开发
 
@@ -47,7 +49,7 @@ npm run privacy:check # 提交前扫描，确认可发布文件不含个人隐�
 
 ## 如何贡献
 
-见 [CONTRIBUTING.md](CONTRIBUTING.md)。最简单的方式：在任一页面右上角点击「编辑此页」——它会直接指向 `tech_stack/` 里的原始笔记，GitHub 会自动引导你创建 Pull Request。
+见 [CONTRIBUTING.md](CONTRIBUTING.md)。最简单的方式：在任一页面底部点击「编辑此页」——它会直接指向 `tech_stack/` 里的原始笔记，GitHub 会自动引导你创建 Pull Request。
 
 ## 许可
 

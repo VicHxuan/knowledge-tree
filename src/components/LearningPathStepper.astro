@@ -3,6 +3,10 @@
  * LearningPathStepper — 学习路径垂直进度条。
  * 每步三态：未开始(0) → 进行中(1) → 已完成(2)，点击左侧按钮循环切换。
  * 进度保存在浏览器 localStorage（key: kt-lp:<pathId>），仅本机可见。
+ *
+ * 进阶功能（V2）：
+ *  - 完成度百分比进度条 + 「继续学习」入口（第一个未完成且有链接的步骤）；
+ *  - 导出 / 导入进度（JSON 文件，跨设备迁移用——数据仍只存在于你自己的文件里）。
  */
 interface Step {
 	title: string;
@@ -25,7 +29,7 @@ const { pathId, steps } = Astro.props;
 	<ol>
 		{
 			steps.map((s, i) => (
-				<li class="lp-step" data-i={i}>
+				<li class="lp-step" data-i={i} data-title={s.title} data-href={s.href ?? ''}>
 					<button
 						type="button"
 						class="lp-toggle"
@@ -52,10 +56,21 @@ const { pathId, steps } = Astro.props;
 			))
 		}
 	</ol>
-	<p class="lp-progress-line">
-		已完成 <span class="lp-done">0</span> / {steps.length} 步
-		<span class="lp-reset" role="button" tabindex="0">重置进度</span>
-	</p>
+	<div class="lp-progress" role="group" aria-label="路径进度">
+		<div class="lp-bar" aria-hidden="true"><span class="lp-bar-fill"></span></div>
+		<p class="lp-progress-line">
+			已完成 <span class="lp-done">0</span> / {steps.length} 步
+			（<span class="lp-pct">0%</span>）
+			<span class="lp-continue"></span>
+		</p>
+		<p class="lp-actions">
+			<span class="lp-msg" aria-live="polite"></span>
+			<button type="button" class="lp-btn" data-act="export">导出进度</button>
+			<button type="button" class="lp-btn" data-act="import">导入进度</button>
+			<span class="lp-reset" role="button" tabindex="0">重置进度</span>
+			<input type="file" class="lp-file" accept="application/json,.json" hidden />
+		</p>
+	</div>
 </div>
 
 <script>
@@ -64,8 +79,13 @@ const { pathId, steps } = Astro.props;
 		if (!id) return;
 		const key = `kt-lp:${id}`;
 		const buttons = [...root.querySelectorAll<HTMLButtonElement>('.lp-toggle')];
+		const items = [...root.querySelectorAll<HTMLElement>('.lp-step')];
 		const doneEl = root.querySelector<HTMLElement>('.lp-done');
-		const resetEl = root.querySelector<HTMLElement>('.lp-reset');
+		const pctEl = root.querySelector<HTMLElement>('.lp-pct');
+		const fillEl = root.querySelector<HTMLElement>('.lp-bar-fill');
+		const continueEl = root.querySelector<HTMLElement>('.lp-continue');
+		const msgEl = root.querySelector<HTMLElement>('.lp-msg');
+		const fileEl = root.querySelector<HTMLInputElement>('.lp-file');
 
 		const load = (): number[] => {
 			try {
@@ -83,9 +103,46 @@ const { pathId, steps } = Astro.props;
 				/* 隐私模式等存储不可用时静默降级为会话内进度 */
 			}
 		};
+		const say = (text: string) => {
+			if (msgEl) {
+				msgEl.textContent = text;
+				setTimeout(() => {
+					if (msgEl.textContent === text) msgEl.textContent = '';
+				}, 4000);
+			}
+		};
 		const render = (state: number[]) => {
 			buttons.forEach((b, i) => (b.dataset.state = String(state[i] ?? 0)));
-			if (doneEl) doneEl.textContent = String(state.filter((s) => s === 2).length);
+			const done = state.filter((s) => s === 2).length;
+			const total = buttons.length || 1;
+			if (doneEl) doneEl.textContent = String(done);
+			if (pctEl) pctEl.textContent = `${Math.round((done / total) * 100)}%`;
+			if (fillEl) fillEl.style.width = `${(done / total) * 100}%`;
+			if (continueEl) {
+				continueEl.replaceChildren();
+				if (done === buttons.length && buttons.length > 0) {
+					continueEl.textContent = '🎉 全部完成';
+				} else {
+					// 继续学习：第一个未完成步骤（优先有链接的；都无链接则展示无链接的下一个）
+					const idx = state.findIndex((s) => s !== 2);
+					const withHref = state.findIndex((s, i) => s !== 2 && items[i]?.dataset.href);
+					const pick = withHref >= 0 ? withHref : idx;
+					if (pick >= 0 && items[pick]) {
+						const href = items[pick].dataset.href;
+						const title = items[pick].dataset.title ?? '';
+						const label = `继续：${title} →`;
+						if (href) {
+							const a = document.createElement('a');
+							a.href = href;
+							a.textContent = label;
+							a.className = 'lp-continue-link';
+							continueEl.append(a);
+						} else {
+							continueEl.textContent = `下一步：${title}（撰写中）`;
+						}
+					}
+				}
+			}
 		};
 
 		const state = load();
@@ -97,10 +154,64 @@ const { pathId, steps } = Astro.props;
 				render(state);
 			}),
 		);
-		resetEl?.addEventListener('click', () => {
+		root.querySelector('.lp-reset')?.addEventListener('click', () => {
 			state.forEach((_, i) => (state[i] = 0));
 			save(state);
 			render(state);
+		});
+
+		// 导出：下载 JSON 文件（kt-lp:<id> 的内容 + 元信息，可跨设备导入）
+		root.querySelector<HTMLButtonElement>('[data-act="export"]')?.addEventListener('click', () => {
+			const payload = {
+				format: 'kt-learning-progress',
+				version: 1,
+				pathId: id,
+				steps: state,
+				exportedAt: new Date().toISOString(),
+			};
+			const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			const d = new Date();
+			const mm = String(d.getMonth() + 1).padStart(2, '0');
+			const dd = String(d.getDate()).padStart(2, '0');
+			a.href = url;
+			a.download = `learning-progress-${id}-${d.getFullYear()}${mm}${dd}.json`;
+			a.click();
+			URL.revokeObjectURL(url);
+			say('已导出进度文件。');
+		});
+
+		// 导入：读取 JSON 文件，校验格式与步骤数后覆盖本路径进度
+		root.querySelector<HTMLButtonElement>('[data-act="import"]')?.addEventListener('click', () => {
+			fileEl?.click();
+		});
+		fileEl?.addEventListener('change', () => {
+			const file = fileEl.files?.[0];
+			if (!file) return;
+			const reader = new FileReader();
+			reader.onload = () => {
+				try {
+					const data = JSON.parse(String(reader.result));
+					const arr = Array.isArray(data.steps) ? data.steps : undefined;
+					const sameId = data.pathId === undefined || data.pathId === id;
+					if (!arr || !sameId || arr.length !== buttons.length) {
+						say(`导入失败：${!sameId ? '路径不匹配' : '格式或步骤数不符'}。`);
+						return;
+					}
+					const clean = buttons.map((_, i) =>
+						typeof arr[i] === 'number' ? Math.max(0, Math.min(2, arr[i] | 0)) : 0,
+					);
+					state.splice(0, state.length, ...clean);
+					save(state);
+					render(state);
+					say('导入成功。');
+				} catch {
+					say('导入失败：文件不是合法 JSON。');
+				}
+			};
+			reader.readAsText(file);
+			fileEl.value = '';
 		});
 	}
 	document.querySelectorAll<HTMLElement>('.lp-stepper').forEach(initStepper);
@@ -213,17 +324,73 @@ const { pathId, steps } = Astro.props;
 	.lp-toggle[data-state='2'] ~ .lp-body .lp-title {
 		color: var(--sl-color-text);
 	}
+	.lp-progress {
+		margin-top: 0.875rem;
+	}
+	.lp-bar {
+		height: 4px;
+		border-radius: 999px;
+		background: var(--sl-color-hairline-light);
+		overflow: hidden;
+	}
+	.lp-bar-fill {
+		display: block;
+		height: 100%;
+		width: 0;
+		border-radius: inherit;
+		background: linear-gradient(90deg, var(--sl-color-accent), #22c55e);
+		transition: width 250ms ease;
+	}
 	.lp-progress-line {
-		margin: 0.75rem 0 0;
+		margin: 0.5rem 0 0;
 		font-size: var(--sl-text-sm);
 		color: var(--sl-color-gray-3);
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.5rem;
+		flex-wrap: wrap;
 	}
 	.lp-done {
 		color: #22c55e;
 		font-weight: 600;
+	}
+	.lp-continue {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+	}
+	.lp-continue-link {
+		color: var(--sl-color-text-accent);
+		text-decoration: none;
+		font-weight: 500;
+	}
+	.lp-continue-link:hover {
+		text-decoration: underline;
+	}
+	.lp-actions {
+		margin: 0.5rem 0 0;
+		display: flex;
+		align-items: center;
+		gap: 0.625rem;
+		flex-wrap: wrap;
+		font-size: var(--sl-text-xs);
+	}
+	.lp-msg {
+		color: var(--sl-color-gray-3);
+	}
+	.lp-btn {
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 999px;
+		background: var(--sl-color-bg);
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-xs);
+		padding: 0.125rem 0.625rem;
+		cursor: pointer;
+		transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+	}
+	.lp-btn:hover {
+		border-color: var(--sl-color-accent);
+		color: var(--sl-color-text-accent);
 	}
 	.lp-reset {
 		margin-left: auto;

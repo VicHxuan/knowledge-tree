@@ -3,6 +3,19 @@
    调色板 / CJK 字体栈 / 版面 / 侧栏文件浏览器质感
    ============================================================ */
 
+/* ---------- 设计令牌：圆角 / 阴影 / 动效节奏 ---------- */
+:root {
+	--kt-radius-sm: 0.375rem;
+	--kt-radius-md: 0.5rem;
+	--kt-radius-lg: 0.75rem;
+	--kt-shadow-sm: 0 1px 3px rgb(0 0 0 / 18%);
+	--kt-shadow-md: 0 4px 16px rgb(0 0 0 / 22%);
+	--kt-ease: 150ms ease;
+	--kt-transition: background-color var(--kt-ease), border-color var(--kt-ease),
+		color var(--kt-ease), transform var(--kt-ease), box-shadow var(--kt-ease),
+		opacity var(--kt-ease);
+}
+
 /* ---------- 字体（CJK 优先栈） ---------- */
 :root {
 	--sl-font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
@@ -160,6 +173,49 @@
 	color: var(--sl-color-accent);
 }
 
+/* 管线节点可点击（首页核心管线直达文章） */
+.pipeline a.node {
+	text-decoration: none;
+	transition: var(--kt-transition);
+}
+.pipeline a.node:hover {
+	border-color: var(--sl-color-accent);
+	color: var(--sl-color-text-accent);
+}
+
+/* ---------- 首页：最近更新 ---------- */
+.recent-list {
+	list-style: none;
+	padding: 0;
+	margin: 0.75rem 0;
+	display: grid;
+	gap: 0.5rem;
+}
+.recent-list li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.25rem 0.75rem;
+	padding: 0.375rem 0.75rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--kt-radius-md);
+	background: color-mix(in oklab, var(--sl-color-bg-inline-code) 55%, transparent);
+}
+.recent-list a {
+	font-weight: 500;
+	text-decoration: none;
+}
+.recent-list a:hover {
+	color: var(--sl-color-text-accent);
+	text-decoration: underline;
+}
+.recent-meta {
+	font-size: var(--sl-text-xs);
+	color: var(--sl-color-gray-3);
+	white-space: nowrap;
+}
+
 /* ---------- 内容页细节 ---------- */
 
 /* 移动端长公式可横向滚动，避免撑破版面 */
@@ -179,4 +235,229 @@
 a[href*='/edit/main/tech_stack/'] {
 	font-size: var(--sl-text-xs);
 	color: var(--sl-color-gray-3);
+}
+
+/* ---------- 文章信息条（rehype-article-tools 注入） ---------- */
+.sl-markdown-content .kt-article-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.375rem 0.75rem;
+	margin: 0 0 1.5rem;
+	padding: 0.5rem 0.875rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-left: 3px solid var(--sl-color-accent);
+	border-radius: var(--kt-radius-md);
+	background: color-mix(in oklab, var(--sl-color-bg-inline-code) 55%, transparent);
+	font-size: var(--sl-text-sm);
+}
+.kt-breadcrumb {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.4rem;
+	min-width: 0;
+}
+.kt-crumb {
+	color: var(--sl-color-gray-2);
+	text-decoration: none;
+	white-space: nowrap;
+}
+.kt-crumb:hover {
+	color: var(--sl-color-text-accent);
+	text-decoration: underline;
+}
+.kt-crumb-sep {
+	color: var(--sl-color-gray-4);
+	font-size: 0.75em;
+}
+.kt-article-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.625rem;
+	margin-left: auto;
+	white-space: nowrap;
+}
+.kt-article-date {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+}
+.kt-bookmark-btn {
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 999px;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+	padding: 0.125rem 0.625rem;
+	cursor: pointer;
+	transition: var(--kt-transition);
+}
+.kt-bookmark-btn:hover {
+	border-color: var(--sl-color-accent);
+	color: var(--sl-color-text-accent);
+}
+.kt-bookmark-btn.on {
+	border-color: var(--sl-color-accent);
+	color: var(--sl-color-text-accent);
+	background: color-mix(in oklab, var(--sl-color-accent) 14%, transparent);
+}
+.kt-feedback-link {
+	font-size: var(--sl-text-xs);
+	color: var(--sl-color-gray-3);
+	text-decoration: none;
+	padding: 0.125rem 0.25rem;
+}
+.kt-feedback-link:hover {
+	color: var(--sl-color-text-accent);
+	text-decoration: underline;
+}
+@media (max-width: 30rem) {
+	.sl-markdown-content .kt-article-bar {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.kt-article-actions {
+		margin-left: 0;
+	}
+}
+
+/* ---------- Mermaid 图（客户端懒渲染占位） ---------- */
+.sl-markdown-content .kt-mermaid {
+	margin: 1.25rem 0;
+	padding: 1rem;
+	border: 1px dashed var(--sl-color-hairline);
+	border-radius: var(--kt-radius-lg);
+	background: color-mix(in oklab, var(--sl-color-bg-inline-code) 45%, transparent);
+	overflow-x: auto;
+}
+.kt-mermaid-out svg {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0 auto;
+}
+.kt-mermaid-error .kt-mermaid-out {
+	font-family: var(--sl-font-mono);
+	font-size: var(--sl-text-sm);
+	white-space: pre-wrap;
+	color: var(--sl-color-gray-2);
+}
+.kt-mermaid-loading {
+	color: var(--sl-color-gray-4);
+	font-size: var(--sl-text-sm);
+}
+
+/* ---------- 书签页（LocalLibrary） ---------- */
+.kt-lib-sec {
+	margin-top: 2rem;
+}
+.kt-lib-sec:first-child {
+	margin-top: 0;
+}
+.kt-lib-sec h2 {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	font-size: 1.25rem;
+}
+.kt-lib-sec h2 small {
+	font-size: var(--sl-text-xs);
+	color: var(--sl-color-gray-3);
+	font-weight: 400;
+}
+.kt-lib-list {
+	list-style: none;
+	padding: 0;
+	margin: 0.5rem 0 0;
+	display: grid;
+	gap: 0.375rem;
+}
+.kt-lib-list li {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.4375rem 0.75rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--kt-radius-md);
+	background: color-mix(in oklab, var(--sl-color-bg-inline-code) 55%, transparent);
+}
+.kt-lib-list a {
+	flex: 1;
+	min-width: 0;
+	font-weight: 500;
+	text-decoration: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.kt-lib-list a:hover {
+	color: var(--sl-color-text-accent);
+	text-decoration: underline;
+}
+.kt-lib-date {
+	flex: none;
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+}
+.kt-lib-remove {
+	flex: none;
+	border: 0;
+	background: none;
+	color: var(--sl-color-gray-4);
+	font-size: 1rem;
+	line-height: 1;
+	cursor: pointer;
+	padding: 0.125rem 0.375rem;
+	border-radius: var(--kt-radius-sm);
+	transition: var(--kt-transition);
+}
+.kt-lib-remove:hover {
+	color: var(--sl-color-text-accent);
+	background: color-mix(in oklab, var(--sl-color-accent) 12%, transparent);
+}
+.kt-lib-clear {
+	margin-top: 0.5rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 999px;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+	padding: 0.1875rem 0.75rem;
+	cursor: pointer;
+	transition: var(--kt-transition);
+}
+.kt-lib-clear:hover {
+	border-color: var(--sl-color-accent);
+	color: var(--sl-color-text-accent);
+}
+.kt-lib-empty,
+.kt-lib-loading {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-sm);
+}
+
+/* ---------- 中文排版细节 ---------- */
+.sl-markdown-content p {
+	line-height: 1.75;
+}
+
+/* ---------- 无障碍：焦点可见与动效抑制 ---------- */
+:where(a, button, summary, input, select):focus-visible {
+	outline: 2px solid var(--sl-color-accent);
+	outline-offset: 2px;
+	border-radius: var(--kt-radius-sm);
+}
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+	.card-grid .card:hover,
+	.pipeline a.node:hover {
+		transform: none;
+	}
 }

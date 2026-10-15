@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import {
 	ReactFlow,
 	Background,
@@ -15,16 +15,19 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import './knowledge-map.css';
-import relations from '../../data/knowledge-relations.json';
-import contentMap from '../../data/content-map.json';
+import { DOMAINS } from '../../data/domains.mjs';
+import { NODES, EDGES, NODE_BY_ID } from '../../data/relations-view.mjs';
 
 /**
  * KnowledgeMap — 知识图谱交互页（React Flow）。
- * 两种布局：依赖视图（按前置知识最长路径分层）/ 领域视图（按五大领域分列）。
- * 支持搜索、状态与领域筛选、相关边开关、节点详情面板；双击已发布节点跳转页面。
+ * 两种布局：依赖视图（按前置知识最长路径分层）/ 领域视图（按六大领域分列）。
+ * 选中节点后进入「聚焦」态：该节点 + 直接前置 + 后续依赖 + 相关主题保持常亮，
+ * 其余节点与边淡出，便于看清局部结构（不改布局，不做二次排布）。
+ * 视图与选中节点会同步到 URL（?view=&node=），可从文章页直达定位。
  */
 
 type Status = 'published' | 'draft';
+type View = 'dependency' | 'domain';
 
 interface RNode {
 	id: string;
@@ -47,6 +50,7 @@ interface KTNodeData extends Record<string, unknown> {
 	domainLabel: string;
 	status: Status;
 	dim: boolean;
+	selected: boolean;
 	href: string;
 }
 
@@ -56,25 +60,32 @@ const NODE_H = 38;
 const GAP_X = 64;
 const GAP_Y = 12;
 
-const DOMAIN_ORDER = [
-	'mathematics',
-	'classical-planning-control',
-	'learning-based-planning',
-	'engineering-tools',
-	'simulation-evaluation',
-] as const;
-const DOMAIN_COLOR: Record<string, string> = {
-	mathematics: '#38bdf8',
-	'classical-planning-control': '#f472b6',
-	'learning-based-planning': '#34d399',
-	'engineering-tools': '#fbbf24',
-	'simulation-evaluation': '#a78bfa',
-};
+// 六大领域色与顺序来自 src/data/domains.mjs（单一事实源）
+const DOMAIN_ORDER: string[] = DOMAINS.map((d) => d.id);
+const DOMAIN_COLOR: Record<string, string> = Object.fromEntries(DOMAINS.map((d) => [d.id, d.color]));
 
-const R_NODES = relations.nodes as RNode[];
-const R_EDGES = relations.edges as REdge[];
-const NODE_BY_ID = new Map(R_NODES.map((n) => [n.id, n]));
-const DESC_BY_SLUG = new Map(contentMap.entries.map((e) => [e.slug, e.description]));
+const R_NODES = NODES as RNode[];
+const R_EDGES = EDGES as REdge[];
+
+/** 相邻关系索引：id → 前置 / 后续依赖 / 相关 */
+const ADJ = (() => {
+	const prereqs = new Map<string, string[]>();
+	const dependents = new Map<string, string[]>();
+	const related = new Map<string, string[]>();
+	const push = (m: Map<string, string[]>, k: string, v: string) => {
+		(m.get(k) ?? m.set(k, []).get(k)!).push(v);
+	};
+	for (const e of R_EDGES) {
+		if (e.type === 'prerequisite') {
+			push(prereqs, e.to, e.from);
+			push(dependents, e.from, e.to);
+		} else {
+			push(related, e.from, e.to);
+			push(related, e.to, e.from);
+		}
+	}
+	return { prereqs, dependents, related };
+})();
 
 /** 依赖视图布局：按 prerequisite 最长路径分层（列），层内按领域+序号排（行）。 */
 function layeredLayout(nodes: RNode[]): Map<string, { x: number; y: number }> {
@@ -112,7 +123,7 @@ function layeredLayout(nodes: RNode[]): Map<string, { x: number; y: number }> {
 	return pos;
 }
 
-/** 领域视图布局：五大领域分列，列内按 order 排。 */
+/** 领域视图布局：六大领域分列，列内按 order 排。 */
 function domainLayout(nodes: RNode[]): Map<string, { x: number; y: number }> {
 	const groups = new Map<string, RNode[]>();
 	for (const d of DOMAIN_ORDER) groups.set(d, []);
@@ -124,7 +135,7 @@ function domainLayout(nodes: RNode[]): Map<string, { x: number; y: number }> {
 	const COL_W = NODE_W + 56;
 	const HEADER_H = 34;
 	groups.forEach((group, domain) => {
-		const col = DOMAIN_ORDER.indexOf(domain as (typeof DOMAIN_ORDER)[number]);
+		const col = DOMAIN_ORDER.indexOf(domain);
 		group.sort((a, b) => a.order - b.order);
 		group.forEach((n, i) =>
 			pos.set(n.id, { x: col * COL_W, y: HEADER_H + i * (NODE_H + GAP_Y) }),
@@ -140,6 +151,7 @@ function KTNode({ data }: NodeProps<Node<KTNodeData, 'kt'>>) {
 			style={{ '--ktm-color': DOMAIN_COLOR[data.domain] ?? '#94a3b8' } as CSSProperties}
 			data-status={data.status}
 			data-dim={data.dim}
+			data-selected={data.selected}
 		>
 			<Handle type="target" position={Position.Left} className="ktm-handle" />
 			<span className="ktm-dot" />
@@ -153,12 +165,40 @@ function KTNode({ data }: NodeProps<Node<KTNodeData, 'kt'>>) {
 const NODE_TYPES: NodeTypes = { kt: KTNode };
 
 export default function KnowledgeMap() {
-	const [view, setView] = useState<'dependency' | 'domain'>('dependency');
+	// 初始值支持从 URL 恢复（?view=domain&node=<slug>）；SSR 时 window 不存在，安全回落默认
+	const [view, setView] = useState<View>(() => {
+		if (typeof window === 'undefined') return 'dependency';
+		return new URLSearchParams(window.location.search).get('view') === 'domain' ? 'domain' : 'dependency';
+	});
+	const [selected, setSelected] = useState<string | null>(() => {
+		if (typeof window === 'undefined') return null;
+		const n = new URLSearchParams(window.location.search).get('node');
+		return n && NODE_BY_ID.has(n) ? n : null;
+	});
 	const [q, setQ] = useState('');
 	const [status, setStatus] = useState<'all' | Status>('all');
 	const [domain, setDomain] = useState<string>('all');
 	const [showRelated, setShowRelated] = useState(false);
-	const [selected, setSelected] = useState<string | null>(null);
+
+	// 视图与选中节点同步进 URL：可分享、可从文章页「在图谱中查看」直达
+	useEffect(() => {
+		if (typeof window === 'undefined') return;
+		const params = new URLSearchParams();
+		if (view !== 'dependency') params.set('view', view);
+		if (selected) params.set('node', selected);
+		const qs = params.toString();
+		window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''));
+	}, [view, selected]);
+
+	/** 聚焦集合：选中节点及其直接前置 / 后续依赖 / 相关主题 */
+	const focusSet = useMemo(() => {
+		if (!selected) return null;
+		const set = new Set<string>([selected]);
+		ADJ.prereqs.get(selected)?.forEach((id) => set.add(id));
+		ADJ.dependents.get(selected)?.forEach((id) => set.add(id));
+		ADJ.related.get(selected)?.forEach((id) => set.add(id));
+		return set;
+	}, [selected]);
 
 	const filtered = useMemo(() => {
 		const needle = q.trim().toLowerCase();
@@ -169,11 +209,12 @@ export default function KnowledgeMap() {
 		}).map((n) => ({
 			...n,
 			dim:
-				needle.length > 0 &&
-				!n.label.toLowerCase().includes(needle) &&
-				!n.title.toLowerCase().includes(needle),
+				(needle.length > 0 &&
+					!n.label.toLowerCase().includes(needle) &&
+					!n.title.toLowerCase().includes(needle)) ||
+				(focusSet !== null && !focusSet.has(n.id)),
 		}));
-	}, [q, status, domain]);
+	}, [q, status, domain, focusSet]);
 
 	const ids = useMemo(() => new Set(filtered.map((n) => n.id)), [filtered]);
 
@@ -190,23 +231,28 @@ export default function KnowledgeMap() {
 				domainLabel: n.domainLabel,
 				status: n.status,
 				dim: n.dim,
+				selected: n.id === selected,
 				href: `${SITE_BASE}/${n.id}/`,
 			} satisfies KTNodeData,
 		}));
-	}, [filtered, view]);
+	}, [filtered, view, selected]);
 
 	const edges: Edge[] = useMemo(() => {
 		const out: Edge[] = [];
 		for (const e of R_EDGES) {
 			if (!ids.has(e.from) || !ids.has(e.to)) continue;
 			if (e.type === 'related' && !showRelated) continue;
+			// 聚焦态：不与选中节点相连的边整体淡出
+			const dimmed = focusSet !== null && e.from !== selected && e.to !== selected;
 			out.push({
 				id: `${e.type}:${e.from}:${e.to}`,
 				source: e.from,
 				target: e.to,
 				type: 'smoothstep',
 				animated: false,
-				className: e.type === 'related' ? 'ktm-edge-related' : 'ktm-edge-prereq',
+				className:
+					(e.type === 'related' ? 'ktm-edge-related' : 'ktm-edge-prereq') +
+					(dimmed ? ' ktm-edge-dim' : ''),
 				markerEnd:
 					e.type === 'prerequisite'
 						? { type: MarkerType.ArrowClosed, width: 14, height: 14 }
@@ -214,17 +260,13 @@ export default function KnowledgeMap() {
 			});
 		}
 		return out;
-	}, [ids, showRelated]);
+	}, [ids, showRelated, focusSet, selected]);
 
 	const selNode = selected ? NODE_BY_ID.get(selected) : undefined;
-	const selPrereqs = selected
-		? R_EDGES.filter((e) => e.type === 'prerequisite' && e.to === selected).map((e) => e.from)
-		: [];
-	const selRelated = selected
-		? R_EDGES.filter(
-				(e) => e.type === 'related' && (e.from === selected || e.to === selected),
-			).map((e) => (e.from === selected ? e.to : e.from))
-		: [];
+	const selPrereqs = selected ? (ADJ.prereqs.get(selected) ?? []) : [];
+	const selDependents = selected ? (ADJ.dependents.get(selected) ?? []) : [];
+	const selRelated = selected ? (ADJ.related.get(selected) ?? []) : [];
+	const focusHint = focusSet ? `${focusSet.size} 个关联节点` : null;
 
 	return (
 		<div className="knowledge-map">
@@ -279,6 +321,11 @@ export default function KnowledgeMap() {
 							onChange={(e) => setQ(e.target.value)}
 							aria-label="搜索知识点"
 						/>
+						{selected && (
+							<button type="button" className="ktm-clear" onClick={() => setSelected(null)}>
+								清除聚焦 ×
+							</button>
+						)}
 					</div>
 					<div className="ktm-row">
 						<select
@@ -296,9 +343,9 @@ export default function KnowledgeMap() {
 							aria-label="领域筛选"
 						>
 							<option value="all">全部领域</option>
-							{DOMAIN_ORDER.map((d) => (
-								<option key={d} value={d}>
-									{R_NODES.find((n) => n.domain === d)?.domainLabel ?? d}
+							{DOMAINS.map((d) => (
+								<option key={d.id} value={d.id}>
+									{d.label}
 								</option>
 							))}
 						</select>
@@ -313,10 +360,10 @@ export default function KnowledgeMap() {
 					</div>
 				</Panel>
 				<Panel position="bottom-left" className="ktm-legend">
-					{DOMAIN_ORDER.map((d) => (
-						<span key={d} className="ktm-legend-item">
-							<i style={{ background: DOMAIN_COLOR[d] }} />
-							{R_NODES.find((n) => n.domain === d)?.domainLabel ?? d}
+					{DOMAINS.map((d) => (
+						<span key={d.id} className="ktm-legend-item">
+							<i style={{ background: d.color }} />
+							{d.label}
 						</span>
 					))}
 					<span className="ktm-legend-item">
@@ -343,14 +390,23 @@ export default function KnowledgeMap() {
 							{selNode.status === 'published' ? '已发布' : '撰写中 🚧'}
 						</span>
 					</p>
-					{DESC_BY_SLUG.get(selNode.id) && (
-						<p className="ktm-detail-desc">{DESC_BY_SLUG.get(selNode.id)}</p>
-					)}
 					{selPrereqs.length > 0 && (
 						<section>
 							<h4>前置知识</h4>
 							<div className="ktm-chips">
 								{selPrereqs.map((id) => (
+									<button key={id} type="button" onClick={() => setSelected(id)}>
+										{NODE_BY_ID.get(id)?.label ?? id}
+									</button>
+								))}
+							</div>
+						</section>
+					)}
+					{selDependents.length > 0 && (
+						<section>
+							<h4>后续依赖</h4>
+							<div className="ktm-chips">
+								{selDependents.map((id) => (
 									<button key={id} type="button" onClick={() => setSelected(id)}>
 										{NODE_BY_ID.get(id)?.label ?? id}
 									</button>
@@ -377,6 +433,7 @@ export default function KnowledgeMap() {
 					) : (
 						<p className="ktm-open ktm-open-draft">撰写中，暂无页面</p>
 					)}
+					{focusHint && <p className="ktm-focus-hint">聚焦中：{focusHint}常亮，其余淡出</p>}
 				</aside>
 			)}
 		</div>

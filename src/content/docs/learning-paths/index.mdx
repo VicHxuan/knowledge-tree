@@ -1,0 +1,33 @@
+---
+title: "学习路径"
+description: "按推荐顺序串联知识点的学习路线，附本地进度追踪与进度总览"
+---
+
+import LearningPathsOverview from '../../../components/LearningPathsOverview.astro';
+
+按依赖关系串联知识点的推荐学习顺序。每条路径内置三态进度（未开始 → 进行中 → 已完成），点击步骤左侧圆点切换；进度保存在本浏览器，可导出为 JSON 文件跨设备迁移：
+
+<LearningPathsOverview
+	paths={[
+		{
+			id: 'reinforcement-learning',
+			title: '强化学习学习路径',
+			href: '/knowledge-tree/learning-paths/reinforcement-learning/',
+			blurb: '数学基础 → RL 核心公式 → 算法演进 → PPO → 工程实践',
+		},
+		{
+			id: 'classical-trajectory-planning',
+			title: '经典轨迹规划学习路径',
+			href: '/knowledge-tree/learning-paths/classical-trajectory-planning/',
+			blurb: '轨迹表示 → Minimum Snap → 轨迹优化 → 跟踪控制',
+		},
+		{
+			id: 'learning-based-uav-navigation',
+			title: '学习式无人机导航学习路径',
+			href: '/knowledge-tree/learning-paths/learning-based-uav-navigation/',
+			blurb: 'CNN → RL 基础 → PPO → 学习式规划 → 仿真评估',
+		},
+	]}
+/>
+
+学习路径与知识分类分开维护：文件夹决定知识分类，本板块决定学习顺序。知识点之间的依赖关系另见[知识图谱](/knowledge-tree/knowledge-map/)；收藏与阅读历史见[书签页](/knowledge-tree/bookmarks/)。

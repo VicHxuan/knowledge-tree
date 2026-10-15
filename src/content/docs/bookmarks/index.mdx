@@ -1,0 +1,14 @@
+---
+title: 书签与最近阅读
+description: 收藏的文章与最近阅读记录——数据只保存在你当前使用的浏览器里
+---
+
+import LocalLibrary from '../../../components/LocalLibrary.astro';
+
+<LocalLibrary />
+
+## 数据与隐私
+
+- 书签来自文章页信息条中的「☆ 收藏」按钮；最近阅读在打开已发布文章时自动记录（本浏览器最多保留 12 条）。
+- 以上数据仅存于浏览器 localStorage，**不上传任何服务器、不进 Git 仓库**；换设备或清除浏览器数据即清空。
+- 想长期保存一份清单，可从浏览器 DevTools 复制对应键值（`kt-bookmarks` / `kt-recent`）。
