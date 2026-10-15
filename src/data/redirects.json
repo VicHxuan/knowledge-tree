@@ -22,5 +22,7 @@
   "/learning-paths/uav-planning": "/learning-paths/classical-trajectory-planning",
   "/machine-learning": "/learning-based-planning",
   "/robotics": "/classical-planning-control",
-  "/programming": "/engineering-tools"
+  "/programming": "/engineering-tools",
+  "/engineering-tools/px4-mavros": "/engineering-tools/px4-sitl",
+  "/engineering-tools/multi-server-gpu-training": "/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide"
 }

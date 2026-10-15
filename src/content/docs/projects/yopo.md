@@ -22,7 +22,7 @@ YOPO（You Only Plan Once）是学习式轨迹规划方向的代表性工作：*
 ## 相关阅读
 
 - 论文原文与衍生工作（YOPO-swarm 等多机变体）走读计划收录在[学习式轨迹规划](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/)板块；
-- 训练基础设施相关：[多服务器多 GPU 训练](/knowledge-tree/engineering-tools/multi-server-gpu-training/)、[PPO 全流程走读](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)。
+- 训练基础设施相关：[多服务器多 GPU 训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide/)、[PPO 全流程走读](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)。
 
 ## 状态
 

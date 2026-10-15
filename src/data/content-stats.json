@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "entries": 86,
+  "entries": 84,
   "published": 38,
-  "draft": 48,
+  "draft": 46,
   "domains": {
     "mathematics": {
       "published": 1,
@@ -21,8 +21,8 @@
     },
     "engineering-tools": {
       "published": 5,
-      "draft": 5,
-      "total": 10
+      "draft": 3,
+      "total": 8
     },
     "simulation-evaluation": {
       "published": 0,
@@ -30,5 +30,5 @@
       "total": 8
     }
   },
-  "contentHash": "8a24e276487db4f5a03fa4ce11535755"
+  "contentHash": "36550c40b58d4323c4e8474d4468cddd"
 }

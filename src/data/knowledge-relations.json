@@ -332,16 +332,6 @@
       "order": 4
     },
     {
-      "id": "engineering-tools/px4-mavros",
-      "label": "PX4 / MAVROS",
-      "title": "PX4 / MAVROS 面试知识点整理",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "",
-      "status": "published",
-      "order": 1
-    },
-    {
       "id": "engineering-tools/ros1",
       "label": "ROS1",
       "title": "ROS1 面试知识点整理",
@@ -349,7 +339,17 @@
       "domainLabel": "工程工具链",
       "group": "",
       "status": "published",
-      "order": 2
+      "order": 1
+    },
+    {
+      "id": "engineering-tools/px4-sitl",
+      "label": "PX4 / MAVROS",
+      "title": "PX4 / MAVROS 面试知识点整理",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "published",
+      "order": 3
     },
     {
       "id": "engineering-tools/remote-control-setup",
@@ -359,7 +359,7 @@
       "domainLabel": "工程工具链",
       "group": "",
       "status": "published",
-      "order": 3
+      "order": 4
     },
     {
       "id": "engineering-tools/git-manual",
@@ -369,17 +369,17 @@
       "domainLabel": "工程工具链",
       "group": "",
       "status": "published",
-      "order": 4
+      "order": 5
     },
     {
-      "id": "engineering-tools/multi-server-gpu-training",
+      "id": "engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide",
       "label": "多服务器 GPU 训练",
       "title": "YOPO RL Selector：多服务器部署与单机多 GPU 训练操作手册",
       "domain": "engineering-tools",
       "domainLabel": "工程工具链",
-      "group": "",
+      "group": "ppo-in-multi-gpu",
       "status": "published",
-      "order": 5
+      "order": 1
     },
     {
       "id": "mathematics/linear-algebra-geometry/matrix-decomposition",
@@ -739,17 +739,7 @@
       "domainLabel": "工程工具链",
       "group": "",
       "status": "draft",
-      "order": 6
-    },
-    {
-      "id": "engineering-tools/px4-ros2-offboard-control",
-      "label": "PX4 Offboard",
-      "title": "PX4 ROS2 Offboard 控制",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "",
-      "status": "draft",
-      "order": 7
+      "order": 2
     },
     {
       "id": "engineering-tools/docker-environment",
@@ -759,27 +749,17 @@
       "domainLabel": "工程工具链",
       "group": "",
       "status": "draft",
-      "order": 8
+      "order": 6
     },
     {
-      "id": "engineering-tools/profiling-debugging",
-      "label": "性能与调试",
-      "title": "性能分析与调试",
+      "id": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
+      "label": "分布式训练架构",
+      "title": "分布式强化学习训练架构",
       "domain": "engineering-tools",
       "domainLabel": "工程工具链",
-      "group": "",
+      "group": "ppo-in-multi-gpu",
       "status": "draft",
-      "order": 9
-    },
-    {
-      "id": "engineering-tools/reproducible-experiments",
-      "label": "可复现实验",
-      "title": "可复现实验管理",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "",
-      "status": "draft",
-      "order": 10
+      "order": 2
     },
     {
       "id": "simulation-evaluation/simulation-platforms/simulator-overview",
@@ -1199,7 +1179,7 @@
       "type": "related"
     },
     {
-      "from": "engineering-tools/multi-server-gpu-training",
+      "from": "engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide",
       "to": "learning-based-planning/engineering-practice/ppo-walkthrough",
       "type": "related"
     }

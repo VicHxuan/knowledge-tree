@@ -332,52 +332,52 @@
       "description": "小脑项目的工作流"
     },
     {
-      "source": "tech_stack/04_engineering-tools/01_px4-mavros.md",
-      "output": "src/content/docs/engineering-tools/px4-mavros.md",
-      "slug": "engineering-tools/px4-mavros",
+      "source": "tech_stack/04_engineering-tools/03_px4-sitl.md",
+      "output": "src/content/docs/engineering-tools/px4-sitl.md",
+      "slug": "engineering-tools/px4-sitl",
       "title": "PX4 / MAVROS 面试知识点整理",
       "label": "PX4 / MAVROS",
-      "order": 1,
+      "order": 3,
       "status": "published",
       "description": "PX4 与 MAVROS 面试要点"
     },
     {
-      "source": "tech_stack/04_engineering-tools/02_ros1.md",
+      "source": "tech_stack/04_engineering-tools/01_ros1.md",
       "output": "src/content/docs/engineering-tools/ros1.md",
       "slug": "engineering-tools/ros1",
       "title": "ROS1 面试知识点整理",
       "label": "ROS1",
-      "order": 2,
+      "order": 1,
       "status": "published",
       "description": "ROS1 面试要点"
     },
     {
-      "source": "tech_stack/04_engineering-tools/03_remote-control-setup.md",
+      "source": "tech_stack/04_engineering-tools/04_remote-control-setup.md",
       "output": "src/content/docs/engineering-tools/remote-control-setup.md",
       "slug": "engineering-tools/remote-control-setup",
       "title": "遥控器与接收机配置（QGC 校准）",
       "label": "遥控器配置",
-      "order": 3,
+      "order": 4,
       "status": "published",
       "description": "QGC 遥控器校准"
     },
     {
-      "source": "tech_stack/04_engineering-tools/04_git-manual.md",
+      "source": "tech_stack/04_engineering-tools/05_git-manual.md",
       "output": "src/content/docs/engineering-tools/git-manual.md",
       "slug": "engineering-tools/git-manual",
       "title": "Git 常用指令手册",
       "label": "Git 手册",
-      "order": 4,
+      "order": 5,
       "status": "published",
       "description": "Git 常用指令"
     },
     {
-      "source": "tech_stack/04_engineering-tools/05_multi-server-gpu-training.md",
-      "output": "src/content/docs/engineering-tools/multi-server-gpu-training.md",
-      "slug": "engineering-tools/multi-server-gpu-training",
+      "source": "tech_stack/04_engineering-tools/ppo-in-multi-GPU/01_multi-gpu-training-deployment-guide.md",
+      "output": "src/content/docs/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide.md",
+      "slug": "engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide",
       "title": "YOPO RL Selector：多服务器部署与单机多 GPU 训练操作手册",
       "label": "多服务器 GPU 训练",
-      "order": 5,
+      "order": 1,
       "status": "published",
       "description": "多服务器部署与 torchrun 多卡训练"
     },
@@ -732,54 +732,34 @@
       "description": "学习与优化的互补结合"
     },
     {
-      "source": "tech_stack/04_engineering-tools/06_ros2.md",
+      "source": "tech_stack/04_engineering-tools/02_ros2.md",
       "output": "src/content/docs/engineering-tools/ros2.md",
       "slug": "engineering-tools/ros2",
       "title": "ROS2 与 DDS 通信",
       "label": "ROS2",
-      "order": 6,
+      "order": 2,
       "status": "draft",
       "description": "DDS 中间件与 ROS1 迁移"
     },
     {
-      "source": "tech_stack/04_engineering-tools/07_px4-ros2-offboard-control.md",
-      "output": "src/content/docs/engineering-tools/px4-ros2-offboard-control.md",
-      "slug": "engineering-tools/px4-ros2-offboard-control",
-      "title": "PX4 ROS2 Offboard 控制",
-      "label": "PX4 Offboard",
-      "order": 7,
-      "status": "draft",
-      "description": "uXRCE-DDS 桥接与 offboard 指令流"
-    },
-    {
-      "source": "tech_stack/04_engineering-tools/08_docker-environment.md",
+      "source": "tech_stack/04_engineering-tools/06_docker-environment.md",
       "output": "src/content/docs/engineering-tools/docker-environment.md",
       "slug": "engineering-tools/docker-environment",
       "title": "Docker 训练环境",
       "label": "Docker 环境",
-      "order": 8,
+      "order": 6,
       "status": "draft",
       "description": "容器化训练环境与 GPU 支持"
     },
     {
-      "source": "tech_stack/04_engineering-tools/09_profiling-debugging.md",
-      "output": "src/content/docs/engineering-tools/profiling-debugging.md",
-      "slug": "engineering-tools/profiling-debugging",
-      "title": "性能分析与调试",
-      "label": "性能与调试",
-      "order": 9,
+      "source": "tech_stack/04_engineering-tools/ppo-in-multi-GPU/02_distributed-rl-training-architecture.md",
+      "output": "src/content/docs/engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture.md",
+      "slug": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
+      "title": "分布式强化学习训练架构",
+      "label": "分布式训练架构",
+      "order": 2,
       "status": "draft",
-      "description": "系统观测与训练瓶颈定位"
-    },
-    {
-      "source": "tech_stack/04_engineering-tools/10_reproducible-experiments.md",
-      "output": "src/content/docs/engineering-tools/reproducible-experiments.md",
-      "slug": "engineering-tools/reproducible-experiments",
-      "title": "可复现实验管理",
-      "label": "可复现实验",
-      "order": 10,
-      "status": "draft",
-      "description": "seed、配置与实验追踪"
+      "description": "多机多卡分布式 RL 训练的架构与机制"
     },
     {
       "source": "tech_stack/05_simulation-evaluation/01_simulation-platforms/01_simulator-overview.md",

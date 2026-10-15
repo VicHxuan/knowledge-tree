@@ -22,7 +22,7 @@ sidebar:
 
 - [PPO 算法](/knowledge-tree/learning-based-planning/rl-algorithms/ppo/)：一次迭代的数据流；
 - [PPO 全流程走读与调参](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)：从训练脚本到 checkpoint；
-- [多服务器多 GPU 训练](/knowledge-tree/engineering-tools/multi-server-gpu-training/)：跨机环境的搭建与排障；
+- [多服务器多 GPU 训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide/)：跨机环境的搭建与排障；
 - [TensorBoard 指标模板](/knowledge-tree/learning-based-planning/engineering-practice/tensorboard-metrics/)：判断训练是否在正确轨道上的速查表。
 
 ## 工程要点
