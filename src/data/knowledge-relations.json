@@ -332,36 +332,6 @@
       "order": 4
     },
     {
-      "id": "engineering-tools/ros1",
-      "label": "ROS1",
-      "title": "ROS1 面试知识点整理",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "",
-      "status": "published",
-      "order": 1
-    },
-    {
-      "id": "engineering-tools/px4-sitl",
-      "label": "PX4 / MAVROS",
-      "title": "PX4 / MAVROS 面试知识点整理",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "",
-      "status": "published",
-      "order": 3
-    },
-    {
-      "id": "engineering-tools/remote-control-setup",
-      "label": "遥控器配置",
-      "title": "遥控器与接收机配置（QGC 校准）",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "",
-      "status": "published",
-      "order": 4
-    },
-    {
       "id": "engineering-tools/git-manual",
       "label": "Git 手册",
       "title": "Git 常用指令手册",
@@ -369,17 +339,77 @@
       "domainLabel": "工程工具链",
       "group": "",
       "status": "published",
-      "order": 5
+      "order": 1
+    },
+    {
+      "id": "engineering-tools/px4-ros/ros1",
+      "label": "ROS1",
+      "title": "ROS1 面试知识点整理",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "px4-ros",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "engineering-tools/px4-ros/px4-sitl",
+      "label": "PX4 / MAVROS",
+      "title": "PX4 / MAVROS 面试知识点整理",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "px4-ros",
+      "status": "published",
+      "order": 3
     },
     {
       "id": "engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide",
-      "label": "多服务器 GPU 训练",
-      "title": "YOPO RL Selector：多服务器部署与单机多 GPU 训练操作手册",
+      "label": "多 GPU 训练部署",
+      "title": "多 GPU 强化学习训练环境部署与运维指南",
       "domain": "engineering-tools",
       "domainLabel": "工程工具链",
       "group": "ppo-in-multi-gpu",
       "status": "published",
       "order": 1
+    },
+    {
+      "id": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
+      "label": "分布式训练架构",
+      "title": "分布式强化学习训练架构与并行机制",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "ppo-in-multi-gpu",
+      "status": "published",
+      "order": 2
+    },
+    {
+      "id": "real-flight/remote-control-setup",
+      "label": "遥控器配置",
+      "title": "遥控器与接收机配置（QGC 校准）",
+      "domain": "real-flight",
+      "domainLabel": "真机飞行",
+      "group": "",
+      "status": "published",
+      "order": 1
+    },
+    {
+      "id": "engineering-tools/docker-environment",
+      "label": "Docker 环境",
+      "title": "Docker 训练环境",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "",
+      "status": "draft",
+      "order": 2
+    },
+    {
+      "id": "engineering-tools/px4-ros/ros2",
+      "label": "ROS2",
+      "title": "ROS2 与 DDS 通信",
+      "domain": "engineering-tools",
+      "domainLabel": "工程工具链",
+      "group": "px4-ros",
+      "status": "draft",
+      "order": 2
     },
     {
       "id": "mathematics/linear-algebra-geometry/matrix-decomposition",
@@ -730,36 +760,6 @@
       "group": "learning-based-trajectory-planning",
       "status": "draft",
       "order": 5
-    },
-    {
-      "id": "engineering-tools/ros2",
-      "label": "ROS2",
-      "title": "ROS2 与 DDS 通信",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "",
-      "status": "draft",
-      "order": 2
-    },
-    {
-      "id": "engineering-tools/docker-environment",
-      "label": "Docker 环境",
-      "title": "Docker 训练环境",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "",
-      "status": "draft",
-      "order": 6
-    },
-    {
-      "id": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
-      "label": "分布式训练架构",
-      "title": "分布式强化学习训练架构",
-      "domain": "engineering-tools",
-      "domainLabel": "工程工具链",
-      "group": "ppo-in-multi-gpu",
-      "status": "draft",
-      "order": 2
     },
     {
       "id": "simulation-evaluation/simulation-platforms/simulator-overview",

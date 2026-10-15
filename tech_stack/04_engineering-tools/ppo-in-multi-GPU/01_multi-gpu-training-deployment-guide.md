@@ -1,24 +1,24 @@
-# YOPO RL Selector：多服务器部署与单机多 GPU 训练操作手册
+# 多 GPU 强化学习训练环境部署与运维指南
 
 ## 1. 概述（Overview）
 
-本文总结当前项目已经采用的流程：在**每台服务器上分别部署**同一套 Docker 镜像和代码，再在该服务器内用 `torchrun` 做单机多 GPU 同步训练。多台服务器可以同时运行不同实验；当前脚本**不把不同服务器组成同一个跨节点进程组**。
+> 本文是一份可执行的工程手册，覆盖服务器检查、存储、容器、单机多 GPU 启动、验收、监控与恢复。分布式训练的数学原理和调度设计见 [分布式强化学习训练架构与并行机制](./02_distributed-rl-training-architecture.md)。
 
-操作入口以 `docker/train.sh` 为准。以下命令中的 `USER`、`SERVER_IP`、`HOST_ID`、`DATA_ROOT`、`RUN_ID` 都是占位符，执行前替换；密码在 SSH 提示时交互输入，不写进命令、脚本、`.env` 或日志。全文中的服务器检查命令可先只读执行；Docker 根目录迁移必须有维护窗口和停止现有容器的授权。
+### 1. 适用范围与操作约定
 
-### 0. 总体流程和关键口径
+- 目标环境为 Linux、NVIDIA GPU、PyTorch、Docker，以及可接入 `torchrun` 的强化学习程序。
+- 基本部署模式为**单台服务器内多 GPU 同步训练**。多台服务器可以各自运行独立实验；跨服务器联合训练需要另行实现并验证。
+- 以下命令中的 `USER`、`SERVER_IP`、`HOST_ID`、`DATA_ROOT`、`PROJECT_ROOT`、`IMAGE_TAG`、`RUN_ID` 均为占位符。执行前替换并核对实际路径。
+- 首先执行只读检查。涉及系统服务、容器根目录或磁盘格式的变更，必须经管理员批准并安排维护窗口。
+- 不在命令、`.env`、日志或仓库中保存密码与访问令牌。
+
+推荐执行顺序：
 
 ```text
-逐台服务器只读审计
-  → 确认数据盘类型、现有容器与 GPU 占用
-  → 安全迁移 Docker/containerd root（确有必要且允许停机时）
-  → 主机专属 runtime-cache
-  → 同步项目、YOPO 权重和镜像
-  → 单卡 smoke → 多卡短测 → 目标规模压力测试
-  → 正式训练 → 日志/TensorBoard 监控 → checkpoint 验收
+只读审计 → 确认存储 → 部署运行环境 → 同步代码与通用模型资源
+         → 单卡测试 → 多卡短测 → 目标负载压力测试
+         → 正式运行 → 监控 → 验收与归档
 ```
-
-每台服务器独立执行这条链。指定物理 GPU 后，容器内设备重编号为 `cuda:0..N-1`，每卡一个进程、一个 Isaac 实例和一份本地环境；Selector PPO 梯度通过 NCCL 同步，只有 rank 0 写公共日志和 checkpoint。`--num-envs` 是**该次训练的全局环境数**，必须能被 GPU 数整除；树和几何体的数量则是**每个 rank 的场景数量**，不是多卡合计。`--steps` 是每个环境并行推进的训练循环步数，训练 transition 总数约为 `steps × num-envs`；`--episode-steps` 才是单个 env 的回合 timeout 上限。
 
 ## 2. 基础与定义（Foundations）
 
@@ -30,239 +30,281 @@
 
 ## 4. 实现与应用（Implementation & Applications）
 
-### 1. 每台服务器先做只读审计
+### 2. 服务器资源审计
 
-本地电脑登录：
+#### 2.1 连接与系统信息
 
 ```bash
 ssh USER@SERVER_IP
-```
-
-在远端确认主机、磁盘、挂载、GPU、容器和服务状态：
-
-```bash
 hostname -s
+uname -a
 lsblk -f
 df -hT
-findmnt /diff
-findmnt /mnt/fsvln-data
+findmnt -T /var/lib/docker
+free -h
+```
+
+#### 2.2 GPU 与容器运行时
+
+```bash
+nvidia-smi
 nvidia-smi --query-gpu=index,name,memory.total,memory.used,utilization.gpu --format=csv
-docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Image}}'
+docker version
 docker info --format '{{.DockerRootDir}}'
+docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Image}}'
 docker compose version
-grep '^[[:space:]]*root' /etc/containerd/config.toml
 systemctl is-active docker containerd
 ```
 
-`findmnt` 对不存在的挂载点或 `grep` 对使用默认 containerd root 的配置返回非零，并不必然是故障；继续查看 `findmnt -T /var/lib/containerd` 和配置文件。还需确认 `docker info` 显示 NVIDIA runtime 可用，并核对目标 GPU 没有其他业务占用。**不要因为要训练就停掉不属于本项目的容器。**记录现有 Docker/containerd 配置及 `docker ps -a` 结果，作为迁移前的回退依据。
+检查 NVIDIA 驱动、目标 GPU 空闲状况、Docker 权限及磁盘余量。`findmnt` 或某些查询命令对不存在的目标返回非零，不应直接判定整台服务器故障。
 
-存储分两类：
+如果需要安装或修复驱动及 NVIDIA Container Toolkit，按服务器发行版和驱动版本采用官方安装文档，避免在已有业务的服务器上盲目升级。
 
-| 场景 | 目录与文件系统要求 |
-| --- | --- |
-| 多台机器共享 `/diff` NATS/NFS | 每台机器使用自己的 `/diff/system-cache/HOST_ID/store`；Docker/containerd 必须位于这个主机专属的 ext4 loop 挂载里，不能直接共用 `/diff/docker_root` 或直接把 Docker 元数据放在共享文件系统上。 |
-| 服务器独占的 ext4 数据盘 | 例如 `/mnt/fsvln-data`。可在此盘建立 `system-cache/HOST_ID/store`，无需再套 loop；仍保留主机名隔离。 |
+#### 2.3 资源记录
 
-先用 `findmnt -T DATA_ROOT` 确认真实文件系统和挂载来源。`HOST_ID` 可取 `hostname -s`，但同名主机仍要人为保证目录唯一。
+| 项目 | 必须记录 |
+|---|---|
+| 主机 | 主机名、系统版本、登录用户 |
+| GPU | 型号、数量、物理编号、空闲显存 |
+| 存储 | 挂载点、文件系统、可用空间 |
+| 容器 | Docker 根目录、containerd 根目录、运行中容器 |
+| 软件 | 驱动、镜像标签、PyTorch 与 CUDA 运行版本 |
 
-### 2. Docker/containerd 根目录迁移
+### 3. 存储与容器运行环境
 
-目标结构如下；`DATA_ROOT` 在共享盘机器可取 `/diff`，在独占盘机器可取实际挂载点：
+#### 3.1 目录规划
+
+每台服务器使用**主机专属**的系统缓存和训练输出目录。推荐结构如下：
 
 ```text
-DATA_ROOT/system-cache/HOST_ID/store/
-├── docker/
-├── containerd/
-└── runtime-cache/
-    ├── home/
-    ├── pip/
-    ├── ov/
-    ├── kit/{cache,data,logs}/
-    ├── gl/
-    ├── compute/
-    └── ranks/
+DATA_ROOT/
+├── system-cache/HOST_ID/
+│   └── store/
+│       ├── docker/
+│       ├── containerd/
+│       └── runtime-cache/
+└── training/HOST_ID/
+    ├── project/
+    ├── artifacts/
+    ├── outputs/
+    └── image-archives/
 ```
 
-共享 `/diff` 时，先由主机管理员为**这台机器**准备独立 ext4 loop 文件并挂载到 `.../store`，确认 `findmnt -T .../store` 的 `FSTYPE=ext4`、来源为本机 loop 设备，且重启后能恢复挂载。这里不能复用另一台机器的 loop 文件或 Docker root。不要对已有文件/块设备执行 `mkfs`；如果无法确认目标为新建且空白的专属存储，停在此处。
+共享 NFS 等存储可以存放项目、模型文件及训练产物，但**不应让多台主机共享同一份 Docker/containerd 运行元数据**。Docker 根目录优先使用本地 ext4 或其他已验证兼容的本地文件系统。若必须借助共享盘承载本机专属 ext4 loop 文件，应由管理员创建、挂载并验证重启后的自动挂载，不得复用其他主机的 loop 文件。
 
-迁移前置条件：已有容器清单已核对、相关使用者同意停机、数据盘空间足够、旧目录留作回退。若服务器仍有不可中断的业务容器，**跳过迁移并暂停正式部署**，不要边运行边复制 Docker 元数据。获得维护窗口后，以当前实际 root 为源、主机专属 ext4 路径为目标执行以下步骤；下面的 `/var/lib/...` 仅适用于只读检查确认它们确实是当前 root 的机器：
+#### 3.2 Docker 根目录迁移
+
+只有确认当前系统盘容量不足，并且获得维护授权时才执行迁移。迁移前必须：
+
+1. 确认 Docker 和 containerd 的**实际**根目录与挂载类型。
+2. 保存现有容器、镜像和服务配置清单。
+3. 备份 `/etc/docker/daemon.json` 和 `/etc/containerd/config.toml`。
+4. 确认目标目录位于主机专属、空间足够的文件系统。
+5. 通知相关使用者，并停止依赖 Docker/containerd 的业务。
+
+迁移时停止相关服务，用 `rsync -aHAX --numeric-ids` 将**已核实的实际源目录**复制到新目录，再谨慎修改配置：
+
+- Docker 在 `daemon.json` 中使用 `data-root`。
+- containerd 在与当前版本兼容的配置中设置顶层 `root`。
+- 合并原配置，不要用空白模板覆盖原有运行时、Registry 或网络设置。
+
+重启后验证：
 
 ```bash
-sudo systemctl stop docker.socket docker containerd
-sudo mkdir -p DATA_ROOT/system-cache/HOST_ID/store/docker
-sudo mkdir -p DATA_ROOT/system-cache/HOST_ID/store/containerd
-sudo rsync -aHAX --numeric-ids /var/lib/docker/ DATA_ROOT/system-cache/HOST_ID/store/docker/
-sudo rsync -aHAX --numeric-ids /var/lib/containerd/ DATA_ROOT/system-cache/HOST_ID/store/containerd/
-```
-
-保留 `/etc/docker/daemon.json` 和 `/etc/containerd/config.toml` 的备份。合并而非覆盖已有配置：在 `daemon.json` 设置 `"data-root": "DATA_ROOT/system-cache/HOST_ID/store/docker"`；在 `config.toml` 顶层设置 `root = "DATA_ROOT/system-cache/HOST_ID/store/containerd"`。若 containerd 配置文件原本不存在，先生成兼容本机版本的默认配置，再修改顶层 `root`；不要照搬别的机器的配置。然后：
-
-```bash
-sudo systemctl start containerd docker
 docker info --format '{{.DockerRootDir}}'
-grep '^[[:space:]]*root' /etc/containerd/config.toml
+docker ps -a
 findmnt -T DATA_ROOT/system-cache/HOST_ID/store/docker
 findmnt -T DATA_ROOT/system-cache/HOST_ID/store/containerd
-docker ps -a
 ```
 
-前三项应分别指向本机专属 `docker`、`containerd`、正确的 ext4 挂载；迁移前的容器/镜像也应仍可见。若失败，停止服务并用**备份的配置**恢复原 root，再启动服务排查。旧 `/var/lib/docker`、`/var/lib/containerd` 暂时保留，验收、备份和回退窗口结束后再另行决定是否清理。本步骤不安装代理、VPN 或翻墙软件。
+出现问题时先恢复原配置和旧根目录，不要急于删除源文件。**不得在未识别的块设备上执行格式化命令。**
 
-### 3. 项目、权重、镜像与缓存部署
+#### 3.3 运行缓存与权限
 
-推荐每台机器使用自己的项目和输出目录：
+图形仿真、渲染和数据处理框架可能会生成大量缓存。将其映射到每台服务器的专属目录，避免多个 Rank 争用同一缓存。检查容器内用户对输出目录具有写权限，不要为了解决权限问题直接放宽整个共享盘的访问权限。
 
-```text
-DATA_ROOT/yopo-runs/HOST_ID/
-├── project/YOPO_RL_SELECTOR/
-├── artifacts/models/
-├── outputs/
-└── image-archives/
-```
+### 4. 项目与容器镜像部署
 
-从本地同步项目代码时排除训练输出、Git 元数据和运行缓存；不要使用可能删除远端既有数据的 `rsync --delete`。示例：
+#### 4.1 源码和通用资源同步
 
-```bash
-# 先在远端建立本机专属目录；不要把 HOST_ID 留成字面值
-mkdir -p DATA_ROOT/yopo-runs/HOST_ID/project/YOPO_RL_SELECTOR
-mkdir -p DATA_ROOT/yopo-runs/HOST_ID/artifacts/models
-mkdir -p DATA_ROOT/yopo-runs/HOST_ID/outputs
-mkdir -p DATA_ROOT/yopo-runs/HOST_ID/image-archives
-```
-
-回到本地电脑执行：
+保留项目所需源码、配置文件、模型初始化权重和数据资源，避免将历史日志与大体积缓存打进镜像。
 
 ```bash
 rsync -aP \
-  --exclude '/outputs/' --exclude '/.git/' \
-  --exclude '__pycache__/' --exclude '*.pyc' \
-  --exclude '/docker/runtime-cache/' \
-  /path/to/workspace/YOPO_RL_SELECTOR/ \
-  USER@SERVER_IP:DATA_ROOT/yopo-runs/HOST_ID/project/YOPO_RL_SELECTOR/
+  --exclude '.git/' \
+  --exclude 'outputs/' \
+  --exclude '__pycache__/' \
+  /path/to/local-project/ \
+  USER@SERVER_IP:DATA_ROOT/training/HOST_ID/project/
 ```
 
-将 YOPO checkpoint 及其需要的契约/配置文件同步到 `.../artifacts/models/`。当前 YOPO-swarm 无 mask 主线的一个权重例子是 `swarm/YOPO_Omni_no_mask/epoch100.pth`；实际训练务必以已验证的文件为准。不要把大量数据集、旧 outputs 或模型历史版本一并放进镜像。
+执行前先确认目标目录。默认不要使用可能删除远端文件的 `rsync --delete`。初始化权重、数据集和检查点应单独同步至 `artifacts/`，并记录校验值与版本来源。
 
-镜像复用使用私有 registry 或 `docker save` → 传输 → `docker load`；**绝不通过共享 Docker root 复用镜像**。如果本地镜像已通过 smoke，可在本地导出：
+#### 4.2 构建与迁移镜像
+
+优先固定 PyTorch、CUDA、仿真框架和算法库版本。修改 Python 源码且使用 Bind Mount 时，通常无需重建镜像；改变系统依赖、Dockerfile 或底层仿真组件后，应生成新镜像标签并重新验证。
 
 ```bash
-docker save -o yopo-rl-selector-isaac5.1-lab2.3-skrl2.1.tar yopo-rl-selector:isaac5.1-lab2.3-skrl2.1
-rsync -aP yopo-rl-selector-isaac5.1-lab2.3-skrl2.1.tar \
-  USER@SERVER_IP:DATA_ROOT/yopo-runs/HOST_ID/image-archives/
+docker build -t IMAGE_TAG .
+docker save -o training-image.tar IMAGE_TAG
+# 在另一台服务器上
+# docker load -i training-image.tar
 ```
 
-远端在数据盘上的归档执行 `docker load -i ...tar`；若要在远端重新构建，使用项目里的 `./docker/train.sh build`。两个方案都应预留 Isaac 镜像解包和 Docker 层的充足空间。镜像环境包含 Isaac Sim 5.1、Isaac Lab 2.3.0 和 skrl 2.1.0。Python 源码由 bind mount 提供；仅修改项目 Python 代码通常无需重建镜像，修改依赖锁文件、Dockerfile 或 Isaac 环境才需要重建并重跑 smoke。
+跨主机传输使用 Registry 或 `docker save`、`docker load`，不要复制共享的 Docker 数据目录。
 
-在远端项目的 `docker/.env` 配置：
+#### 4.3 GPU 容器可用性
 
-```dotenv
-YOPO_HOST_ID=HOST_ID
-YOPO_PROJECT_ROOT=DATA_ROOT/yopo-runs/HOST_ID/project/YOPO_RL_SELECTOR
-YOPO_ARTIFACT_ROOT=DATA_ROOT/yopo-runs/HOST_ID/artifacts/models
-YOPO_OUTPUT_ROOT=DATA_ROOT/yopo-runs/HOST_ID/outputs
-YOPO_CACHE_ROOT=DATA_ROOT/system-cache/HOST_ID/store/runtime-cache
-YOPO_UID=1000
-YOPO_GID=1000
-YOPO_IMAGE=yopo-rl-selector:isaac5.1-lab2.3-skrl2.1
-```
-
-`YOPO_UID/GID` 应改为远端实际运行账号的 `id -u` / `id -g`，并确保输出和 cache 可写。对共享 `/diff`，`YOPO_CACHE_ROOT` 必须精确位于上述主机专属 `store/runtime-cache`，因为脚本会按此路径校验。由脚本建立 pip、OV、Kit、GL、compute 和各 run/rank 缓存目录；不要跨服务器共享 cache。`docker/.env` 不放密码或 W&B API key。可用 `./docker/train.sh init` 创建模板后逐项检查；该命令若发现 `.env` 已存在不会覆盖。
-
-### 4. 部署验收：从静态检查到目标负载
-
-在远端项目根目录运行：
+选择已准备好的 CUDA 测试镜像并确认容器能访问 GPU：
 
 ```bash
-cd DATA_ROOT/yopo-runs/HOST_ID/project/YOPO_RL_SELECTOR
-./docker/train.sh paths
-./docker/train.sh validate-storage
-./docker/train.sh gpu-map 0,1,2,3
-./docker/train.sh preflight --offline
-./docker/train.sh config
+docker run --rm --gpus all CUDA_TEST_IMAGE nvidia-smi
 ```
 
-`validate-storage` 是脚本检查，独占数据盘场景还需手工对照第 2 节的两个 root 和挂载结果。`preflight --offline` 不拉取 CUDA smoke 镜像；如果镜像/网络已具备，可以再用 `./docker/train.sh preflight` 检查 NVIDIA 容器运行时。对目标 GPU 做完整 Isaac 导入测试，例如只使用物理 GPU 0：
+随后检查训练镜像中 Python、PyTorch、CUDA、仿真组件和分布式后端是否均可正常导入。CUDA 编译版本、驱动支持范围与框架版本须相互兼容。
+
+### 5. 单机多 GPU 启动
+
+#### 5.1 进程与设备约定
+
+常用模式为每张可见 GPU 一个训练进程。`torchrun` 自动设置 `LOCAL_RANK`、`RANK`、`WORLD_SIZE` 等环境变量，程序应根据 `LOCAL_RANK` 绑定设备。
 
 ```bash
-YOPO_GPU_DEVICE_IDS=0 YOPO_CONTAINER_CUDA_VISIBLE_DEVICES=0 ./docker/train.sh smoke
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+torchrun --standalone --nnodes=1 --nproc-per-node=4 train.py
 ```
 
-接下来三阶段验收，逐级推进，不以“容器启动成功”代替训练成功：
+`train.py` 必须已实现分布式初始化、按 Rank 创建环境和统一结束流程。**仅添加 `torchrun` 不会自动让单卡 PPO 变成正确的多卡 PPO。**
 
-1. **多卡链路短测**：例如 4 GPU、全局 8 env、`--steps 128 --rollouts 8 --epochs 1 --mini-batches 2`，低障碍物数量和唯一的临时 `RUN_ID`。确认每 rank 的 GPU、至少两次 PPO update、NCCL 梯度同步、只有 rank 0 写 output，且 TensorBoard/W&B 离线文件产生。短测结束后用 `status`、日志及产物验收。
-2. **目标场景压力测试**：先保持实际 GPU 数和目标障碍物数量，使用目标 `--num-envs`，但只运行数百到数千 step。核对首个完整 PPO update、持续推进、CPU/RAM/显存余量、是否有单 rank 拖慢、reward 是否有限值、是否出现 OOM。某些场景在首次 PPO 更新前就很慢，不能只看 Isaac 启动日志。
-3. **正式训练**：压力测试通过后换**新的 RUN_ID**，再设置计划中的总步数和 checkpoint 周期。`train.sh` 拒绝覆盖已有输出，避免误删训练记录。
+#### 5.2 容器内启动示例
 
-容量计算用于选择 `mini-batches`：若全局 512 env、4 GPU、`rollouts=64`，则每 rank 有 128 env 和 `128×64=8192` transitions；`mini-batches=64` 时本地每批 128，全局等效约 512。环境数、rollout、PPO epoch 与场景物体数量都会影响吞吐和内存，先实测后放大；OOM 时优先检查每 rank 的环境和场景数量，再调整 rollout/minibatch。`--steps` 必须写整数（例如 `2000000`），不要传 `1e10` 字符串。
-
-### 5. 正式分布式训练示例
-
-以下是 YOPO-swarm 无 mask 权重、4 张指定 GPU、box-tree 的**模板**，不是所有服务器的固定最优参数。先确认权重位于 `YOPO_ARTIFACT_ROOT` 下、四张 GPU 空闲、输出盘容量充足；物理 GPU 编号和 `RUN_ID` 按服务器修改。
+下面假设当前项目目录可被容器映射，训练镜像及程序入口已经验证：
 
 ```bash
-cd DATA_ROOT/yopo-runs/HOST_ID/project/YOPO_RL_SELECTOR
-
-./docker/train.sh run-distributed --gpus 0,1,2,3 RUN_ID \
-  --map box-tree --curriculum true --uav-obs-other false \
-  --depth-backend analytic --depth-preprocess none \
-  --selector-weight-mode yopo-init --selector-downsample area \
-  --yopo-checkpoint DATA_ROOT/yopo-runs/HOST_ID/artifacts/models/swarm/YOPO_Omni_no_mask/epoch100.pth \
-  --num-envs 512 \
-  --static-count 512 --dynamic-count 256 \
-  --dynamic-cube-count 256 --dynamic-sphere-count 256 \
-  --steps 2000000 --episode-steps 3200 \
-  --rollouts 64 --epochs 5 --mini-batches 64 \
-  --learning-rate 0.0001 --discount-factor 0.999 \
-  --curriculum-success-thresholds 0.8 0.8 0.8 \
-  --logger wandb --wandb-mode offline --wandb-artifacts none \
-  --tensorboard true --tensorboard-flush-rollouts 1 \
-  --log-every-rollouts 1 --save-check 50000 \
-  --runtime-speed 3 --seed 42
+docker run --rm \
+  --name training-RUN_ID \
+  --gpus '"device=0,1,2,3"' \
+  --shm-size=8g \
+  -v "$PWD":/workspace \
+  -v "DATA_ROOT/training/HOST_ID/outputs":/outputs \
+  -w /workspace \
+  IMAGE_TAG \
+  torchrun --standalone --nnodes=1 --nproc-per-node=4 train.py
 ```
 
-`run-distributed` 自动添加 `--headless --mode train --output outputs/RUN_ID`，所以不要再手传这些参数中的 `--output`。宿主机上位于 `YOPO_ARTIFACT_ROOT` 内的 checkpoint 路径会自动转换成容器路径。若只用一张卡，改为 `./docker/train.sh run --gpu GPU_ID RUN_ID ...`，其余参数仍按单卡资源调整。多台服务器同时训练时，每台服务器各自运行 `run` 或 `run-distributed`，使用独立 `RUN_ID`、输出目录和缓存；当前不提供跨服务器联合梯度同步。
+容器内 GPU 编号可能被重新映射，须在容器内部检查 `nvidia-smi` 与每个进程的实际设备。不同仿真器可能还需要额外的缓存挂载、共享内存或图形运行时参数，按项目的已验证运行约定补充。
 
-### 6. 查看进度、资源和训练曲线
+#### 5.3 训练配置口径
 
-远端在项目根目录：
+配置文件必须明确：
+
+| 字段 | 必须约定的语义 |
+|---|---|
+| GPU 数量 | 进程数量和可见设备范围 |
+| 环境数 | 全局总数还是每 Rank 数量 |
+| 场景数 | 全局总数还是每 Rank 数量 |
+| Rollout 长度 | 每环境采样步数，还是每 Rank 总步数 |
+| Episode 长度 | 单回合最长步数 |
+| Mini-batch | 本地大小、数量与更新次数 |
+| 随机种子 | 主种子及各 Rank 的派生方式 |
+
+不能依据参数名称猜测上述含义，应检查训练脚本实际实现并在配置中记录。
+
+#### 5.4 多服务器模式
+
+多台服务器独立运行实验时，各自设置唯一 `RUN_ID`、输出目录与缓存，不加入同一个分布式进程组。若需要跨节点联合训练，则必须额外配置主节点地址、通信端口、节点序号、网络互通及跨节点故障恢复，并单独完成正确性验收。
+
+### 6. 分阶段验收
+
+| 阶段 | 操作 | 通过标准 |
+|---|---|---|
+| 静态检查 | 目录、权限、镜像、驱动、GPU 映射 | 所有依赖与目标设备可访问 |
+| 单卡测试 | 运行简化任务和短 Rollout | 环境推进、推理及更新成功 |
+| 多卡短测 | 小环境数，至少两轮完整 PPO 更新 | 全部 Rank 完成且参数一致 |
+| 压力测试 | 目标环境数和障碍规模 | 无 OOM、死锁、持续掉速 |
+| 正式训练 | 新 `RUN_ID`、固定代码版本 | 指标、日志和检查点正常生成 |
+
+多卡验收必须进入至少一次真实 `backward` 与参数更新，不能仅以容器启动、GPU 可见或 NCCL 初始化成功为通过标准。
+
+### 7. 正式运行与实验记录
+
+每次训练创建唯一实验目录：
+
+```text
+outputs/RUN_ID/
+├── config/
+├── logs/
+├── rank_logs/
+├── tensorboard/
+├── checkpoints/
+└── diagnostics/
+```
+
+建议固定并保存源代码提交号、镜像标签、随机种子、硬件信息、完整训练配置、初始化权重及数据版本。公共日志和检查点优先由 Rank 0 写入，避免多进程覆盖同一文件；各 Rank 的错误日志应单独保留。
+
+### 8. 监控与日志
+
+#### 8.1 服务器侧检查
 
 ```bash
-./docker/train.sh status RUN_ID
-./docker/train.sh logs RUN_ID
-./docker/train.sh monitor RUN_ID
+nvidia-smi
+nvidia-smi pmon -c 1
+docker ps
+docker stats --no-stream
+docker logs --tail 200 CONTAINER_NAME
 ```
 
-`logs` 会把 tqdm 的回车刷新转换成逐行输出，便于通过 SSH 看 step/s。原生命令是 `docker logs --tail 200 -f yopo-RUN_ID`。还可用 `nvidia-smi` 查看 GPU，`docker stats --no-stream yopo-RUN_ID` 查看容器资源。周期 checkpoint 在 `outputs/RUN_ID/checkpoints/selector_<step>steps.pt`，rank 异常报告在 `outputs/RUN_ID/rank_logs/`。若日志停止推进，检查容器状态、所有 rank 日志、首个异常、OOM 和 GPU/CPU 负载；NCCL timeout 可能只是某个 rank 先失败后的连锁现象。
+检查训练步数是否持续推进、各 Rank 是否正常、GPU 显存是否稳定，以及是否存在某一 Rank 明显落后。
 
-训练时启用 W&B **offline** 和 TensorBoard 双记录。W&B offline 不上传云端、无需远端登录，但自身不能直接提供实时网页。实时查看使用 TensorBoard：
+#### 8.2 TensorBoard 与远程访问
+
+在服务器上将 TensorBoard 限制为回环地址：
 
 ```bash
-# 远端：仅监听远端回环地址，不向公网开放 6006
-./docker/train.sh tensorboard RUN_ID 6006
+tensorboard --logdir /path/to/outputs/RUN_ID/tensorboard \
+  --host 127.0.0.1 --port 6006
 ```
 
-在本地**另开终端**：
+本地电脑通过 SSH 端口转发访问：
 
 ```bash
 ssh -N -L 6006:127.0.0.1:6006 USER@SERVER_IP
 ```
 
-本地浏览器访问 `http://127.0.0.1:6006`。多台服务器或多个 run 同时监控时，各 sidecar 与本地 SSH 隧道使用不同端口。若 SSH 出现 `connect failed: Connection refused`，先在远端检查 `yopo-tensorboard-RUN_ID` 是否运行、日志目录是否存在、端口是否已被占用；只建立隧道不会自动启动 TensorBoard。结束查看可运行 `./docker/train.sh tensorboard-stop RUN_ID`。离线 W&B 原始数据保存在 `outputs/RUN_ID/wandb/`，需要时再通过 `rsync` 拉回本地分析，不要把 `wandb sync` 当作严格离线实时查看方式。
+浏览器打开 `http://127.0.0.1:6006`。多实验同时运行时使用不同端口。其他日志平台如 W&B 可设为离线模式，但离线记录不等于实时云端访问。
 
-### 7. 更新、停止、恢复和交付检查
+### 9. 停止、恢复与故障排查
 
-- **只改超参数**：用新 `RUN_ID` 启动；不重建镜像。
-- **修改项目 Python 代码**：同步新的项目快照，正常停止旧训练后重启新 run；源码是只读 bind mount，通常不重建镜像。运行中的进程不会自动采用新代码。
-- **修改依赖、Dockerfile、Isaac 或 CUDA 环境**：构建/传输新镜像，重新 `preflight`、`smoke` 和短测，记录镜像标签和代码版本。
-- **停止项目训练**：`./docker/train.sh stop RUN_ID` 会向容器发 SIGINT 并等待；先看状态与最后 checkpoint，再决定是否进一步处理。不要用停止 Docker 服务代替停止训练。
-- **恢复训练**：先核对当前脚本是否提供与该 checkpoint 对应的恢复入口和训练状态契约，再用新 `RUN_ID` 验证恢复；不要只凭 `.pt` 文件存在就假设优化器、课程等级及 rollout 已完整恢复。
+#### 9.1 安全停止与恢复
 
-每台服务器的最终验收记录至少包括：主机名及存储挂载、Docker/containerd root、镜像标签与源码版本、权重路径、物理 GPU 列表、`RUN_ID`、每 rank env 数、首个 PPO update、持续增长的 step、TensorBoard event 文件、W&B offline 目录、checkpoint、GPU/CPU/RAM/显存余量及已知异常。旧实验输出和镜像归档只有在明确目标、完成备份且确认不再使用之后才单独清理。
+优先使用程序提供的安全退出入口，等待完成正在执行的必要写入。恢复训练前检查是否保存：模型参数、优化器状态、学习率调度器、随机数状态、全局步数，以及任务所需的环境和课程状态。
+
+仅有模型权重不代表能够精确恢复此前训练。恢复后先做小规模验证，再继续目标负载。
+
+#### 9.2 常见故障
+
+| 现象 | 优先检查 |
+|---|---|
+| CUDA OOM | 每 Rank 环境数量、观测缓存、Rollout Buffer、Mini-batch |
+| NCCL Timeout | 最早失败的 Rank、通信调用顺序、设备映射、网络状态 |
+| GPU 利用率低 | 环境推进耗时、CPU 饱和、同步等待、数据传输 |
+| 参数不一致 | 初始广播、优化器恢复、更新步数、同步遗漏 |
+| 日志停滞 | 进程状态、Rank 错误日志、文件系统及剩余空间 |
+| 恢复后异常 | 版本漂移、部分状态缺失、随机种子和配置不匹配 |
+
+NCCL 超时可能只是某个 Rank 更早发生异常的连锁结果，应从第一处报错开始排查，不要仅靠延长超时时间掩盖问题。
 
 ## 5. 分析与总结（Analysis & Summary）
 
-> 待补充。
+### 10. 交付验收与参考
+
+每次交付应至少附带服务器审计记录、镜像和源码版本、实验配置、首次完整更新的证据、监控截图或日志、性能统计以及可读取的检查点。
 
 ## 6. 关联与参考（Related Topics & References）
 
-> 待补充。
+相关资料：
+
+- [分布式强化学习训练架构与并行机制](./02_distributed-rl-training-architecture.md)
+- [PyTorch 分布式训练](https://pytorch.org/docs/stable/distributed.html)
+- [PyTorch torchrun](https://pytorch.org/docs/stable/elastic/run.html)
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/)

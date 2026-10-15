@@ -81,6 +81,7 @@ export default defineConfig({
 				docGroup('学习式规划', 'learning-based-planning'),
 				docGroup('工程工具链', 'engineering-tools'),
 				docGroup('仿真与评估', 'simulation-evaluation'),
+				docGroup('真机飞行', 'real-flight'),
 				docGroup('研究项目', 'projects'),
 			],
 		}),

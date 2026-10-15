@@ -29,7 +29,7 @@ const STATS_PATH = join(ROOT, 'src/data/content-stats.json');
 const REPO = 'https://github.com/VicHxuan/knowledge-tree';
 const SITE_BASE = '/knowledge-tree';
 const TS_DOMAINS = ['01_math-physic-base', '02_classical-planning-control', '03_learning-based-planning', '04_engineering-tools', '05_simulation-evaluation'];
-const SITE_DOMAIN_DIRS = ['mathematics', 'classical-planning-control', 'learning-based-planning', 'engineering-tools', 'simulation-evaluation'];
+const SITE_DOMAIN_DIRS = ['mathematics', 'classical-planning-control', 'learning-based-planning', 'engineering-tools', 'simulation-evaluation', 'real-flight'];
 const LEGACY_SITE_DIRS = ['rl-end-to-end', 'machine-learning', 'robotics', 'programming'];
 
 // curated external link overrides: tech_stack-relative resolved path -> URL

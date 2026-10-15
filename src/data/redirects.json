@@ -23,6 +23,9 @@
   "/machine-learning": "/learning-based-planning",
   "/robotics": "/classical-planning-control",
   "/programming": "/engineering-tools",
-  "/engineering-tools/px4-mavros": "/engineering-tools/px4-sitl",
-  "/engineering-tools/multi-server-gpu-training": "/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide"
+  "/engineering-tools/px4-mavros": "/engineering-tools/px4-ros/px4-sitl",
+  "/engineering-tools/multi-server-gpu-training": "/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide",
+  "/engineering-tools/px4-sitl": "/engineering-tools/px4-ros/px4-sitl",
+  "/engineering-tools/ros1": "/engineering-tools/px4-ros/ros1",
+  "/engineering-tools/remote-control-setup": "/real-flight/remote-control-setup"
 }

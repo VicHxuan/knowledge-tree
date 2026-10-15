@@ -1,29 +1,27 @@
 ---
 title: "工程工具链"
-description: "PX4 / MAVROS、ROS、Docker、Git 与多服务器 GPU 训练"
+description: "Git、Docker、PX4 与 ROS、多 GPU 训练"
 sidebar:
   order: 1
 ---
 
-从飞控到训练集群的工程工具箱。按"上机 → 开发 → 训练"的使用顺序分组：
+从飞控到训练集群的工程工具箱：版本控制、容器环境、PX4 与 ROS 中间件，以及多 GPU 训练基础设施。
 
-## 飞控与机体
+## 版本控制与容器
 
-- [PX4 / MAVROS](/knowledge-tree/engineering-tools/px4-sitl/)：PX4 与 MAVROS 面试要点
-- [遥控器配置](/knowledge-tree/engineering-tools/remote-control-setup/)：QGC 遥控器校准
-- [PX4 控制器代码](/knowledge-tree/classical-planning-control/tracking-control/px4-controller-attitude-rate/)（在传统规划控制板块）：姿态/角速度级联实现
+- [Git 手册](/knowledge-tree/engineering-tools/git-manual/)：Git 常用指令速查
+- Docker 环境 🚧：容器化训练环境与 GPU 支持（撰写中）
 
-## 机器人中间件
+## PX4 与 ROS
 
-- [ROS1](/knowledge-tree/engineering-tools/ros1/)：ROS1 面试要点
+- [ROS1](/knowledge-tree/engineering-tools/px4-ros/ros1/)：ROS1 面试要点
 - ROS2 🚧：DDS 中间件与 ROS1 迁移（撰写中）
+- [PX4 / MAVROS](/knowledge-tree/engineering-tools/px4-ros/px4-sitl/)：PX4 与 MAVROS 面试要点
+- [PX4 控制器代码](/knowledge-tree/classical-planning-control/tracking-control/px4-controller-attitude-rate/)（在传统规划控制板块）：姿态/角速度级联实现
 
 ## 训练与实验
 
-- [多服务器 GPU 训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide/)：多服务器部署与 torchrun 多卡训练（在 [PPO 多卡训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/) 子板块）
-- 分布式 RL 训练架构 🚧：多机多卡训练架构与机制（撰写中）
-- Docker 环境 🚧：容器化训练环境与 GPU 支持（撰写中）
+- [多 GPU 训练部署](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide/)：服务器审计、存储、容器与多卡启动（在 [PPO 多卡训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/) 子板块）
+- [分布式 RL 训练架构](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture/)：同步数据并行 PPO、梯度同步与 Rollout 调度
 
-## 版本控制
-
-- [Git 手册](/knowledge-tree/engineering-tools/git-manual/)：Git 常用指令速查
+遥控器配置等实飞内容已移至[真机飞行](/knowledge-tree/real-flight/)板块。
