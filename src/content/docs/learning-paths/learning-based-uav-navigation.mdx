@@ -1,29 +1,47 @@
 ---
 title: "学习式无人机导航学习路径"
-description: "从视觉/RL 基础到学习式规划落地的推荐学习顺序，附本地进度追踪"
+description: "从视觉与 RL 基础到学习式规划落地：明确学习目标、推荐步骤与完成标准"
 sidebar:
   order: 3
 ---
 
 import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 
-面向「端到端学习式无人机轨迹规划」的跨板块路径：前半段打基础（视觉骨干 + RL 算法），后半段进入学习式规划与仿真评估。点击每一步左侧的圆点可以标记学习进度（未开始 → 进行中 → 已完成，进度保存在本浏览器）：
+## 学习目标
+
+理解学习式无人机轨迹规划的完整接口：图像如何编码、策略输出如何成为动作或轨迹，以及怎样通过仿真和评估判断导航能力。
+
+## 开始之前
+
+需要基本神经网络和 Python 阅读能力，并对无人机的状态、动作、目标与障碍物有直观认识。前半段补齐视觉骨干与 RL 基础，后半段进入规划及评估；撰写中的步骤先用备注明确要解决的问题。
+
+## 学习步骤
+
+这条跨板块路径沿用「视觉骨干 → RL 算法 → 学习式规划 → 仿真与迁移」的顺序。点击左侧按钮记录进度。
 
 <LearningPathStepper
 	pathId="learning-based-uav-navigation"
+	legacyStepIds={['cnn', 'rl-foundations', 'ppo', 'engineering-pitfalls', 'planning-overview', 'yopo', 'section-simulation-evaluation', 'sim-to-real']}
 	steps={[
-		{ title: 'CNN', href: '/knowledge-tree/learning-based-planning/neural-network-architectures/cnn/', note: '深度网络如何从图像提取特征——观测编码器的骨干' },
-		{ title: '强化学习核心公式手册', href: '/knowledge-tree/learning-based-planning/rl-algorithms/rl-foundations/', note: 'MDP、贝尔曼方程到策略梯度' },
-		{ title: 'PPO 算法', href: '/knowledge-tree/learning-based-planning/rl-algorithms/ppo/', note: '学习式规划最常用的训练算法' },
-		{ title: '强化学习工程避坑指南', href: '/knowledge-tree/learning-based-planning/engineering-practice/rl-engineering-pitfalls/', note: '观测 / 奖励 / 训练稳定性的实践要点' },
-		{ title: '学习式轨迹规划总览', note: '观测、动作、奖励设计与网络输出如何映射到轨迹（撰写中）' },
-		{ title: 'YOPO 论文走读', note: '感知到规划的端到端架构拆解（撰写中）' },
-		{ title: '仿真与评估板块', href: '/knowledge-tree/simulation-evaluation/', note: '仿真平台选型、场景设计与评估方法（撰写中）' },
-		{ title: 'Sim-to-Real Gap', note: '迁移到实机的差距来源与缓解手段（撰写中）' },
+		{ id: 'cnn', slug: 'learning-based-planning/neural-network-architectures/cnn', note: '深度网络如何从图像提取特征——观测编码器的骨干' },
+		{ id: 'rl-foundations', slug: 'learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations', note: 'MDP、贝尔曼方程到策略梯度' },
+		{ id: 'ppo', slug: 'learning-based-planning/rl-algorithms/model-free-rl/ppo', note: '理解 Actor/Critic、优势估计与稳定策略更新' },
+		{ id: 'engineering-pitfalls', slug: 'learning-based-planning/engineering-practice/rl-engineering-pitfalls', note: '观测、奖励与训练稳定性的实践要点' },
+		{ id: 'planning-overview', slug: 'learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview', note: '观测、动作、奖励设计与网络输出如何映射到轨迹' },
+		{ id: 'yopo', slug: 'learning-based-planning/learning-based-trajectory-planning/yopo', note: '感知到规划的端到端架构拆解' },
+		{ id: 'section-simulation-evaluation', title: '仿真与评估板块', href: '/knowledge-tree/simulation-evaluation/', note: '仿真平台选型、场景设计与评估方法；部分章节正在撰写' },
+		{ id: 'sim-to-real', slug: 'simulation-evaluation/sim-to-real/sim-to-real-gap', note: '迁移到实机的差距来源与缓解手段' },
 	]}
 />
 
-## 与其他路径的关系
+## 完成标准
 
-- 前半段（CNN → RL 基础 → PPO）与[强化学习学习路径](/knowledge-tree/learning-paths/reinforcement-learning/)高度重合，可以并行推进；
-- 后半段涉及的多机交互、场景泛化评估属于[仿真与评估](/knowledge-tree/simulation-evaluation/)板块，该板块正在撰写中。
+- 能画出观测编码、策略/轨迹输出、环境执行和奖励反馈的数据流，并写清各接口的物理含义。
+- 能说明训练目标与评估指标的区别，给出固定场景、随机种子、基线和失败类型的评估安排。
+- 能列出迁移到实机时需要检验的感知误差、时延与动力学差异，并把它们对应到验证环节。
+
+## 延伸方向
+
+- 前半段（CNN → RL 基础 → PPO）与[强化学习学习路径](/knowledge-tree/learning-paths/reinforcement-learning/)高度重合，可以并行推进。
+- 轨迹表示与控制接口可继续阅读[经典轨迹规划学习路径](/knowledge-tree/learning-paths/classical-trajectory-planning/)。
+- 多机交互与场景泛化评估归入[仿真与评估](/knowledge-tree/simulation-evaluation/)板块，相关章节正在撰写。

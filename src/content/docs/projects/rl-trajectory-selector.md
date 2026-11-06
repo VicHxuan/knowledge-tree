@@ -9,7 +9,9 @@ sidebar:
 
 用强化学习训练一个**轨迹候选选择器**：上游给出若干条候选轨迹（经典规划器或生成网络输出），策略网络从中选出一条执行。这是「学习式」与「经典」路线的折中——不追求端到端，而是把学习模块插在管线中最有价值的决策点上。
 
-## 技术栈
+## 系统与知识关系
+
+### 技术栈
 
 | 环节 | 选型 |
 | --- | --- |
@@ -20,12 +22,12 @@ sidebar:
 
 选型理由与训练链路的完整走读：
 
-- [PPO 算法](/knowledge-tree/learning-based-planning/rl-algorithms/ppo/)：一次迭代的数据流；
+- [PPO 算法](/knowledge-tree/learning-based-planning/rl-algorithms/model-free-rl/ppo/)：一次迭代的数据流；
 - [PPO 全流程走读与调参](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)：从训练脚本到 checkpoint；
 - [多服务器多 GPU 训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide/)：跨机环境的搭建与排障；
 - [TensorBoard 指标模板](/knowledge-tree/learning-based-planning/engineering-practice/tensorboard-metrics/)：判断训练是否在正确轨道上的速查表。
 
-## 工程要点
+### 工程要点
 
 这一类项目的重心常常不在算法而在训练工程，实践中反复被验证的几条：
 
@@ -35,6 +37,12 @@ sidebar:
 
 详细展开见[强化学习工程避坑指南](/knowledge-tree/learning-based-planning/engineering-practice/rl-engineering-pitfalls/)。
 
-## 状态
+## 实践入口
+
+从 [PPO 算法主线](/knowledge-tree/learning-based-planning/rl-algorithms/model-free-rl/ppo/)进入，按[训练工程走读](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)检查环境接口、采样、更新和记录。复现实验时固定源码版本、任务配置、checkpoint 与评估协议。
+
+## 进展与证据
 
 项目持续迭代中。任务设计（state / action / reward 抽象）的方法论整理在[小脑 Work Pipeline](/knowledge-tree/learning-based-planning/engineering-practice/work-pipeline/)。
+
+本页整理知识与复现入口；具体实验结论需附配置、评估协议及结果记录后补充。

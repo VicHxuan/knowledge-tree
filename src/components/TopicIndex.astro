@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import contentMap from '../data/content-map.json';
+
+interface Props { prefix: string }
+const { prefix } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const allArticles = contentMap.entries.filter((entry) => entry.slug.startsWith(`${prefix}/`));
+const articles = allArticles.filter((entry) => entry.slug.slice(prefix.length + 1).split('/').length === 1)
+  .sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
+const articleIds = new Set(contentMap.entries.map((entry) => entry.slug));
+const sections = (await getCollection('docs')).map((page) => ({
+  id: page.id.replace(/\/index$/, ''), data: page.data,
+})).filter((page) => page.id.startsWith(`${prefix}/`) &&
+  page.id.slice(prefix.length + 1).split('/').length === 1 && !articleIds.has(page.id))
+  .sort((a, b) => (a.data.sidebar.order ?? 999) - (b.data.sidebar.order ?? 999));
+const published = allArticles.filter((entry) => entry.status === 'published').length;
+---
+
+<div class="topic-index">
+  <p class="topic-count">{published} 篇可阅读 · {allArticles.length - published} 篇撰写中</p>
+  {sections.length > 0 && <ul class="topic-sections">
+    {sections.map((section) => {
+      const children = allArticles.filter((entry) => entry.slug.startsWith(`${section.id}/`));
+      const available = children.filter((entry) => entry.status === 'published').length;
+      return <li>
+        <a href={`${base}/${section.id}/`}>{section.data.title}</a>
+        <span class="topic-meta">{available} / {children.length} 篇可阅读</span>
+        {section.data.description && <p>{section.data.description}</p>}
+      </li>;
+    })}
+  </ul>}
+  {articles.length > 0 && <ul class="topic-articles">
+    {articles.map((entry) => <li>
+      {entry.status === 'published'
+        ? <a href={`${base}/${entry.slug}/`}>{entry.label}</a>
+        : <span class="topic-draft">{entry.label} <small>撰写中</small></span>}
+      <p>{entry.description}</p>
+    </li>)}
+  </ul>}
+</div>
+
+<style>
+  .topic-count, .topic-meta { color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
+  .topic-sections, .topic-articles { list-style: none; padding: 0; }
+  .topic-index li { padding: 0.8rem 0; border-bottom: 1px solid var(--sl-color-hairline-light); margin: 0; }
+  .topic-index li:first-child { padding-top: 0.25rem; }
+  .topic-index li a { font-weight: 600; }
+  .topic-index li p { margin: 0.25rem 0 0; font-size: var(--sl-text-sm); color: var(--sl-color-gray-2); }
+  .topic-meta { display: inline-block; margin-inline-start: 0.75rem; }
+  .topic-draft { color: var(--sl-color-gray-3); }
+  .topic-draft small { margin-inline-start: 0.5rem; border: 1px dashed var(--sl-color-hairline); padding: 0.1rem 0.35rem; border-radius: 0.25rem; }
+</style>

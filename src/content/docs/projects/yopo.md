@@ -9,7 +9,7 @@ sidebar:
 
 YOPO（You Only Plan Once）是学习式轨迹规划方向的代表性工作：**用一次前向传播直接输出可执行轨迹**，替代经典管线中「搜索 → 优化」的迭代过程。项目页跟踪该论文族的阅读与实践，对应的站点章节（学习式轨迹规划总览、YOPO、NavRL）正在撰写中 🚧。
 
-## 技术要点
+## 系统与知识关系
 
 从当前整理的资料看，YOPO 的关键设计可以概括为：
 
@@ -19,11 +19,13 @@ YOPO（You Only Plan Once）是学习式轨迹规划方向的代表性工作：*
 
 这套「用环境信息求 loss」的思路，与 RL 的 reward 设计一脉相承，具体的对比分析在[小脑 Work Pipeline](/knowledge-tree/learning-based-planning/engineering-practice/work-pipeline/) 中有展开。
 
-## 相关阅读
+## 实践入口
 
 - 论文原文与衍生工作（YOPO-swarm 等多机变体）走读计划收录在[学习式轨迹规划](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/)板块；
 - 训练基础设施相关：[多服务器多 GPU 训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide/)、[PPO 全流程走读](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)。
 
-## 状态
+## 进展与证据
 
 论文走读与架构分析撰写中（对应知识树的 `learning-based-planning/learning-based-trajectory-planning` 目录），本页随进展更新。
+
+本页整理知识与复现入口；具体实验结论需附配置、评估协议及结果记录后补充。

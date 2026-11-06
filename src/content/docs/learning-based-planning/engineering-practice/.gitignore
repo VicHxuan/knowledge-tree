@@ -1,4 +1,8 @@
-# 章节页面由 scripts/sync-docs.mjs 从 tech_stack/ 原件生成，属构建产物不入库。
-# 手写的 index.md 通过 !index.md 保留入库。
-*.md
-!index.md
+# BEGIN knowledge-tree generated files
+/observation-action-reward-design.md
+/ppo-training-and-debugging.md
+/ppo-walkthrough.md
+/rl-engineering-pitfalls.md
+/tensorboard-metrics.md
+/work-pipeline.md
+# END knowledge-tree generated files

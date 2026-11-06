@@ -7,13 +7,16 @@
  *   2. <kt-actions> 自定义元素：书签收藏（localStorage）+ GitHub Issue 反馈链接。
  *      由 scripts/rehype-article-tools.mjs 注入到已发布文章的信息条中。
  *   3. 最近阅读：已发布文章页加载时记录到 localStorage，供书签页消费。
+ *   4. ArticleDisclosures：正文推导的批量开合、锚点定位与打印展开。
  * 站点为纯 MPA（无 ClientRouter），本脚本随每次页面加载重新执行；
  * 自定义元素定义做了幂等保护。
  */
 import DefaultFooter from '@astrojs/starlight/components/Footer.astro';
+import ArticleDisclosures from './ArticleDisclosures.astro';
 ---
 
 <DefaultFooter />
+<ArticleDisclosures />
 
 <script>
 	// ---------- localStorage 小工具（隐私模式/存储被禁时静默降级） ----------

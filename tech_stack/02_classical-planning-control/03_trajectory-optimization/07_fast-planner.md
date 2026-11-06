@@ -1,18 +1,18 @@
 # Fast-Planner 框架
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > 待补充。
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 ### 1. FAST-Planner 轨迹规划框架
 
-#### 1.1 数学定义与系统构造
+#### 1.1 系统模型
 
 FAST-Planner 旨在解决无人机在复杂未知环境中的高速自主飞行问题。系统由前端动力学路径搜索、后端B样条轨迹优化以及迭代时间分配三个核心模块构成。
 
@@ -83,9 +83,9 @@ Algorithm FAST_Planner(start_state, goal_state, ESDF_map):
     Return Non_Uniform_BSpline(control_points, knot_vector)
 ```
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
-### 3. C++代码实现
+### 3. C++ 实现
 
 以下代码展示 FAST-Planner 后端最核心的非均匀B样条时间调整算法逻辑。
 
@@ -180,10 +180,10 @@ public:
 };
 ```
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 > 待补充。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

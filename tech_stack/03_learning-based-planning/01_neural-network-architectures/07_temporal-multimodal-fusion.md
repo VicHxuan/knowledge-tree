@@ -1,16 +1,16 @@
 # 时序与多模态融合
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > **状态：草稿** — Knowledge Tree V2 规划章节，正文撰写中。
 
 时序网络与多传感器融合结构。本篇大纲先行，正文完成后进入正式发布：
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 ### 时序信息
 
@@ -28,14 +28,14 @@ LSTM、TCN 与 attention
 
 时间戳与空间对齐问题
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 > 待补充。
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 > 待补充。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

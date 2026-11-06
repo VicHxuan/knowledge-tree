@@ -1,6 +1,6 @@
 # 域随机化
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > **状态：草稿** — Knowledge Tree V2 规划章节，正文撰写中。
 
@@ -10,11 +10,11 @@
 
 sim-to-real 的分布差异
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 ### 随机化维度
 
@@ -24,16 +24,16 @@ sim-to-real 的分布差异
 
 课程化随机
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 > 待补充。
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 ### 实践权衡
 
 随机化过度与欠拟合
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

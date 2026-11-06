@@ -1,6 +1,6 @@
 # SE(3) 几何控制
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > **状态：草稿** — Knowledge Tree V2 规划章节，正文撰写中。
 
@@ -10,11 +10,11 @@
 
 为什么需要 SE(3) 上的控制
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 ### 姿态误差函数
 
@@ -28,16 +28,16 @@
 
 不受欧拉奇异性限制
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 > 待补充。
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 ### 与 PX4 级联 PID 的对比
 
 建模差异与性能
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

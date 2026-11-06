@@ -1,4 +1,12 @@
-# 章节页面由 scripts/sync-docs.mjs 从 tech_stack/ 原件生成，属构建产物不入库。
-# 手写的 index.md 通过 !index.md 保留入库。
-*.md
-!index.md
+# BEGIN knowledge-tree generated files
+/bezier-bspline.md
+/differential-flatness-minimum-snap.md
+/ego-planner.md
+/fast-planner.md
+/gcopter-minco.md
+/minco-parameterization.md
+/replanning-and-trajectory-continuity.md
+/safe-flight-corridor.md
+/trajectory-optimization-formulation.md
+/trajectory-representation-parameterization.md
+# END knowledge-tree generated files

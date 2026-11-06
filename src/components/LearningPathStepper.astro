@@ -1,60 +1,61 @@
 ---
-/**
- * LearningPathStepper — 学习路径垂直进度条。
- * 每步三态：未开始(0) → 进行中(1) → 已完成(2)，点击左侧按钮循环切换。
- * 进度保存在浏览器 localStorage（key: kt-lp:<pathId>），仅本机可见。
- *
- * 进阶功能（V2）：
- *  - 完成度百分比进度条 + 「继续学习」入口（第一个未完成且有链接的步骤）；
- *  - 导出 / 导入进度（JSON 文件，跨设备迁移用——数据仍只存在于你自己的文件里）。
- */
-interface Step {
-	title: string;
-	href?: string;
-	note?: string;
-}
+/** 学习路径按稳定步骤 ID 记录进度；文章元信息从 content-map 派生。 */
+import contentMap from '../data/content-map.json';
+
+type Step = { slug: string; id?: string; note?: string } | { id: string; title: string; href: string; note?: string };
 interface Props {
 	pathId: string;
 	steps: Step[];
+	/** 冻结的旧版数组顺序，不能随当前 steps 重排。 */
+	legacyStepIds: string[];
 }
-const { pathId, steps } = Astro.props;
+const { pathId, steps: inputSteps, legacyStepIds } = Astro.props;
+const bySlug = new Map(contentMap.entries.map((entry) => [entry.slug, entry]));
+const steps = inputSteps.map((step) => {
+	if ('slug' in step) {
+		const entry = bySlug.get(step.slug);
+		if (!entry) throw new Error(`LearningPathStepper: unknown article ${step.slug}`);
+		return {
+			id: step.id ?? step.slug,
+			title: entry.title,
+			href: entry.status === 'published' ? `/knowledge-tree/${entry.slug}/` : undefined,
+			note: step.note,
+			status: entry.status,
+		};
+	}
+	return { ...step, status: 'published' };
+});
+if (new Set(steps.map((step) => step.id)).size !== steps.length || steps.some((step) => !step.id)) {
+	throw new Error(`LearningPathStepper: duplicate or empty step ID in ${pathId}`);
+}
+if (new Set(legacyStepIds).size !== legacyStepIds.length || legacyStepIds.some((id) => !id)) {
+	throw new Error(`LearningPathStepper: invalid legacyStepIds in ${pathId}`);
+}
 ---
 
-<div class="lp-stepper" data-lp-id={pathId} data-lp-count={steps.length}>
+<div class="lp-stepper" data-lp-id={pathId} data-lp-legacy-ids={JSON.stringify(legacyStepIds)}>
 	<div class="lp-legend">
-		点击每一步左侧的按钮切换进度：<span class="lp-state-0">未开始</span> →
-		<span class="lp-state-1">进行中</span> → <span class="lp-state-2">已完成</span>
-		（进度保存在本浏览器）
+		点击步骤左侧按钮切换：<span class="lp-state-0">未开始</span> →
+		<span class="lp-state-1">进行中</span> → <span class="lp-state-2">已完成</span>。
+		进度保存在本浏览器，可导出文件备份。
 	</div>
 	<ol>
-		{
-			steps.map((s, i) => (
-				<li class="lp-step" data-i={i} data-title={s.title} data-href={s.href ?? ''}>
-					<button
-						type="button"
-						class="lp-toggle"
-						data-state="0"
-						title="切换学习进度"
-						aria-label={`切换「${s.title}」的学习进度`}
-					>
-						<span class="lp-rail" aria-hidden="true" />
-						<span class="lp-dot" aria-hidden="true" />
-					</button>
-					<div class="lp-body">
-						{s.href ? (
-							<a class="lp-title" href={s.href}>
-								{s.title}
-							</a>
-						) : (
-							<span class="lp-title lp-todo">
-								{s.title} <span aria-hidden="true">🚧</span>
-							</span>
-						)}
-						{s.note && <p class="lp-note">{s.note}</p>}
-					</div>
-				</li>
-			))
-		}
+		{steps.map((step) => (
+			<li class="lp-step" data-step-id={step.id} data-title={step.title} data-href={step.href ?? ''} data-status={step.status}>
+				<button type="button" class="lp-toggle" data-state="0" title="切换学习进度" aria-label={`「${step.title}」：未开始，标记为进行中`}>
+					<span class="lp-rail" aria-hidden="true" />
+					<span class="lp-dot" aria-hidden="true" />
+				</button>
+				<div class="lp-body">
+					{step.href ? (
+						<a class="lp-title" href={step.href}>{step.title}</a>
+					) : (
+						<span class="lp-title lp-todo">{step.title} <span class="lp-publish-state">（撰写中）</span></span>
+					)}
+					{step.note && <p class="lp-note">{step.note}</p>}
+				</div>
+			</li>
+		))}
 	</ol>
 	<div class="lp-progress" role="group" aria-label="路径进度">
 		<div class="lp-bar" aria-hidden="true"><span class="lp-bar-fill"></span></div>
@@ -67,151 +68,113 @@ const { pathId, steps } = Astro.props;
 			<span class="lp-msg" aria-live="polite"></span>
 			<button type="button" class="lp-btn" data-act="export">导出进度</button>
 			<button type="button" class="lp-btn" data-act="import">导入进度</button>
-			<span class="lp-reset" role="button" tabindex="0">重置进度</span>
-			<input type="file" class="lp-file" accept="application/json,.json" hidden />
+			<button type="button" class="lp-reset">重置进度</button>
+			<input type="file" class="lp-file" accept="application/json,.json" aria-label="选择学习进度文件" hidden />
 		</p>
 	</div>
 </div>
 
 <script>
+	import { emptyProgress, importProgress, progressPayload, restoreProgress } from '../data/learning-progress.mjs';
+
 	function initStepper(root: HTMLElement) {
 		const id = root.dataset.lpId;
 		if (!id) return;
 		const key = `kt-lp:${id}`;
-		const buttons = [...root.querySelectorAll<HTMLButtonElement>('.lp-toggle')];
 		const items = [...root.querySelectorAll<HTMLElement>('.lp-step')];
+		const buttons = items.map((item) => item.querySelector<HTMLButtonElement>('.lp-toggle')!);
+		const stepIds = items.map((item) => item.dataset.stepId!);
+		const schema = { pathId: id, stepIds, legacyStepIds: JSON.parse(root.dataset.lpLegacyIds ?? '[]') as string[] };
 		const doneEl = root.querySelector<HTMLElement>('.lp-done');
 		const pctEl = root.querySelector<HTMLElement>('.lp-pct');
 		const fillEl = root.querySelector<HTMLElement>('.lp-bar-fill');
 		const continueEl = root.querySelector<HTMLElement>('.lp-continue');
 		const msgEl = root.querySelector<HTMLElement>('.lp-msg');
 		const fileEl = root.querySelector<HTMLInputElement>('.lp-file');
+		const labels = ['未开始', '进行中', '已完成'];
+		let stored: unknown = null;
+		try { stored = JSON.parse(localStorage.getItem(key) ?? 'null'); } catch { /* 使用空进度。 */ }
+		let state = restoreProgress(stored, schema);
+		const save = () => {
+			try { localStorage.setItem(key, JSON.stringify(progressPayload(id, state))); }
+			catch { /* 存储不可用时保留当前会话内进度。 */ }
+		};
+		// 成功读取的旧记录立即迁移；不覆盖未知格式或未来版本的记录。
+		if (Array.isArray(stored) || (stored && typeof stored === 'object' && 'format' in stored &&
+			stored.format === 'kt-learning-progress' && 'pathId' in stored && stored.pathId === id &&
+			'version' in stored && (stored.version === 1 || stored.version === 2))) save();
 
-		const load = (): number[] => {
-			try {
-				const raw = localStorage.getItem(key);
-				const arr = raw ? JSON.parse(raw) : [];
-				return buttons.map((_, i) => (Array.isArray(arr) && typeof arr[i] === 'number' ? arr[i] : 0));
-			} catch {
-				return buttons.map(() => 0);
-			}
-		};
-		const save = (state: number[]) => {
-			try {
-				localStorage.setItem(key, JSON.stringify(state));
-			} catch {
-				/* 隐私模式等存储不可用时静默降级为会话内进度 */
-			}
-		};
 		const say = (text: string) => {
-			if (msgEl) {
-				msgEl.textContent = text;
-				setTimeout(() => {
-					if (msgEl.textContent === text) msgEl.textContent = '';
-				}, 4000);
-			}
+			if (msgEl) msgEl.textContent = text;
 		};
-		const render = (state: number[]) => {
-			buttons.forEach((b, i) => (b.dataset.state = String(state[i] ?? 0)));
-			const done = state.filter((s) => s === 2).length;
-			const total = buttons.length || 1;
+		const render = () => {
+			buttons.forEach((button, index) => {
+				const value = state[stepIds[index]];
+				button.dataset.state = String(value);
+				button.setAttribute('aria-label', `「${items[index].dataset.title}」：${labels[value]}，标记为${labels[(value + 1) % 3]}`);
+			});
+			const done = stepIds.filter((stepId) => state[stepId] === 2).length;
+			const total = stepIds.length;
+			const pct = total ? Math.round(done / total * 100) : 0;
 			if (doneEl) doneEl.textContent = String(done);
-			if (pctEl) pctEl.textContent = `${Math.round((done / total) * 100)}%`;
-			if (fillEl) fillEl.style.width = `${(done / total) * 100}%`;
-			if (continueEl) {
-				continueEl.replaceChildren();
-				if (done === buttons.length && buttons.length > 0) {
-					continueEl.textContent = '🎉 全部完成';
-				} else {
-					// 继续学习：第一个未完成步骤（优先有链接的；都无链接则展示无链接的下一个）
-					const idx = state.findIndex((s) => s !== 2);
-					const withHref = state.findIndex((s, i) => s !== 2 && items[i]?.dataset.href);
-					const pick = withHref >= 0 ? withHref : idx;
-					if (pick >= 0 && items[pick]) {
-						const href = items[pick].dataset.href;
-						const title = items[pick].dataset.title ?? '';
-						const label = `继续：${title} →`;
-						if (href) {
-							const a = document.createElement('a');
-							a.href = href;
-							a.textContent = label;
-							a.className = 'lp-continue-link';
-							continueEl.append(a);
-						} else {
-							continueEl.textContent = `下一步：${title}（撰写中）`;
-						}
-					}
-				}
+			if (pctEl) pctEl.textContent = `${pct}%`;
+			if (fillEl) fillEl.style.width = `${pct}%`;
+			if (!continueEl) return;
+			continueEl.replaceChildren();
+			if (done === total && total > 0) {
+				continueEl.textContent = '全部完成';
+				return;
 			}
+			const pick = items.find((item) => state[item.dataset.stepId!] !== 2 && item.dataset.href)
+				?? items.find((item) => state[item.dataset.stepId!] !== 2);
+			if (!pick) return;
+			if (pick.dataset.href) {
+				const anchor = document.createElement('a');
+				anchor.href = pick.dataset.href;
+				anchor.textContent = `继续：${pick.dataset.title} →`;
+				anchor.className = 'lp-continue-link';
+				continueEl.append(anchor);
+			} else continueEl.textContent = `下一步：${pick.dataset.title}（撰写中）`;
 		};
-
-		const state = load();
-		render(state);
-		buttons.forEach((b, i) =>
-			b.addEventListener('click', () => {
-				state[i] = ((state[i] ?? 0) + 1) % 3;
-				save(state);
-				render(state);
-			}),
-		);
+		render();
+		buttons.forEach((button, index) => button.addEventListener('click', () => {
+			const stepId = stepIds[index];
+			state[stepId] = (state[stepId] + 1) % 3;
+			save();
+			render();
+		}));
 		root.querySelector('.lp-reset')?.addEventListener('click', () => {
-			state.forEach((_, i) => (state[i] = 0));
-			save(state);
-			render(state);
+			state = emptyProgress(stepIds);
+			save();
+			render();
+			say('已重置本路径进度。');
 		});
-
-		// 导出：下载 JSON 文件（kt-lp:<id> 的内容 + 元信息，可跨设备导入）
-		root.querySelector<HTMLButtonElement>('[data-act="export"]')?.addEventListener('click', () => {
-			const payload = {
-				format: 'kt-learning-progress',
-				version: 1,
-				pathId: id,
-				steps: state,
-				exportedAt: new Date().toISOString(),
-			};
+		root.querySelector('[data-act="export"]')?.addEventListener('click', () => {
+			const payload = { ...progressPayload(id, state), exportedAt: new Date().toISOString() };
 			const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
 			const url = URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			const d = new Date();
-			const mm = String(d.getMonth() + 1).padStart(2, '0');
-			const dd = String(d.getDate()).padStart(2, '0');
-			a.href = url;
-			a.download = `learning-progress-${id}-${d.getFullYear()}${mm}${dd}.json`;
-			a.click();
-			URL.revokeObjectURL(url);
+			const anchor = document.createElement('a');
+			anchor.href = url;
+			anchor.download = `learning-progress-${id}-${new Date().toISOString().slice(0, 10)}.json`;
+			anchor.click();
+			setTimeout(() => URL.revokeObjectURL(url), 1000);
 			say('已导出进度文件。');
 		});
-
-		// 导入：读取 JSON 文件，校验格式与步骤数后覆盖本路径进度
-		root.querySelector<HTMLButtonElement>('[data-act="import"]')?.addEventListener('click', () => {
-			fileEl?.click();
-		});
-		fileEl?.addEventListener('change', () => {
+		root.querySelector('[data-act="import"]')?.addEventListener('click', () => fileEl?.click());
+		fileEl?.addEventListener('change', async () => {
 			const file = fileEl.files?.[0];
 			if (!file) return;
-			const reader = new FileReader();
-			reader.onload = () => {
-				try {
-					const data = JSON.parse(String(reader.result));
-					const arr = Array.isArray(data.steps) ? data.steps : undefined;
-					const sameId = data.pathId === undefined || data.pathId === id;
-					if (!arr || !sameId || arr.length !== buttons.length) {
-						say(`导入失败：${!sameId ? '路径不匹配' : '格式或步骤数不符'}。`);
-						return;
-					}
-					const clean = buttons.map((_, i) =>
-						typeof arr[i] === 'number' ? Math.max(0, Math.min(2, arr[i] | 0)) : 0,
-					);
-					state.splice(0, state.length, ...clean);
-					save(state);
-					render(state);
-					say('导入成功。');
-				} catch {
-					say('导入失败：文件不是合法 JSON。');
-				}
-			};
-			reader.readAsText(file);
 			fileEl.value = '';
+			try {
+				const payload = JSON.parse(await file.text());
+				const result = importProgress(payload, state, schema);
+				state = result.state;
+				save();
+				render();
+				say(`导入成功，更新 ${result.matched} 个匹配步骤，其余进度保留。`);
+			} catch (error) {
+				say(`导入失败：${error instanceof SyntaxError ? '文件不是合法 JSON' : error instanceof Error ? error.message : '无法读取文件'}。`);
+			}
 		});
 	}
 	document.querySelectorAll<HTMLElement>('.lp-stepper').forEach(initStepper);
@@ -251,14 +214,15 @@ const { pathId, steps } = Astro.props;
 	}
 	.lp-toggle {
 		position: relative;
-		width: 1.75rem;
+		width: 2.75rem;
+		flex: none;
 		border: 0;
 		padding: 0 0 0.5rem;
 		background: none;
 		cursor: pointer;
 		display: flex;
 		justify-content: center;
-		min-height: 2rem;
+		min-height: 2.75rem;
 	}
 	.lp-rail {
 		position: absolute;
@@ -394,6 +358,11 @@ const { pathId, steps } = Astro.props;
 	}
 	.lp-reset {
 		margin-left: auto;
+		border: 0;
+		background: none;
+		padding: 0.375rem;
+		min-height: 2.75rem;
+		font: inherit;
 		font-size: var(--sl-text-xs);
 		color: var(--sl-color-gray-4);
 		cursor: pointer;

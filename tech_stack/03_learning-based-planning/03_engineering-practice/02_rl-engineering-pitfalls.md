@@ -1,18 +1,18 @@
 # 强化学习工程避坑指南与注意事项手册
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > 待补充。
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 ### 1. 环境与回合管理
 
-#### 1.1 Step 计数
+#### 1.1 环境步计数
 
 区分：
 
@@ -22,7 +22,7 @@
 
 单环境 timeout 必须由 `episode_step[env]` 判断。
 
-#### 1.2 Reset 类型
+#### 1.2 重置类型
 
 自然终止：
 
@@ -43,7 +43,7 @@ curriculum切换
 显式全局重初始化
 ```
 
-#### 1.3 Synthetic Reset
+#### 1.3 合成重置
 
 课程切换等训练逻辑产生的 reset 不属于自然 termination 或 timeout。
 
@@ -116,9 +116,9 @@ Actor可观测
 
 ---
 
-### 3. Observation / State
+### 3. 观测与状态
 
-#### 3.1 状态契约
+#### 3.1 状态定义
 
 每个输入变量应明确：
 
@@ -145,7 +145,7 @@ RNN hidden state
 
 历史长度应与目标运动时间尺度匹配。
 
-#### 3.3 Ego-motion
+#### 3.3 自运动补偿
 
 多帧视觉/深度输入应考虑自身运动。
 
@@ -178,7 +178,7 @@ previous_valid=0
 RNN hidden state清零
 ```
 
-#### 3.5 Previous Plan 与 Actual State
+#### 3.5 历史规划与实际状态
 
 应区分：
 
@@ -241,9 +241,9 @@ score
 
 ---
 
-### 5. Action 设计
+### 5. 动作设计
 
-#### 5.1 固定动作
+#### 5.1 固定语义动作
 
 传统离散动作：
 
@@ -253,7 +253,7 @@ $$
 
 每个 index 具有固定物理语义。
 
-#### 5.2 Candidate Selection Action
+#### 5.2 候选选择动作
 
 候选选择问题中：
 
@@ -276,9 +276,9 @@ $$
 
 离散 index 仅作为候选引用。
 
-#### 5.3 Candidate 可观测性
+#### 5.3 候选可观测性
 
-若 action 表示“选择当前候选 \(i\)”，则候选本身必须进入 Actor observation。
+若 action 表示“选择当前候选 $i$”，则候选本身必须进入 Actor observation。
 
 推荐：
 
@@ -292,7 +292,7 @@ $$
 [l_1,\ldots,l_N]=f_\theta(o_t)
 $$
 
-#### 5.4 Shared Scorer
+#### 5.4 共享评分器
 
 候选选择网络推荐：
 
@@ -306,7 +306,7 @@ candidate feature
 
 避免每个 candidate 使用独立固定输出神经元。
 
-#### 5.5 Permutation Test
+#### 5.5 置换等变性检验
 
 对已构造完成的 candidate tensor 随机排列：
 
@@ -330,7 +330,7 @@ reshape错位
 mask错位
 ```
 
-#### 5.6 Candidate Representation Test
+#### 5.6 候选表示检验
 
 检查：
 
@@ -354,9 +354,9 @@ alias rate
 
 ---
 
-### 6. Reward 设计
+### 6. 奖励设计
 
-#### 6.1 Reward 分层
+#### 6.1 奖励分层
 
 推荐分为：
 
@@ -377,7 +377,7 @@ r_{terminal}
 +r_{time}
 $$
 
-#### 6.2 Dense Reward
+#### 6.2 稠密奖励
 
 每个 dense reward 应对应明确的学习目标。
 
@@ -392,7 +392,7 @@ dynamic risk
 
 对同一危险重复计权。
 
-#### 6.3 Episode 累计量
+#### 6.3 回合累计奖励
 
 Reward 系数必须按 episode sum 检查。
 
@@ -411,7 +411,7 @@ step mean
 episode sum
 ```
 
-#### 6.4 Progress Reward
+#### 6.4 进度奖励
 
 推荐：
 
@@ -427,7 +427,7 @@ $$
 
 避免状态跳变或异常值产生过大回报。
 
-#### 6.5 Timeout
+#### 6.5 超时处理
 
 timeout 应与 success 区分。
 
@@ -459,7 +459,7 @@ $$
 
 不能仅将未来轨迹与当前障碍位置比较。
 
-#### 7.2 常用量
+#### 7.2 风险指标
 
 推荐使用：
 
@@ -496,7 +496,7 @@ analytic TTC
 batched GPU calculation
 ```
 
-#### 7.4 Static / Dynamic 分离
+#### 7.4 静态与动态风险分离
 
 建议维护：
 
@@ -509,7 +509,7 @@ DynamicObstacleBatch
 
 ---
 
-### 8. Candidate Regret
+### 8. 候选选择遗憾
 
 对于每条候选定义：
 
@@ -529,7 +529,7 @@ $$
 C_{best}=\min_i C_i
 $$
 
-选择候选 \(a\) 的 regret：
+选择候选 $a$ 的 regret：
 
 $$
 R_{regret}
@@ -549,9 +549,9 @@ discrete candidate ranking
 
 ---
 
-### 9. Collision 与安全尺度
+### 9. 碰撞与安全尺度
 
-#### 9.1 Collision Authority
+#### 9.1 碰撞终止判定
 
 训练中应指定唯一 termination authority，例如：
 
@@ -606,9 +606,9 @@ physics contact
 
 ---
 
-### 10. Actor / Critic
+### 10. Actor-Critic
 
-#### 10.1 Shared Critic
+#### 10.1 共享价值网络
 
 结构：
 
@@ -626,7 +626,7 @@ shared encoder
 Actor/Critic共享梯度
 ```
 
-#### 10.2 Independent Critic
+#### 10.2 独立价值网络
 
 结构：
 
@@ -642,7 +642,7 @@ Critic encoder → value
 显存与计算成本更高
 ```
 
-#### 10.3 梯度契约
+#### 10.3 梯度传播约束
 
 必须明确：
 
@@ -653,7 +653,7 @@ Critic loss是否回传Actor encoder
 哪些层独立
 ```
 
-#### 10.4 Privileged Critic
+#### 10.4 特权状态 Critic
 
 若使用 simulator truth，应明确数据边界：
 
@@ -689,7 +689,7 @@ dropout = 0
 
 避免 PPO 重算 log-prob 时发生分布漂移。
 
-#### 11.3 Frozen Layer
+#### 11.3 参数冻结
 
 冻结配置应明确到：
 
@@ -707,9 +707,9 @@ BN running statistics
 
 ---
 
-### 12. PPO Batch 配置
+### 12. PPO 批量配置
 
-#### 12.1 基本量
+#### 12.1 批量参数
 
 $$
 N_{transition}^{local}
@@ -719,7 +719,7 @@ N_{env}^{local}
 T_{rollout}
 $$
 
-若每 rank 分为 \(M\) 个 minibatch：
+若每 rank 分为 $M$ 个 minibatch：
 
 $$
 N_{minibatch}^{local}
@@ -784,7 +784,7 @@ step
 
 ### 15. 统计与日志
 
-#### 15.1 Rate 定义
+#### 15.1 比率指标定义
 
 任何 rate 必须明确：
 
@@ -797,7 +797,7 @@ aggregation scope
 
 例如 success rate 不应只有名称。
 
-#### 15.2 Rollout / Episode / Latest Outcome
+#### 15.2 统计窗口
 
 建议分开记录：
 
@@ -818,7 +818,7 @@ Smoothing = 0
 
 平滑显示值不得直接作为原始计数解释。
 
-#### 15.4 Reward 日志
+#### 15.4 奖励日志
 
 每个主要 reward 项记录：
 
@@ -829,7 +829,7 @@ episode sum
 
 ---
 
-### 16. Curriculum
+### 16. 课程学习
 
 #### 16.1 晋级条件
 
@@ -866,7 +866,7 @@ map density
 
 ---
 
-### 17. Checkpoint Contract
+### 17. 检查点状态
 
 Checkpoint 应保存：
 
@@ -910,7 +910,7 @@ invalid-value handling
 
 ---
 
-### 20. 推荐单元测试
+### 20. 单元测试
 
 至少包含：
 
@@ -929,7 +929,7 @@ PPO recompute consistency test
 
 ---
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 ### 13. 分布式训练
 
@@ -965,7 +965,7 @@ global statistics
 seed_rank = base_seed + rank
 ```
 
-#### 13.4 NCCL Timeout
+#### 13.4 NCCL 超时
 
 出现 NCCL timeout 时优先查找：
 
@@ -998,7 +998,7 @@ observation error
 
 ---
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 ### 21. 训练评价指标
 
@@ -1049,7 +1049,7 @@ GPU memory
 
 ### 23. 工程检查清单
 
-#### Environment
+#### 环境
 
 * [ ] global step 与 episode step 分离；
 * [ ] 普通终止使用 partial reset；
@@ -1058,7 +1058,7 @@ GPU memory
 * [ ] collision authority 唯一；
 * [ ] failure source 可观测。
 
-#### State
+#### 状态
 
 * [ ] shape / dtype / unit 明确；
 * [ ] 坐标系明确；
@@ -1067,7 +1067,7 @@ GPU memory
 * [ ] 动态任务包含时序信息；
 * [ ] ego-motion 处理明确。
 
-#### Action
+#### 动作
 
 * [ ] action 物理语义明确；
 * [ ] candidate action 对 Actor 可见；
@@ -1075,7 +1075,7 @@ GPU memory
 * [ ] permutation test 通过；
 * [ ] train / play action contract 一致。
 
-#### Reward
+#### 奖励
 
 * [ ] 各 reward 项目标明确；
 * [ ] 无明显重复处罚；
@@ -1085,7 +1085,7 @@ GPU memory
 * [ ] synthetic reset 不污染 reward；
 * [ ] 所有 reward 有 finite check。
 
-#### Actor / Critic
+#### Actor-Critic
 
 * [ ] Actor 仅使用可部署信息；
 * [ ] Critic 输入契约明确；
@@ -1102,7 +1102,7 @@ GPU memory
 * [ ] KL / entropy / clip fraction 有记录；
 * [ ] 多卡初始化一致。
 
-#### Distributed
+#### 分布式训练
 
 * [ ] WORLD_SIZE / RANK / LOCAL_RANK 正确；
 * [ ] env 数可被 world size 整除；
@@ -1110,14 +1110,14 @@ GPU memory
 * [ ] rank 0 负责公共输出；
 * [ ] NCCL 故障优先检查本地异常。
 
-#### Logging
+#### 日志
 
 * [ ] rate 分母明确；
 * [ ] rollout / episode / curriculum 指标分离；
 * [ ] step mean / episode sum 同时记录；
 * [ ] TensorBoard smoothing 与 raw value 区分。
 
-#### Deployment
+#### 部署
 
 * [ ] checkpoint contract 完整；
 * [ ] runtime dependency 完整；
@@ -1128,7 +1128,7 @@ GPU memory
 
 ---
 
-### 24. 核心规则
+### 24. 设计原则
 
 1. 环境语义、State、Action、Reward 必须形成闭合契约。
 2. 终止因素应对 Actor 可观测。
@@ -1149,6 +1149,6 @@ GPU memory
 17. 分布式通信异常应优先追踪最早本地错误。
 18. 训练效果必须使用任务指标、episode 指标和优化指标联合判断。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

@@ -1,0 +1,24 @@
+---
+title: "Model-Free RL"
+description: "值方法与策略梯度两支：DQN、PG/GAE、TRPO、PPO、DDPG、TD3、SAC"
+sidebar:
+  order: 2
+---
+
+import TopicIndex from '../../../../../components/TopicIndex.astro';
+
+## 板块定位
+
+不依赖环境转移模型、直接从交互样本学习策略与值函数的算法主线，分值方法与策略梯度两支；每篇算法页标注其策略数据类型（On/Off-Policy）。
+
+## 阅读主线
+
+两条主线：**值方法：Q-learning → DQN**；**策略优化：PG/Actor-Critic/GAE → PPO**。TRPO 解释信赖域背景；连续控制的 off-policy 分支为 DDPG → TD3 与 SAC。阅读时对齐数据来源、价值目标和策略更新方式。
+
+## 主题目录
+
+<TopicIndex prefix="learning-based-planning/rl-algorithms/model-free-rl" />
+
+## 下一步
+
+[返回上级板块](/knowledge-tree/learning-based-planning/rl-algorithms/) · [强化学习学习路径](/knowledge-tree/learning-paths/reinforcement-learning/) · [学习式无人机导航](/knowledge-tree/learning-paths/learning-based-uav-navigation/)

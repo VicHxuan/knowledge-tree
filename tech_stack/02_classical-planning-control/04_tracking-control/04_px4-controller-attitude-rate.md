@@ -1,8 +1,8 @@
 # PX4 Controller 代码讲解清单
 
-## 1. 概述（Overview）
+## 1. 概述
 
-### 一. 代码功能简介
+### 一. 控制器功能
 
 该代码实现一套基于 PX4 控制结构的无人机姿态与角速度控制器，支持批量并行环境计算。
 
@@ -95,7 +95,7 @@ last_achieved_wrench
 
 ---
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 ### 二.1. 依赖模块
 
@@ -132,7 +132,7 @@ P300ProDynamics
 
 ---
 
-### 二.2. 四元数与旋转处理方法
+### 二.2. 四元数与旋转运算
 
 无人机姿态主要使用四元数表示，因此首先定义一系列四元数和坐标变换相关方法。
 
@@ -188,7 +188,7 @@ q* = [w, -x, -y, -z]
 
 ---
 
-#### 二.2.3. 世界系向量旋转到机体系
+#### 二.2.3. 世界系到机体系的变换
 
 ```python
 def quat_rotate_inverse(q: torch.Tensor, vector_world: torch.Tensor) -> torch.Tensor:
@@ -210,7 +210,7 @@ Body Frame
 
 ---
 
-#### 二.2.4. 计算机体系 Z 轴在世界系中的方向
+#### 二.2.4. 机体 Z 轴的世界系表示
 
 ```python
 def body_z_world(q: torch.Tensor) -> torch.Tensor:
@@ -235,7 +235,7 @@ def body_z_world(q: torch.Tensor) -> torch.Tensor:
 
 ---
 
-#### 二.2.5. 计算两个向量之间的旋转四元数
+#### 二.2.5. 向量间旋转四元数
 
 ```python
 def quat_from_two_vectors(source: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
@@ -269,7 +269,7 @@ target
 
 ---
 
-#### 二.2.6. 欧拉角转换为四元数
+#### 二.2.6. 欧拉角与四元数转换
 
 ```python
 def quat_from_euler(roll: torch.Tensor, pitch: torch.Tensor, yaw: torch.Tensor) -> torch.Tensor:
@@ -307,9 +307,9 @@ yaw
 
 ---
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
-### 二.3. PX4Controller 本体类
+### 二.3. PX4Controller 类
 
 #### 二.3.1. 控制器初始化
 
@@ -852,7 +852,7 @@ P300ProDynamics
 
 ---
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 ### 二.7. 角速度命令接口
 
@@ -1430,9 +1430,9 @@ class PX4Controller:
             self.previous_rate[env_ids] = angular_velocity_body
 ```
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
-### 三. 控制流程总结
+### 三. 控制流程
 
 姿态命令接口：
 
@@ -1499,6 +1499,6 @@ class PX4Controller:
 电机控制
 ```
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

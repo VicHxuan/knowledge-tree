@@ -33,23 +33,34 @@ src/content/docs/                  # → 生成产物（untracked）+ 少量手�
 └── projects/                      #    研究项目页（手写）
 ```
 
-领域注册表在 `src/data/domains.mjs`（侧栏分组、首页卡片、图谱域色共用的单一事实源）；`astro.config.mjs` 的 sidebar 用 `autogenerate` 按目录结构自动生成侧栏分组，无需维护独立的目录数据库。
+领域注册表在 `src/data/domains.mjs`（侧栏分组、首页卡片、图谱域色共用的单一事实源）；`astro.config.mjs` 的 sidebar 用 `autogenerate` 按目录结构生成分组，`src/routeData.ts` 从各分类首页读取中文名称和顺序，并使上下篇导航保持一致。
 
 ## 本地开发
 
 ```bash
-npm install
-npm run dev           # 开发服务器（predev 钩子自动先同步文档）
+npm ci
+npm run dev -- --background --host 127.0.0.1  # 后台预览，自动同步原件
 npm run build         # 生产构建（prebuild 钩子自动先同步文档）
-npm run docs:check    # 校验：同步无漂移 + 链接与重定向合法
-npm run privacy:check # 提交前扫描，确认可发布文件不含个人隐私数据
+npm run docs:check    # 只读校验：同步、六模块、链接、重定向和关系
+npm run privacy:check # 本地隐私规则扫描
+npm run site:check    # 构建后检查真实 HTML 链接、资源和锚点
+npm test             # 维护脚本与学习进度回归
+npm run test:browser # 构建后验收折叠、深链接和学习路径
 ```
 
 推送到 `main` 分支后，GitHub Actions 会先跑校验再构建发布。
 
-## 如何贡献
+## 阅读与内容架构
+
+技术文章统一六模块，默认正文给出学习主线；推导、长算例和代码使用可展开细节。网页支持深链接自动展开、批量开合和完整打印。[PPO](tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md)是完整示范，可运行教学实现位于 [examples/ppo_core.py](examples/ppo_core.py)。
+
+分类页统一为板块定位、阅读主线、主题目录、下一步，目录和发布状态自动派生。学习路径保留教学顺序，以稳定步骤 ID 保存本地进度；项目页连接知识与实践证据。文章注册表负责展示元数据，关系文件只记录知识之间的边。
+
+## 贡献指南
 
 见 [CONTRIBUTING.md](CONTRIBUTING.md)。最简单的方式：在任一页面底部点击「编辑此页」——它会直接指向 `tech_stack/` 里的原始笔记，GitHub 会自动引导你创建 Pull Request。
+
+本地维护可使用 `knowledge-tree-editor` 编辑文档，使用 `knowledge-tree-maintainer` 同步 GitHub 与网站。标题采用简洁的学术名称，不附重复中英文括注。
 
 ## 许可
 

@@ -232,9 +232,9 @@
       "description": "自注意力与 Transformer 结构"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/01_rl-foundations.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/rl-foundations.md",
-      "slug": "learning-based-planning/rl-algorithms/rl-foundations",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/01_rl-foundations/01_reinforcement-learning-foundations.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations.md",
+      "slug": "learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations",
       "title": "强化学习核心公式手册",
       "label": "强化学习基础",
       "order": 1,
@@ -242,9 +242,9 @@
       "description": "MDP、贝尔曼方程到策略梯度"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_algorithm-evolution.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/algorithm-evolution.md",
-      "slug": "learning-based-planning/rl-algorithms/algorithm-evolution",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/01_rl-foundations/02_rl-algorithm-evolution.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution.md",
+      "slug": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
       "title": "强化学习算法演进与梳理",
       "label": "算法演进",
       "order": 2,
@@ -252,44 +252,164 @@
       "description": "值方法到策略梯度的演进"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/05_trpo.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/trpo.md",
-      "slug": "learning-based-planning/rl-algorithms/trpo",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/01_rl-foundations/03_model-free-vs-model-based.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/rl-foundations/model-free-vs-model-based.md",
+      "slug": "learning-based-planning/rl-algorithms/rl-foundations/model-free-vs-model-based",
+      "title": "有模型与无模型强化学习",
+      "label": "有模型 RL",
+      "order": 3,
+      "status": "draft",
+      "description": "样本效率与模型误差的权衡"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/01_rl-foundations/04_pomdp-recurrent-policies.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies.md",
+      "slug": "learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies",
+      "title": "POMDP 与循环策略",
+      "label": "POMDP",
+      "order": 4,
+      "status": "draft",
+      "description": "部分可观测与循环网络策略"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/01_dqn.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-free-rl/dqn.md",
+      "slug": "learning-based-planning/rl-algorithms/model-free-rl/dqn",
+      "title": "值函数方法与 DQN",
+      "label": "值函数与 DQN",
+      "order": 5,
+      "status": "draft",
+      "description": "从 Q-learning 到深度 Q 网络"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/02_policy-gradient-actor-critic-gae.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae.md",
+      "slug": "learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae",
+      "title": "策略梯度、Actor-Critic 与 GAE",
+      "label": "策略梯度与 GAE",
+      "order": 6,
+      "status": "draft",
+      "description": "从 REINFORCE 到优势估计"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/03_trpo.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-free-rl/trpo.md",
+      "slug": "learning-based-planning/rl-algorithms/model-free-rl/trpo",
       "title": "TRPO (Trust Region Policy Optimization) 算法完整解析与代码实现",
       "label": "TRPO",
-      "order": 5,
+      "order": 7,
       "status": "published",
       "description": "信赖域策略优化推导与实现"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/06_ppo.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/ppo.md",
-      "slug": "learning-based-planning/rl-algorithms/ppo",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-free-rl/ppo.md",
+      "slug": "learning-based-planning/rl-algorithms/model-free-rl/ppo",
       "title": "PPO 算法完整解析与代码实现",
       "label": "PPO",
-      "order": 6,
+      "order": 8,
       "status": "published",
-      "description": "PPO 完整推导与代码实现"
+      "description": "从 Actor/Critic、并行 rollout 与 GAE 到 PPO-Clip、多轮参数更新；主线、可展开推导与可运行教学代码"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/08_td3.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/td3.md",
-      "slug": "learning-based-planning/rl-algorithms/td3",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/05_ddpg.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-free-rl/ddpg.md",
+      "slug": "learning-based-planning/rl-algorithms/model-free-rl/ddpg",
+      "title": "DDPG 与确定性策略梯度",
+      "label": "DDPG",
+      "order": 9,
+      "status": "draft",
+      "description": "确定性策略梯度与连续控制"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/06_td3.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-free-rl/td3.md",
+      "slug": "learning-based-planning/rl-algorithms/model-free-rl/td3",
       "title": "TD3 算法完整解析与代码实现",
       "label": "TD3",
-      "order": 8,
+      "order": 10,
       "status": "published",
       "description": "双 Q 学习与延迟策略更新"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/09_sac.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/sac.md",
-      "slug": "learning-based-planning/rl-algorithms/sac",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/07_sac.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-free-rl/sac.md",
+      "slug": "learning-based-planning/rl-algorithms/model-free-rl/sac",
       "title": "SAC 算法完整解析与代码实现",
       "label": "SAC",
-      "order": 9,
+      "order": 11,
       "status": "published",
       "description": "最大熵 Actor-Critic 推导"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/01_model-based-rl-foundations.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
+      "title": "基于模型的强化学习基础",
+      "label": "MB RL 基础",
+      "order": 12,
+      "status": "draft",
+      "description": "环境动力学模型与奖励模型、世界模型组成、真实与想象 rollout、模型不确定性——Model-Based RL 分支的技术地基。"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/02_dyna.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/dyna.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/dyna",
+      "title": "Dyna：基于模型生成经验的强化学习架构",
+      "label": "Dyna",
+      "order": 13,
+      "status": "draft",
+      "description": "Dyna 架构：真实经验与模型生成的虚拟经验共同更新值函数，经典 Dyna-Q 及其与现代 MBPO 的思想血缘。"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/03_pets.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/pets.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/pets",
+      "title": "PETS：概率动力学模型与轨迹采样规划",
+      "label": "PETS",
+      "order": 14,
+      "status": "draft",
+      "description": "PETS：概率系综动力学模型与 CEM 轨迹采样规划，每步在线重规划的 MPC 式 Model-Based RL。"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/04_mbpo.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/mbpo.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/mbpo",
+      "title": "MBPO：基于模型生成经验的策略优化",
+      "label": "MBPO",
+      "order": 15,
+      "status": "draft",
+      "description": "MBPO：短时域模型 rollout 生成合成经验，交给 SAC 等 model-free 学习器，无 BPTT 的经验放大器。"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/05_muzero.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/muzero.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/muzero",
+      "title": "MuZero：潜在动力学学习与模型规划",
+      "label": "MuZero",
+      "order": 16,
+      "status": "draft",
+      "description": "MuZero：表示/动力学/预测三网络与 MCTS 结合，不重建观测的价值等效潜在模型规划。"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/06_dreamer.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/dreamer.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/dreamer",
+      "title": "Dreamer：基于潜在世界模型的想象策略学习",
+      "label": "Dreamer",
+      "order": 17,
+      "status": "draft",
+      "description": "Dreamer：RSSM 潜在世界模型中的想象 rollout，actor-critic 经冻结模型反传的梯度式策略优化。"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/07_differentiable-policy-optimization.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization",
+      "title": "可微动力学与直接策略优化",
+      "label": "可微策略优化",
+      "order": 18,
+      "status": "draft",
+      "description": "可微动力学与短时域 BPTT 的直接策略优化：pathwise 梯度、SHAC 与梯度稳定性设计。"
     },
     {
       "source": "tech_stack/03_learning-based-planning/03_engineering-practice/01_ppo-walkthrough.md",
@@ -299,7 +419,7 @@
       "label": "PPO 走读与调参",
       "order": 1,
       "status": "published",
-      "description": "一次 PPO 迭代的数据流走读"
+      "description": "PPO 训练循环的工程走读：环境契约、采样与更新配置、指标诊断、检查点和复现"
     },
     {
       "source": "tech_stack/03_learning-based-planning/03_engineering-practice/02_rl-engineering-pitfalls.md",
@@ -610,56 +730,6 @@
       "order": 7,
       "status": "draft",
       "description": "时序网络与多传感器融合结构"
-    },
-    {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_value-based-rl-dqn.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/value-based-rl-dqn.md",
-      "slug": "learning-based-planning/rl-algorithms/value-based-rl-dqn",
-      "title": "值函数方法与 DQN",
-      "label": "值函数与 DQN",
-      "order": 3,
-      "status": "draft",
-      "description": "从 Q-learning 到深度 Q 网络"
-    },
-    {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/04_policy-gradient-actor-critic-gae.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/policy-gradient-actor-critic-gae.md",
-      "slug": "learning-based-planning/rl-algorithms/policy-gradient-actor-critic-gae",
-      "title": "策略梯度、Actor-Critic 与 GAE",
-      "label": "策略梯度与 GAE",
-      "order": 4,
-      "status": "draft",
-      "description": "从 REINFORCE 到优势估计"
-    },
-    {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/07_ddpg.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/ddpg.md",
-      "slug": "learning-based-planning/rl-algorithms/ddpg",
-      "title": "DDPG 与确定性策略梯度",
-      "label": "DDPG",
-      "order": 7,
-      "status": "draft",
-      "description": "确定性策略梯度与连续控制"
-    },
-    {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/10_pomdp-recurrent-rl.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/pomdp-recurrent-rl.md",
-      "slug": "learning-based-planning/rl-algorithms/pomdp-recurrent-rl",
-      "title": "POMDP 与循环策略",
-      "label": "POMDP",
-      "order": 10,
-      "status": "draft",
-      "description": "部分可观测与循环网络策略"
-    },
-    {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/11_model-based-and-model-free-rl.md",
-      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-and-model-free-rl.md",
-      "slug": "learning-based-planning/rl-algorithms/model-based-and-model-free-rl",
-      "title": "有模型与无模型强化学习",
-      "label": "有模型 RL",
-      "order": 11,
-      "status": "draft",
-      "description": "样本效率与模型误差的权衡"
     },
     {
       "source": "tech_stack/03_learning-based-planning/03_engineering-practice/05_observation-action-reward-design.md",

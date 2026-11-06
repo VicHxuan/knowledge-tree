@@ -1,12 +1,12 @@
 # Trajectory Representation and Parameterization
 
-## 1. 概述（Overview）
+## 1. 概述
 
-### 1. Trajectory Generation Strategy
+### 1. 轨迹生成策略
 
 轨迹生成描述的是轨迹从哪里来，以及轨迹参数如何获得。在当前讨论范围内，可以归纳为三类。
 
-#### 1.1 Path + Time Parameterization
+#### 1.1 路径与时间参数化
 
 首先获得一条几何路径：
 
@@ -46,7 +46,7 @@ $$
 
 该方法将几何路径规划和时间分配分开完成。
 
-#### 1.2 Direct Trajectory Parameter Generation
+#### 1.2 轨迹参数直接生成
 
 直接生成某种轨迹参数：
 
@@ -71,7 +71,7 @@ $$
 
 参数可以由优化器、搜索算法或神经网络直接产生。
 
-#### 1.3 Motion Primitive Selection / Composition
+#### 1.3 运动基元选择与组合
 
 首先构造有限或参数化的候选轨迹集合：
 
@@ -110,9 +110,9 @@ Motion Primitive 本身不是一种独立的轨迹数学表示方式。每一个
 
 等轨迹表示或参数化形式。
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
-### 2. Trajectory Mathematical Representation
+### 2. 轨迹数学表示
 
 当前讨论统一采用：
 
@@ -268,11 +268,11 @@ $$
 
 共 $M$ 个时间参数。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
-### 3. Polynomial Parameterization
+### 3. 多项式参数化
 
-#### 3.1 Direct Polynomial Coefficients
+#### 3.1 直接系数参数化
 
 ##### 参数化方法
 
@@ -308,7 +308,7 @@ $$
 \boldsymbol{\beta}_5(t)
 $$
 
-##### 3D PVA 实例
+##### 三维 PVA 示例
 
 对于一个三维五次 polynomial segment：
 
@@ -343,7 +343,7 @@ $$
 * PVA 边界条件需要显式施加
 * 多段轨迹的连续性需要显式约束
 
-#### 3.2 Hermite Parameterization
+#### 3.2 Hermite 参数化
 
 ##### 参数化方法
 
@@ -381,7 +381,7 @@ $$
 \boldsymbol{\beta}_5(t)
 $$
 
-##### 3D PVA 实例
+##### 三维 PVA 示例
 
 每个位置、速度和加速度均为三维向量：
 
@@ -444,7 +444,7 @@ $$
 * 中间 knot 的速度和加速度必须显式给定或通过其他方法计算
 * 适合已知边界状态下的轨迹插值
 
-#### 3.3 Bezier Parameterization
+#### 3.3 贝塞尔参数化
 
 ##### 参数化方法
 
@@ -490,7 +490,7 @@ u^j
 (1-u)^{5-j}
 $$
 
-##### 3D PVA 实例
+##### 三维 PVA 示例
 
 6 个三维 control points 可以组成参数矩阵：
 
@@ -606,7 +606,7 @@ $$
 * PVA 边界可以转换为对应 control points
 * 多段 Bezier 需要进一步保证 segment 连接处的连续性
 
-#### 3.4 B-Spline Parameterization
+#### 3.4 B 样条参数化
 
 ##### 参数化方法
 
@@ -647,7 +647,7 @@ u_K
 ]
 $$
 
-##### 3D PVA 实例
+##### 三维 PVA 示例
 
 采用五次 B-spline：
 
@@ -736,7 +736,7 @@ $$
 * 适合局部轨迹形状调整
 * 适合局部避障优化
 
-#### 3.5 MINCO Parameterization
+#### 3.5 MINCO 参数化
 
 ##### 参数化方法
 
@@ -853,7 +853,7 @@ $$
 
 其对应的速度和加速度不需要显式定义，而是由 minimum-control optimality condition 自动确定。
 
-##### 3D PVA 实例
+##### 三维 PVA 示例
 
 考虑两段 MINCO trajectory：
 
@@ -982,13 +982,13 @@ $$
 * 多个 segment 之间存在耦合
 * 不具有 B-spline control point 那样严格的局部支撑特性
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 > 待补充。
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
-### 4. Parameterization Summary
+### 4. 参数化方法比较
 
 | Parameterization  | 核心参数                            | 3D Quintic 示例               | 参数影响范围              | 是否内嵌优化目标 |
 | ----------------- | ------------------------------- | --------------------------- | ------------------- | -------- |
@@ -1019,6 +1019,6 @@ $$
 
 NURBS，即 Non-Uniform Rational B-Spline，属于 Piecewise Rational Polynomial，而不是严格意义上的 Piecewise Polynomial，因此不纳入当前分类主体。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

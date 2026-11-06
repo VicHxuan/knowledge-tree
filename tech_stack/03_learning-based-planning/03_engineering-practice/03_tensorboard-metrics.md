@@ -1,6 +1,6 @@
 # 通用强化学习 TensorBoard 指标模板
 
-## 1. 概述（Overview）
+## 1. 概述
 
 **版本：v1.2**
 
@@ -8,7 +8,7 @@
 
 **适用范围：离散动作 / 连续动作、单环境 / 向量化环境、单 GPU / 多 GPU、带或不带 Curriculum Learning 的强化学习任务。**
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 ### 1. 设计原则
 
@@ -22,9 +22,9 @@
 
 ---
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
-### 2. Episode：回合表现 `episode/*`
+### 2. 回合表现 `episode/*`
 
 #### 2.1 指标清单
 
@@ -55,7 +55,7 @@ K 为可配置参数，建议初始使用：
 
 ---
 
-### 3. Termination：终止结果 `termination/*`
+### 3. 终止结果 `termination/*`
 
 采用 **Per-Env Latest Termination** 机制。
 
@@ -137,7 +137,7 @@ Curriculum Level 全局切换时，将全部元素重新填充为 `-10`。
 
 ---
 
-### 4. Reward：奖励统计 `reward/*`
+### 4. 奖励统计 `reward/*`
 
 #### 4.1 基础奖励
 
@@ -170,7 +170,7 @@ Curriculum Level 全局切换时，将全部元素重新填充为 `-10`。
 
 ---
 
-### 5. Rollout：采样统计 `rollout/*`
+### 5. 采样统计 `rollout/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -180,11 +180,11 @@ Curriculum Level 全局切换时，将全部元素重新填充为 `-10`。
 
 ---
 
-### 6. Policy：策略分布 `policy/*`
+### 6. 策略分布 `policy/*`
 
 根据 PPO Actor 的动作空间类型，选择以下两种分组之一。
 
-#### 6.1 离散动作策略（Discrete Action）
+#### 6.1 离散动作策略
 
 适用于 Categorical Policy，例如在多个候选动作中选择一个。
 
@@ -203,7 +203,7 @@ Curriculum Level 全局切换时，将全部元素重新填充为 `-10`。
 
 如果存在 Action Mask，应针对各样本的有效动作集合计算。
 
-#### 6.2 连续动作策略（Continuous Action）
+#### 6.2 连续动作策略
 
 适用于 Gaussian Policy、Squashed Gaussian Policy 等。
 
@@ -219,7 +219,7 @@ Curriculum Level 全局切换时，将全部元素重新填充为 `-10`。
 
 如果使用 Tanh Squashing，需明确 Entropy 和 Std 是针对变换前还是变换后的动作分布。
 
-#### 6.3 两种策略通用
+#### 6.3 通用策略指标
 
 | 指标 | 含义 |
 |---|---|
@@ -234,7 +234,7 @@ Curriculum Level 全局切换时，将全部元素重新填充为 `-10`。
 
 ---
 
-### 7. PPO：策略更新诊断 `ppo/*`
+### 7. PPO 更新诊断 `ppo/*`
 
 #### 7.1 指标清单
 
@@ -267,7 +267,7 @@ PPO Probability Ratio：
 
 ---
 
-### 8. Critic：价值网络 `critic/*`
+### 8. 价值网络 `critic/*`
 
 #### 8.1 指标清单
 
@@ -279,7 +279,7 @@ PPO Probability Ratio：
 | `critic/target_std` | Critic 训练目标 Return 的标准差 |
 | `critic/explained_variance` | Critic 对目标 Return 方差的解释能力 |
 
-#### 8.2 Explained Variance
+#### 8.2 解释方差
 
 定义：
 
@@ -297,7 +297,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 9. Loss：训练损失 `loss/*`
+### 9. 训练损失 `loss/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -314,7 +314,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 10. Optimizer：优化过程 `optimizer/*`
+### 10. 优化过程 `optimizer/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -342,7 +342,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 11. Diagnostics：通用数值诊断 `diagnostics/*`
+### 11. 数值诊断 `diagnostics/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -361,7 +361,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 12. Evaluation：独立评估 `eval/*`
+### 12. 独立评估 `eval/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -384,7 +384,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 13. Performance：训练性能 `performance/*`
+### 13. 训练性能 `performance/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -402,7 +402,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 14. Distributed：分布式训练 `distributed/*`
+### 14. 分布式训练 `distributed/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -420,7 +420,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 15. Resources：硬件资源 `resources/*`
+### 15. 硬件资源 `resources/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -433,7 +433,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 16. Curriculum：课程学习 `curriculum/*`
+### 16. 课程学习 `curriculum/*`
 
 | 指标 | 含义 |
 |---|---|
@@ -441,7 +441,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 | `curriculum/level_transition_count` | 从训练开始累计发生的 Level 切换次数 |
 | `curriculum/episodes_since_level_change` | 当前 Level 下已经完成的 Episode 数量 |
 
-#### 16.1 Level 切换规则
+#### 16.1 课程等级切换
 
 当全局 Curriculum Level 变化时：
 
@@ -456,7 +456,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 17. Model：网络结构诊断 `model/*`
+### 17. 网络结构诊断 `model/*`
 
 根据实际网络结构添加。
 
@@ -473,7 +473,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 
 ---
 
-### 18. Task：任务特异性指标 `task/*`
+### 18. 任务指标 `task/*`
 
 新项目仅需在该模块添加任务相关指标。
 
@@ -521,7 +521,7 @@ Value Mean 本身不是 Critic 准确率，需结合 Value Target、Value Loss �
 | `dqn/q_target_mean` | TD Target 均值 |
 | `dqn/td_error_abs_mean` | TD Error 绝对值均值 |
 
-#### 20.3 Replay Buffer
+#### 20.3 经验回放池
 
 SAC、DQN、TD3 等离策略算法可增加：
 
@@ -533,7 +533,7 @@ SAC、DQN、TD3 等离策略算法可增加：
 
 ---
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 ### 19. TensorBoard 记录规范
 
@@ -597,7 +597,7 @@ Policy / Critic 的即时诊断若只使用 Rank 0，需要明确注明，不能
 
 ---
 
-### 21. 新项目使用规则
+### 21. 项目接入规范
 
 在新的 RL 训练项目中，按照以下顺序配置：
 
@@ -613,10 +613,10 @@ Policy / Critic 的即时诊断若只使用 Rank 0，需要明确注明，不能
 
 **最终原则：通用统计定义保持稳定，算法模块按需切换，任务指标独立扩展。**
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 > 待补充。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

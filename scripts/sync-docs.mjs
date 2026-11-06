@@ -9,19 +9,20 @@
  *    otherwise all body headings are demoted one level (fence-aware)
  *  - internal links to other originals are rewritten to /knowledge-tree/ slugs;
  *    curated external overrides (references/papers -> arXiv) applied
- *  - generated dirs get a .gitignore (*.md, !index.md): chapters are build-time
- *    artifacts, only hand-written index.md pages are tracked
- *  - stale pages from previous layouts are removed
+ *  - generated dirs ignore only explicit outputs; hand-written pages remain tracked
+ *  - cleanup only removes stale files with our generator ownership marker
  *
  * Flags: --check  verify freshness without writing (exit 1 on drift)
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, unlinkSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { posix } from 'node:path';
 import { DOMAINS } from '../src/data/domains.mjs';
+import { rewriteSourceTarget, sourceDomain, validateSlug } from './lib/docs-model.mjs';
+import { planGeneratedFiles, applyFilePlan, checkFilePlan, GENERATED_MARKER } from './lib/generated-files.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const TS = join(ROOT, 'tech_stack');
@@ -32,8 +33,6 @@ const REPO = 'https://github.com/VicHxuan/knowledge-tree';
 const SITE_BASE = '/knowledge-tree';
 // 六大知识域目录由 src/data/domains.mjs 统一登记（单一事实源）
 const TS_DOMAINS = DOMAINS.map((d) => d.tsDir);
-const SITE_DOMAIN_DIRS = DOMAINS.map((d) => d.id);
-const LEGACY_SITE_DIRS = ['rl-end-to-end', 'machine-learning', 'robotics', 'programming'];
 
 // curated external link overrides: tech_stack-relative resolved path -> URL
 const EXTERN = {
@@ -69,6 +68,11 @@ function loadMap() {
     if (!e.source.startsWith('tech_stack/') || !e.output.startsWith('src/content/docs/')) {
       throw new Error(`bad map entry paths: ${e.source}`);
     }
+    sourceDomain(e.source, DOMAINS);
+    validateSlug(e.slug, DOMAINS);
+    if (e.output !== `src/content/docs/${e.slug}.md`) throw new Error(`output must match slug: ${e.output}`);
+    if (!['draft', 'published'].includes(e.status)) throw new Error(`invalid status: ${e.status}`);
+    if (bySource.has(e.source.slice('tech_stack/'.length))) throw new Error(`duplicate source: ${e.source}`);
     if (bySlug.has(e.slug)) throw new Error(`duplicate slug: ${e.slug}`);
     bySource.set(e.source.slice('tech_stack/'.length), e);
     bySlug.set(e.slug, e);
@@ -102,6 +106,7 @@ function yamlScalar(s) {
 
 function frontmatter(e) {
   let fm = '---\n';
+  fm += `${GENERATED_MARKER}\n`;
   fm += `title: ${yamlScalar(e.title)}\n`;
   fm += `description: ${yamlScalar(e.description)}\n`;
   fm += `editUrl: ${yamlScalar(`${REPO}/edit/main/${e.source}`)}\n`;
@@ -164,14 +169,9 @@ function processBody(raw, e, bySource) {
 }
 
 function convertLinks(line, srcDir, bySource) {
-  return line.replace(/\]\(([^)\s]*)\)/g, (whole, target) => {
-    if (/^(https?:|mailto:|#)/.test(target)) return whole;
-    let p = posix.normalize(posix.join(srcDir, target));
-    if (p.startsWith('../')) return whole; // escapes tech_stack -> leave untouched
-    if (EXTERN[p]) return `](${EXTERN[p]})`;
-    const entry = bySource.get(p);
-    if (entry) return `](${SITE_BASE}/${entry.slug}/)`;
-    return whole;
+  return line.replace(/\]\(([^)\s]*)(?:\s+("[^"]*"|'[^']*'))?\)/g, (whole, target, title) => {
+    const converted = rewriteSourceTarget(target, srcDir, bySource, EXTERN);
+    return `](${converted}${title ? ' ' + title : ''})`;
   });
 }
 
@@ -182,68 +182,17 @@ function generate(map) {
   for (const e of map.entries) {
     const srcPath = join(ROOT, e.source);
     const outPath = join(ROOT, e.output);
+    if (existsSync(outPath)) {
+      const previous = readFileSync(outPath, 'utf8');
+      const legacySignature = `editUrl: ${yamlScalar(`${REPO}/edit/main/${e.source}`)}`;
+      if (!previous.startsWith(`---\n${GENERATED_MARKER}\n`) && !(previous.startsWith('---\n') && previous.includes(legacySignature))) {
+        throw new Error(`refusing to overwrite an unmarked hand-written page: ${e.output}`);
+      }
+    }
     const text = frontmatter(e) + '\n' + processBody(readFileSync(srcPath, 'utf8'), e, map.bySource) + '\n';
     written.push({ entry: e, outPath, text });
   }
   return written;
-}
-
-// ---------- housekeeping ----------
-
-const GITIGNORE = '# 章节页面由 scripts/sync-docs.mjs 从 tech_stack/ 原件生成，属构建产物不入库。\n# 手写的 index.md 通过 !index.md 保留入库。\n*.md\n!index.md\n';
-
-function housekeep(written) {
-  const expected = new Set(written.map((w) => w.outPath));
-  const genDirs = new Set(written.map((w) => dirname(w.outPath)));
-
-  // legacy top-level dirs from previous layouts
-  const removedLegacy = [];
-  for (const d of LEGACY_SITE_DIRS) {
-    const p = join(DOCS, d);
-    if (existsSync(p)) { rmSync(p, { recursive: true }); removedLegacy.push(d); }
-  }
-
-  // stale generated pages inside the six site domains
-  const stale = [];
-  for (const d of SITE_DOMAIN_DIRS) {
-    const dir = join(DOCS, d);
-    if (!existsSync(dir)) continue;
-    for (const f of walk(dir)) {
-      if (!expected.has(f) && !f.endsWith('index.md')) stale.push(f);
-    }
-  }
-  for (const d of SITE_DOMAIN_DIRS) {
-    const dir = join(DOCS, d);
-    if (!existsSync(dir)) continue;
-    pruneEmpty(dir, expected);
-  }
-
-  return { stale, removedLegacy, genDirs };
-}
-
-function pruneEmpty(dir, expected) {
-  for (const name of readdirSync(dir, { withFileTypes: true })) {
-    if (!name.isDirectory()) continue;
-    const p = join(dir, name.name);
-    pruneEmpty(p, expected);
-    const left = readdirSync(p);
-    if (left.length === 1 && left[0] === '.gitignore') {
-      const ig = join(p, '.gitignore');
-      if (readFileSync(ig, 'utf8') === GITIGNORE) rmSync(p, { recursive: true });
-    }
-  }
-}
-
-function writeAll(written, house) {
-  for (const w of written) {
-    mkdirSync(dirname(w.outPath), { recursive: true });
-    writeFileSync(w.outPath, w.text);
-  }
-  for (const f of house.stale) unlinkSync(f);
-  for (const d of house.genDirs) {
-    const ig = join(d, '.gitignore');
-    if (!existsSync(ig) || readFileSync(ig, 'utf8') !== GITIGNORE) writeFileSync(ig, GITIGNORE);
-  }
 }
 
 /** 原件最近一次提交的 author-date（YYYY-MM-DD）；无 git 历史时返回 null。 */
@@ -298,28 +247,26 @@ function stats(written) {
 function main() {
   const map = loadMap();
   const written = generate(map);
-  const house = housekeep(written);
-
+  const s = stats(written);
+  const files = written.map((w) => ({ path: w.outPath, content: w.text }));
+  files.push({ path: STATS_PATH, content: JSON.stringify(s, null, 2) + '\n' });
+  // Public downloads are an explicit allowlist; private reference trees are never copied.
+  const downloads = ['examples/ppo_core.py'];
+  for (const source of downloads) {
+    const path = join(ROOT, source);
+    if (!existsSync(path)) throw new Error(`download source missing: ${source}`);
+    files.push({ path: join(ROOT, 'public', source), content: readFileSync(path, 'utf8') });
+  }
+  const plan = planGeneratedFiles({ docs: DOCS, generated: files, articlePaths: written.map((w) => w.outPath), downloadPaths: downloads.map((p) => join(ROOT, 'public', p)) });
   if (CHECK) {
-    let drift = 0;
-    for (const w of written) {
-      if (!existsSync(w.outPath)) { console.error(`missing: ${relative(ROOT, w.outPath)}`); drift++; continue; }
-      if (readFileSync(w.outPath, 'utf8') !== w.text) { console.error(`stale:  ${relative(ROOT, w.outPath)}`); drift++; }
-    }
-    for (const f of house.stale) { console.error(`extra:  ${relative(ROOT, f)}`); drift++; }
-    for (const d of house.removedLegacy) { console.error(`legacy dir still present: src/content/docs/${d}`); drift++; }
-    if (drift) { console.error(`docs sync check FAILED (${drift} file(s) need sync)`); process.exit(1); }
-    console.log(`docs sync check OK: ${written.length} pages in sync`);
+    const issues = checkFilePlan(plan);
+    for (const issue of issues) console.error(issue);
+    if (issues.length) { process.exitCode = 1; return; }
+    console.log(`docs sync check OK: ${written.length} pages, statistics, downloads and ignores in sync (read-only)`);
     return;
   }
-
-  writeAll(written, house);
-  const s = stats(written);
-  mkdirSync(dirname(STATS_PATH), { recursive: true });
-  writeFileSync(STATS_PATH, JSON.stringify(s, null, 2) + '\n');
-  console.log(`synced ${s.entries} pages (${s.published} published, ${s.draft} draft) from ${map.entries.length} map entries`);
-  if (house.stale.length) console.log(`removed ${house.stale.length} stale generated page(s)`);
-  if (house.removedLegacy.length) console.log(`removed legacy dir(s): ${house.removedLegacy.join(', ')}`);
+  applyFilePlan(plan);
+  console.log(`synced ${s.entries} pages (${s.published} published, ${s.draft} draft); removed ${plan.remove.length} marked generated file(s)`);
   console.log(`content hash: ${s.contentHash}`);
 }
 

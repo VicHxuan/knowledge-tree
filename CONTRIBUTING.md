@@ -1,143 +1,117 @@
-# 贡献指南
+# 贡献与维护指南
 
-感谢你为知识树贡献内容！
+## 内容在哪里维护
 
-## 两层内容模型（先读这个）
+| 内容 | 维护入口 |
+|---|---|
+| 技术正文，包括草稿 | `tech_stack/` 原件；遵循[六模块模板](tech_stack/TECHNICAL_ARTICLE_TEMPLATE.md) |
+| 文章标题、路由、发布状态、排序 | `src/data/content-map.json` |
+| 六大领域 | `src/data/domains.mjs` |
+| 前置和相关关系 | `src/data/knowledge-relations.json` 的 edges |
+| 旧网址兼容 | `src/data/redirects.json` |
+| 分类导读、学习路径、项目页 | `src/content/docs/` 中的手写 MD/MDX |
+| 网站交互与样式 | `src/components/`、`src/styles/` |
 
-- **章节正文**：写在 `tech_stack/` 下的原始笔记里（事实源）。`src/content/docs/` 中对应的页面由 `scripts/sync-docs.mjs` **自动生成**（untracked），直接改生成产物会在下次同步时被覆盖。
-- **手写页面**：板块首页（各目录的 `index.md`）、`learning-paths/`、`knowledge-map/`、`projects/` 直接维护在 `src/content/docs/` 下。
+生成文章带所有权标记，由 sync 重建；不要手工编辑。分类页是 `index.mdx`，其 `TopicIndex` 从注册表派生文章目录及发布状态。节点展示信息从文章注册表派生，统计和下载文件由 sync 生成。
 
-不确定某篇正文该改哪里？点页面上角的「编辑此页」，链接会指向事实源。
+## 技术文章的统一结构
 
-## 新增或修改章节
+全部技术文章（含草稿）采用：**概述 → 基础与定义 → 核心原理 → 实现与应用 → 分析与总结 → 关联与参考**。原件一个 H1，网站自动吸收为页面标题；模块为 H2，主线小节为 H3。
 
-1. 原始笔记放在 `tech_stack/` 对应领域目录下，文件名使用小写英文与连字符（kebab-case）；
-2. 运行 `npm run docs:add -- tech_stack/<域>/<板块>/<文件>.md` 注册文章：自动校验路径、从首个 H1 推导标题、生成 slug 并同时写入 `content-map.json` 与 `knowledge-relations.json`（可用 `--title` / `--label` / `--status` / `--order` / `--description` 覆盖默认值）。也可以手工在 `src/data/content-map.json` 注册映射（source / output / slug / title / label / order / status）；
-3. 运行 `npm run docs:sync` 生成页面；状态为 `draft` 的条目会带 `draft: true`，只在开发服务器可见、不进生产构建；
-4. 正文从二级标题 `##` 开始组织，**不要**写一级标题——页面大标题由映射表的 `title` 渲染（与标题相同的 H1 会被自动吸收）；已发布文章须符合**六模块结构**（见下文写作规范），`docs:check` 会逐篇校验；
-5. 数学公式使用 `$...$`（行内）与 `$$...$$`（块级），由 KaTeX 渲染；
-6. 架构与流程图使用 ` ```mermaid ` 代码块书写（flowchart、sequenceDiagram、graph 等），构建时保留源码并在页面加载后按当前主题客户端渲染——只在不影响文章正文的场合使用，复杂图示仍优先手绘图片；
-7. 原始笔记中的站内相对链接会被同步脚本自动转换；站内跳转写完整路径并带 `/knowledge-tree` 前缀，例如：
+标题采用简洁的学术名词短语，如“网络结构”“优势估计”“策略优化”。具体步骤、结论和限制条件写在正文，不堆进小标题。章节及折叠标题不附重复英文译名或“重要”“详细说明”等无信息括注；正文保留必要的首次术语定义、数学表达式、单位、版本和消歧说明。
 
-   ```md
-   [PPO](/knowledge-tree/learning-based-planning/rl-algorithms/ppo/)
-   ```
+按模板组织“结论先行、细节展开”。必要公式、假设和边界保持可见；证明、算例和长代码放在 `<details class="kt-derivation" id="稳定英文ID">` 中。主线与推导写作示范见 [PPO 原件](tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md)。
 
-移动 / 重命名已有文章：先 `git mv` 原件到新路径，再运行
-`npm run docs:rename -- --from <旧slug> --to tech_stack/<新路径>.md`。脚本会同步改写映射条目与关系边端点，旧文曾发布过时还会自动在 `redirects.json` 登记旧 slug 的兜底跳转。
+修改技术内容时查原始论文、官方文档或实现。保留来源、符号和复现条件；缺失材料写 `> 待补充。`，发布状态与内容完善程度分开处理。
 
-## 新增手写页面
+## 手写页面的统一结构
 
-在 `src/content/docs/` 对应目录放置 `.md` / `.mdx` 文件，frontmatter 示例：
+- 分类页：板块定位、阅读主线、主题目录、下一步。目录用 `TopicIndex`，不要再手抄文章标题和草稿状态。
+- 学习路径：学习目标、开始之前、学习步骤、完成标准、延伸方向。文章步骤用 slug 引用，步骤顺序和教学说明人工维护；稳定步骤 ID 与历史迁移表不能按新排序重写。
+- 项目页：项目定位、系统与知识关系、实践入口、进展与证据。记录实际已有的结果，计划与完成状态明确区分。
 
-```md
----
-title: PPO 强化学习算法
-description: 一句话简介，用于搜索与页面摘要
-sidebar:
-  order: 5
----
-```
+## 修改已有文章
 
-新增分类目录时放置 `index.md` 作为分组首页，并检查 `astro.config.mjs` 中 `sidebar` 的分组配置。
+1. 修改原件，必要时更新映射的 title/description。
+2. 更新相关关系；原件链接可以写相对 `.md`（含 query/fragment），同步后转成 `/knowledge-tree/<slug>/`。
+3. 同步、检查、构建，再检查受影响网页。结构变化时检查旧锚点。
 
-## 技术文章写作规范（Technical Article Writing Standards）
-
-### 规范入口
-
-所有底层技术教程（数学理论、算法推导、论文方法、工程工具）统一遵循
-[Technical Article Template](./tech_stack/TECHNICAL_ARTICLE_TEMPLATE.md)。
-该文件既是写作规范，也是可复制的文章骨架；它属于知识库规范文件，不进入网站的教程发布映射。
-
-### 文章结构要求
-
-底层技术文章统一采用**六模块写作体系**，模块顺序固定：
-
-1. **概述（Overview）**：背景、问题动机、应用场景与文章定位。
-2. **基础与定义（Foundations）**：先修概念、问题建模、输入输出定义、变量与符号、坐标系与基本假设。
-3. **核心原理（Core Principles）**：方法思想、算法架构、数学推导、关键公式与执行流程——通常是算法与理论文章的主体。
-4. **实现与应用（Implementation & Applications）**：伪代码与实现、命令与配置、算法参数、实验示例与应用案例。
-5. **分析与总结（Analysis & Summary）**：方法特点、性能与适用条件、局限、工程常见问题与核心结论。
-6. **关联与参考（Related Topics & References）**：前置知识、相关技术、进阶阅读、研究项目与参考资料（论文、官方文档、开源仓库）。
-
-排版约定：原件使用一个 `# 文章标题`；六个主模块统一为 `##`，模块内使用 `###`，复杂推导再使用 `####`。三级及以下标题随技术内容自由扩展。原文没有材料的模块写 `> 待补充。`，不凭空生成技术事实。
-
-### 文档内容管理与同步关系
-
-项目采用双层内容架构：
-
-- `tech_stack/`：技术文章原件，唯一维护入口；
-- `src/content/docs/`：网站发布内容（生成副本 + 少量手写页面）；
-- `astro.config.mjs`：网站路由、侧栏与布局配置。
-
-同步关系（依据 `scripts/` 的实际实现）：
-
-- `scripts/sync-docs.mjs` 按 `src/data/content-map.json` 的映射，把 `tech_stack/` 原件确定性生成为 Starlight 页面（注入 frontmatter、吸收与页面标题一致的 H1、转换站内链接、`draft` 状态只在开发态可见），并统计各域文章数、最近更新与每篇的最近维护日期（取原件的 git author-date）；`predev` / `prebuild` 钩子在每次 `dev` / `build` 前自动执行，`--check` 模式用于检测漂移；
-- `scripts/validate-docs.mjs` 校验站内链接与重定向（含重定向环检测）、已发布文章的六模块标题结构，以及 content-map / knowledge-relations / redirects 之间的数据一致性（slug 唯一、边端点存在、前置依赖成无环 DAG 等）；
-- `scripts/docs-add.mjs` / `scripts/docs-rename.mjs` 是新增 / 移动文章的登记器（见上文用法），注册后仍需人工补充 `knowledge-relations.json` 的前置 / 相关边；
-- `scripts/privacy-check.mjs` 在提交前扫描可发布文件中的个人隐私数据；
-- 六大领域的目录名、名称与配色统一登记在 `src/data/domains.mjs`（侧栏分组、同步、校验、知识图谱共用）；新增领域时先在这里注册，再建目录。
-
-因此：**技术正文一律修改 `tech_stack/` 原件**，网站副本由脚本重新生成；手改生成页面会在下次同步时被覆盖。
-
-### 新增文章检查清单
-
-新增技术文章时：
-
-1. 使用统一模板（六模块结构，从规范文件复制骨架）；
-2. 遵循现有目录与文件命名规范（数字前缀 = 领域内章节顺序）；
-3. 正确设置标题层级（一个 H1 + 六个 `##` 模块，模块内 `###`/`####`）；
-4. 在「基础与定义」给出必要的概念、符号与变量定义；
-5. 保持公式、符号及代码准确（LaTeX 书写公式，代码块标明语言）；
-6. 在「关联与参考」添加相关知识和参考资料（先修、进阶、论文、文档、仓库均给明确链接）；
-7. 检查 Markdown 在 VS Code 与网站渲染均正常（本地 `npm run dev` 预览）。
-
-### 已有文章维护原则
-
-调整已有 Markdown 结构时：
-
-- 尽可能保留全部原始技术内容；以章节重排、标题分级和段落归类为主要修改方式；
-- 完整保留公式、变量、推导、代码、命令、图片、表格、实验结果和引用；
-- 技术纠错与知识补充通过独立的内容修订任务处理，不与结构重排混在一起；
-- 对内容不足的模块明确标记 `> 待补充。`，并在任务报告中登记；
-- 保证文档在 VS Code Markdown 和 Astro + Starlight 中正常渲染。
-
-### Pull Request 检查规则
-
-提交技术文章时，确认以下各项：
-
-- [ ] 文章结构符合模板（六模块齐全，缺失模块有 `> 待补充。` 标记）；
-- [ ] 标题层级正确（一个 H1，模块 `##`，子章节逐级递进）；
-- [ ] 数学公式和代码完整（LaTeX 正确、代码块语言标注、内容可复现）；
-- [ ] 内部链接与图片有效（`npm run docs:check` 通过）；
-- [ ] 技术来源清晰（推导、结论、参数有出处或复现条件）；
-- [ ] 网站构建通过（`npm run build` 无错误）；
-- [ ] 公开文件符合项目隐私规则（`npm run privacy:check` 通过）。
-
-### 风格与安全补充
-
-- 正文内容保持原始笔记风格，修改他人内容时尽量做最小改动。
-- 引用其他知识点时优先链接站内页面，而不是复制内容。
-- 涉及内部项目的内容，注意不要包含真实服务器地址、密码或密钥。
-- 知识点之间的依赖关系（前置 / 相关）维护在 `src/data/knowledge-relations.json`，会在页面右侧目录栏与知识图谱中展示。
-
-## 本地验证
+批量修改已有标题前，可从当前生成页保存锚点基线。仅标题改名、层级与顺序不变时，使用以下命令维护 `src/data/heading-aliases.json`：
 
 ```bash
-npm run docs:check    # 同步无漂移 + 链接/重定向合法 + 六模块结构 + 数据一致性
-npm run privacy:check # 确认可发布文件不含个人隐私数据
-npm run build         # 构建验证：frontmatter、图标的问题都会在这里暴露
+node scripts/heading-aliases.mjs capture /tmp/knowledge-tree-headings.json
+# 编辑原件标题后：
+npm run docs:sync
+node scripts/heading-aliases.mjs update /tmp/knowledge-tree-headings.json
+node scripts/heading-aliases.mjs update /tmp/knowledge-tree-headings.json --write
 ```
 
-新增 / 移动文章的登记命令：
+先审阅输出再写入；章节增删、重排或改层级时须人工核对映射。六个主模块使用稳定锚点 `kt-section-1` 至 `kt-section-6`；旧标题别名只在构建时生成，不显示在目录中。改名已发生但尚未同步时，原有生成页仍可作为基线；生成页已更新时应从对应旧版本恢复基线。完成验证后删除临时基线。
 
 ```bash
-npm run docs:add -- tech_stack/<域>/<板块>/<文件>.md [--title …] [--status published|draft]
-npm run docs:rename -- --from <旧slug> --to tech_stack/<新路径>.md
+npm run docs:sync
+npm run docs:check
+npm run privacy:check
+npm run build
+npm run site:check
 ```
 
-## 提交变更
+`docs:check` 只比较，不写入或删除。首次 checkout 没有生成文章，应先 sync。`site:check` 检查实际 HTML 的链接、资源、锚点、技术文章六模块及公式解析错误，也能覆盖 MDX 组件生成的链接。生产构建排除 draft；分类页保留其无链接的撰写中状态。
 
-- 小改动：直接在页面右上角点「编辑此页」发起 PR。
-- 仓库内工作：Fork → 新建分支 → 提交 → PR 到 `main`。
-- 推送到 `main` 后 GitHub Actions 自动校验、构建并发布网站。
+## 新增文章
+
+从模板复制骨架，文件名采用 `NN_kebab-case.md`。数字前缀用于原件排序，网站排序取映射的 order。
+
+```bash
+npm run docs:add -- tech_stack/<领域>/<子目录>/<文件>.md --status draft
+```
+
+默认 slug 从注册领域与各级相对目录推导，并去掉数字前缀；可用 `--slug` 指定稳定路由。可用参数还有 `--title`、`--label`、`--order`、`--description`。添加后按教学需要补充关系边：`prerequisite` 从先修指向后续，`related` 为无方向关联。
+
+## 移动或改名
+
+先移动原件，再更新登记。默认保留公开 URL：
+
+```bash
+npm run docs:rename -- --from <原slug> --to tech_stack/<新路径>.md
+```
+
+确需换 URL 时显式传 `--new-slug`；脚本会更新关系端点、迁移标题锚点别名，并将旧网址和已有历史路由直接指向最终目标。同步后检查其他原件的相对链接。删除已发布文章时为旧 URL 提供合理去向，不让它静默失效。
+
+## 验证与预览
+
+```bash
+npm test                     # 维护脚本、数据与进度迁移回归
+npm run build
+npm run site:check
+npm run test:browser          # 自动启用生产预览，测试折叠和学习路径
+```
+
+浏览器测试优先使用 `CHROME_PATH`，本机有 `/usr/bin/google-chrome` 时自动使用；否则先运行 `npx playwright install chromium`。测试输出在 `test-results/`，修复失败后删除不再需要的截图与 trace。
+
+PPO 教学代码另需 Python + PyTorch：
+
+```bash
+python -m unittest discover -s tests -p 'test_ppo_core.py'
+python examples/ppo_core.py
+```
+
+算法示例验证 GAE、边界与单轮梯度，不用长时间训练替代这些检查。代码的运行依赖独立于网站的 npm 依赖。
+
+本地开发用后台模式：
+
+```bash
+npm run dev -- --background --host 127.0.0.1
+npm run astro -- dev status
+npm run astro -- dev stop
+```
+
+生产预览为 `npm run preview -- --host 127.0.0.1`，需先构建；搜索在生产构建中验收。
+
+## 提交与发布
+
+本机提供两个 skill：`knowledge-tree-editor` 负责本地文档编辑与预览；`knowledge-tree-maintainer` 负责将已修改的内容同步到 GitHub 和网站，并核实对应部署结果。明确要求“同步到 GitHub 并更新网站”时，按该范围完成检查、提交、推送与线上验收。
+
+提交前检查具体 diff，定向暂存原件、配置和手写页面。`SITE-AND-WORKFLOW.md` 是本地实现说明，不入库；`tech_stack/personal/`、`tech_stack/references/` 和隐私模式库保持本地。
+
+本地有隐私规则时运行扫描；无规则的 CI 会明确显示跳过。推送 main 会自动触发校验、构建和 GitHub Pages 发布。使用当前仓库的 SSH remote，按用户的提交/发布指令执行。

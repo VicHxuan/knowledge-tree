@@ -3,13 +3,13 @@
  *
  * 消费方：
  *   - astro.config.mjs          侧边栏内容分组（label + 目录 id）
- *   - scripts/sync-docs.mjs     tech_stack 域目录覆盖性校验（tsDir）与站点域目录清理（id）
+ *   - scripts/sync-docs.mjs     tech_stack 域目录覆盖性校验（tsDir）与路由领域校验（id）
  *   - src/content/docs/index.mdx 首页领域卡片（icon / blurb / 计数）
  *   - src/components/knowledge-map/KnowledgeMap.tsx 图谱域色与领域视图排序
  *   - scripts/rehype-article-tools.mjs 文章面包屑的域标签
  *
- * 新增知识领域：在此登记一条，并在 content-map.json / knowledge-relations.json
- * 中使用其 id；侧栏、首页卡片、图谱域色与筛选即自动生效。
+ * 新增知识领域：在此登记一条，并在 content-map.json 中使用其 id；
+ * 侧栏、首页卡片、图谱域色与筛选即自动生效，关系边引用完整文章 slug。
  * 图标名取自 Starlight 内置图标集（schema.d.ts StarlightIcon）。
  */
 export const DOMAINS = [

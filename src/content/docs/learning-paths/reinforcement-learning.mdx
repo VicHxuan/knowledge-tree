@@ -1,34 +1,51 @@
 ---
 title: "强化学习学习路径"
-description: "从数学基础到 PPO 实践的推荐学习顺序，附本地进度追踪"
+description: "从数学基础到 PPO 实践：明确学习目标、推荐步骤与完成标准，支持本地进度追踪"
 sidebar:
   order: 1
 ---
 
 import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 
-按依赖关系推荐的学习顺序。点击每一步左侧的圆点可以标记学习进度（未开始 → 进行中 → 已完成，进度保存在本浏览器）：
+## 学习目标
+
+沿着「数学语言 → RL 核心公式 → 算法演进 → PPO → 工程实践」完成一次闭环：能够解释策略为何更新、优势如何估计，以及如何从训练指标定位问题。
+
+## 开始之前
+
+需要能阅读基本微积分、概率符号和 Python 代码。数学尚不熟悉时，从前两步补齐；已经掌握的步骤可以直接标记为完成。撰写中的文章显示为无链接步骤，可以先记录学习进度，后续再回访。
+
+## 学习步骤
+
+保持下面的教学顺序。每一步的备注说明它在主线中的作用；点击左侧按钮记录进度。
 
 <LearningPathStepper
 	pathId="reinforcement-learning"
+	legacyStepIds={['optimization-theory', 'probability-and-gaussian', 'rl-foundations', 'algorithm-evolution', 'trpo', 'ppo', 'engineering-pitfalls', 'ppo-walkthrough', 'tensorboard-metrics', 'work-pipeline']}
 	steps={[
-		{ title: '数学优化理论', href: '/knowledge-tree/mathematics/calculus-optimization/optimization-theory/', note: '凸优化、拉格朗日对偶——TRPO/PPO 推导的语言底座' },
-		{ title: '概率论与高斯估计', note: '分布、期望与高斯分布的性质（撰写中）' },
-		{ title: '强化学习核心公式手册', href: '/knowledge-tree/learning-based-planning/rl-algorithms/rl-foundations/', note: 'MDP、贝尔曼方程到策略梯度的数学主线' },
-		{ title: '算法演进', href: '/knowledge-tree/learning-based-planning/rl-algorithms/algorithm-evolution/', note: '从值方法到策略梯度，建立算法族谱' },
-		{ title: 'TRPO', href: '/knowledge-tree/learning-based-planning/rl-algorithms/trpo/', note: '信赖域思想的完整推导' },
-		{ title: 'PPO 算法', href: '/knowledge-tree/learning-based-planning/rl-algorithms/ppo/', note: '完整理解一次 PPO 迭代的数据流' },
-		{ title: '强化学习工程避坑指南', href: '/knowledge-tree/learning-based-planning/engineering-practice/rl-engineering-pitfalls/', note: '动手训练前通读一遍，能省掉大量调试时间' },
-		{ title: 'PPO 全流程走读与调参', href: '/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/', note: '从训练脚本到 checkpoint 的完整链路' },
-		{ title: 'TensorBoard 指标模板', href: '/knowledge-tree/learning-based-planning/engineering-practice/tensorboard-metrics/', note: '训练监控与调参速查' },
-		{ title: '小脑 Work Pipeline', href: '/knowledge-tree/learning-based-planning/engineering-practice/work-pipeline/', note: '应用视角：这些方法如何用于无人机轨迹输出' },
+		{ id: 'optimization-theory', slug: 'mathematics/calculus-optimization/optimization-theory', note: '凸优化、拉格朗日对偶——TRPO/PPO 推导的语言底座' },
+		{ id: 'probability-and-gaussian', slug: 'mathematics/probability-statistics/probability-bayesian-inference', note: '分布与期望，再补充高斯分布与状态估计的性质' },
+		{ id: 'rl-foundations', slug: 'learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations', note: 'MDP、贝尔曼方程到策略梯度的数学主线' },
+		{ id: 'algorithm-evolution', slug: 'learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution', note: '从值方法到策略梯度，建立算法族谱' },
+		{ id: 'trpo', slug: 'learning-based-planning/rl-algorithms/model-free-rl/trpo', note: '信赖域思想的完整推导' },
+		{ id: 'ppo', slug: 'learning-based-planning/rl-algorithms/model-free-rl/ppo', note: '沿 Actor/Critic、rollout、GAE、裁剪目标与多轮更新理解一次完整迭代' },
+		{ id: 'engineering-pitfalls', slug: 'learning-based-planning/engineering-practice/rl-engineering-pitfalls', note: '动手训练前核对观测、奖励与训练稳定性的常见问题' },
+		{ id: 'ppo-walkthrough', slug: 'learning-based-planning/engineering-practice/ppo-walkthrough', note: '从训练脚本到 checkpoint 的完整链路' },
+		{ id: 'tensorboard-metrics', slug: 'learning-based-planning/engineering-practice/tensorboard-metrics', note: '训练监控与调参速查' },
+		{ id: 'work-pipeline', slug: 'learning-based-planning/engineering-practice/work-pipeline', note: '应用视角：这些方法如何用于无人机轨迹输出' },
 	]}
 />
+
+## 完成标准
+
+- 能画出一次 PPO 迭代，标明采样策略、缓存数据、固定训练目标和实际更新的参数。
+- 能解释 GAE、概率比值、裁剪目标、价值损失与熵项各自解决的问题。
+- 能给出一次小规模训练的配置、监控指标和 checkpoint，并说明如何判断训练是否有效。
 
 ## 延伸方向
 
 完成主线后可以按兴趣分支：
 
-- **值方法分支**：DQN 家族与 POMDP（见[算法演进](/knowledge-tree/learning-based-planning/rl-algorithms/algorithm-evolution/)）；
-- **连续控制分支**：DDPG → TD3 → [SAC](/knowledge-tree/learning-based-planning/rl-algorithms/sac/)；
-- **网络骨干**：[CNN](/knowledge-tree/learning-based-planning/neural-network-architectures/cnn/)、[RNN/LSTM](/knowledge-tree/learning-based-planning/neural-network-architectures/rnn-lstm/)、[Attention/Transformer](/knowledge-tree/learning-based-planning/neural-network-architectures/attention-transformer/)——设计观测编码器时用得上。
+- **值方法分支**：DQN 家族与 POMDP（见[算法演进](/knowledge-tree/learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution/)）。
+- **连续控制分支**：DDPG → TD3 → [SAC](/knowledge-tree/learning-based-planning/rl-algorithms/model-free-rl/sac/)。
+- **网络骨干**：[CNN](/knowledge-tree/learning-based-planning/neural-network-architectures/cnn/)、[RNN/LSTM](/knowledge-tree/learning-based-planning/neural-network-architectures/rnn-lstm/)、[Attention/Transformer](/knowledge-tree/learning-based-planning/neural-network-architectures/attention-transformer/)——用于设计观测编码器。

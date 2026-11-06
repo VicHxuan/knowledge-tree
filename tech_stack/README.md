@@ -1,67 +1,34 @@
-# 无人机轨迹规划控制 — 知识库（V2）
+# 无人机规划控制知识库
 
-**个人学习知识库 + 简历 + 面试复习主线**
+这里维护知识树网站的技术文章原件。每篇文章采用同一主体结构：**概述 → 基础与定义 → 核心原理 → 实现与应用 → 分析与总结 → 关联与参考**。主线默认展开，长推导、算例和实现细节可展开阅读。
 
-> **Author**: Jiarui Hua
-> **方向**: 无人机轨迹规划控制 (Trajectory Planning & Control)
-> **核心管线**: 数学物理基础 / 经典规划控制 / 学习式规划 / 工程工具 / 仿真与评估
+## 六大领域与两条技术主线
 
-本目录是知识树网站的**原件库**：网站发布副本由 `scripts/sync-docs.mjs` 依据
-`src/data/content-map.json` 从这里确定性生成，正文修改一律改原件。
+| 领域 | 内容与作用 |
+|---|---|
+| [数学基础](01_math-physic-base/) | 线性代数、优化、概率、动力学和最优控制，共同的概念底座 |
+| [传统规划控制](02_classical-planning-control/) | 状态估计与建图 → 路径搜索 → 轨迹优化 → 跟踪控制 |
+| [学习式规划](03_learning-based-planning/) | 观测 → 表示学习 → 策略或规划网络 → 动作/轨迹 → 反馈 |
+| [工程工具链](04_engineering-tools/) | Git、容器、ROS/PX4、训练部署与分布式架构 |
+| [仿真与评估](05_simulation-evaluation/) | 平台、场景、固定评估协议、泛化、真机迁移 |
+| [真机飞行](06_real-flight/) | 设备配置、校准与实飞工程记录 |
 
----
+数学为两条技术主线提供语言；工程、评估和实飞将方法连接成可复现系统。具体文章的可阅读/撰写中状态，以网站分类目录为准。
 
-## 知识库结构（五个一级领域）
+## 强化学习的阅读入口
 
-### [01_math-physic-base](01_math-physic-base/) — 数学物理基础
+`03_learning-based-planning/02_rl-algorithms/` 按三个分支组织：
 
-| 子领域 | 内容 | 状态 |
-|------|------|------|
-| [01_linear-algebra-geometry](01_math-physic-base/01_linear-algebra-geometry/) | 矩阵分解、坐标变换、SO(3)/SE(3) 与四元数 | 撰写中 |
-| [02_calculus-optimization](01_math-physic-base/02_calculus-optimization/) | 梯度/雅可比、优化理论、无约束/约束优化、数值优化 | 优化理论已完成，其余撰写中 |
-| [03_probability-statistics](01_math-physic-base/03_probability-statistics/) | 概率与贝叶斯推断、高斯与状态估计 | 撰写中 |
-| [04_dynamics](01_math-physic-base/04_dynamics/) | 刚体动力学、四旋翼动力学 | 撰写中 |
-| [05_optimal-control-foundations](01_math-physic-base/05_optimal-control-foundations/) | 最优控制建模、Hamilton 与 Pontryagin | 撰写中 |
+1. `01_rl-foundations/`：公式手册、算法演进、范式导航、部分可观测问题。
+2. `02_model-free-rl/`：DQN；PG/Actor-Critic/GAE → TRPO/PPO；DDPG → TD3/SAC。
+3. `03_model-based-rl/`：模型学习、Dyna、PETS、MBPO、MuZero、Dreamer 和可微模型优化。
 
-### [02_classical-planning-control](02_classical-planning-control/) — Pipeline: sensor → SLAM → 搜索 → 优化 → 控制
+[PPO 文章](03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md)集中说明一轮算法的数据与参数更新；[工程走读](03_learning-based-planning/03_engineering-practice/01_ppo-walkthrough.md)负责训练循环、配置与诊断。基础专题尚未发布时，PPO 保留理解主线所需的推导。
 
-| 阶段 | 目录 | 内容 | 状态 |
-|------|------|------|------|
-| 感知与建图 | [01_perception-slam](02_classical-planning-control/01_perception-slam/) | 卡尔曼滤波系列、FAST-LIO、VIO、占据网格与 ESDF、动态障碍物跟踪 | 大部分完成 |
-| 前端搜索 | [02_path-search](02_classical-planning-control/02_path-search/) | 启发式、采样法、增量式、Kinodynamic 搜索 | 大部分完成 |
-| 后端优化 | [03_trajectory-optimization](02_classical-planning-control/03_trajectory-optimization/) | 轨迹表示、微分平坦与 Minimum Snap、贝塞尔与 B 样条、SFC、问题建模、MINCO、Fast-Planner、EGO-Planner、GCOPTER、重规划 | 核心已完成 |
-| 跟踪控制 | [04_tracking-control](02_classical-planning-control/04_tracking-control/) | PID、LQR、MPC、PX4 控制器、几何控制、延迟与执行器 | 核心已完成 |
+## 写作与维护
 
-### [03_learning-based-planning](03_learning-based-planning/) — Pipeline: sensor → 特征提取 → RL 推理 → control
-
-| 阶段 | 目录 | 内容 | 状态 |
-|------|------|------|------|
-| 特征提取 | [01_neural-network-architectures](03_learning-based-planning/01_neural-network-architectures/) | MLP、CNN、RNN/LSTM、Attention/Transformer、多尺度特征、时序融合 | 已完成 |
-| 决策推理 | [02_rl-algorithms](03_learning-based-planning/02_rl-algorithms/) | MDP 基础、算法演进、值方法、策略梯度/GAE、TRPO、PPO、DDPG、TD3、SAC、POMDP、有模型 RL | 核心已完成 |
-| 工程实践 | [03_engineering-practice](03_learning-based-planning/03_engineering-practice/) | PPO 走读、避坑指南、TensorBoard、小脑工作流、观测奖励设计、训练调试 | 已完成 |
-| 学习式规划 | [04_learning-based-trajectory-planning](03_learning-based-planning/04_learning-based-trajectory-planning/) | 总览、YOPO、NavRL、候选选择、残差优化 | 撰写中 |
-
-### [04_engineering-tools](04_engineering-tools/)
-
-PX4 / MAVROS、ROS1、遥控器配置、Git 手册、多服务器多 GPU 训练（已完成）；
-ROS2、PX4 Offboard、Docker、性能调试、可复现实验（撰写中）。
-
-### [05_simulation-evaluation](05_simulation-evaluation/)
-
-仿真平台、时序与接口、场景设计、域随机化、评估指标、基线与 Oracle、泛化与消融、Sim-to-Real（撰写中）。
-
-### [references](references/) — 参考资料（仅本地，不入库）
-
-论文与课程笔记，通过正式来源链接引用。
-
-### [personal](personal/) — 简历与面试材料（仅本地，不入库）
-
----
-
-## 撰写约定
-
-- 文件名数字前缀 = 领域内章节顺序；网站侧栏顺序由 `content-map.json` 决定。
-- 新增章节先写大纲（正文中标注"状态：草稿"），完成后进入正式发布。
-- 正文修改在本目录进行，网站副本由同步脚本生成，不要手改 `src/content/docs` 下的生成页面。
-
-*Keep Building, Keep Flying.*
+- 按[技术文章模板](TECHNICAL_ARTICLE_TEMPLATE.md)编写正文；草稿也保留六模块，未知部分如实标注。
+- 原件文件名可用数字前缀排序；网站的排序、标题、状态、URL 在 `src/data/content-map.json` 维护。
+- 注册、移动与验证按[贡献指南](../CONTRIBUTING.md)执行；移动原件默认保留公开 URL。
+- 网站生成副本不可手改；完整可运行示例在仓库 `examples/`，同步脚本生成网页下载。
+- `references/` 和 `personal/` 为本地资料，不进入网站发布。文章用正式论文/文档链接引用参考资料。

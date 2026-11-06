@@ -16,12 +16,12 @@ import KnowledgeMap from '../../../components/knowledge-map/KnowledgeMap';
 - **详情与直达**：单击节点查看描述、前置、后续依赖与相关主题；双击已发布节点直接跳转对应页面；
 - **URL 状态**：视图与选中节点会写入地址栏（如 `?view=dependency&node=<知识点>`），文章页的「在图谱中查看」链接即依赖此机制直达定位。
 
-进度图较大，可以拖拽平移、滚轮缩放（触屏支持双指缩放）；右下角有缩放控件，右侧小地图可用于快速定位。
+图谱较大，可以拖拽平移、滚轮缩放（触屏支持双指缩放）；右下角有缩放控件，右侧小地图可用于快速定位。
 
 <KnowledgeMap client:load />
 
 ## 阅读建议
 
-- 图谱数据来自 [knowledge-relations.json](https://github.com/VicHxuan/knowledge-tree/blob/main/src/data/knowledge-relations.json)，随内容目录一起维护；
+- 图谱包含全部已登记的知识点，文章标题与发布状态随知识目录同步；
 - 系统性学习请配合[学习路径](/knowledge-tree/learning-paths/)，图谱更适合查依赖、找关联；
 - 撰写中（🚧 虚线框）的节点暂无内容页面，点击不会跳转。

@@ -1,60 +1,60 @@
 # EGO-Planner 学习文档
 
-## 1. 概述（Overview）
+## 1. 概述
 
-### 1. 方法定位与整体思想
+### 1. 方法概述
 
 EGO-Planner 是一种无 ESDF 的梯度型四旋翼无人机局部轨迹规划器。传统梯度型轨迹优化方法通常需要预先维护 ESDF，并通过 ESDF 查询障碍物距离和梯度方向。EGO-Planner 的核心出发点是：局部轨迹优化实际只涉及轨迹附近的一小部分空间，维护完整 ESDF 会产生大量与当前轨迹无关的计算。因此，EGO-Planner 不再构建环境空间中的稠密距离场，而是在轨迹真正与障碍物发生碰撞时，只为发生碰撞的控制点提取必要的障碍物信息，并直接构造碰撞梯度。
 
 系统将无人机轨迹表示为均匀 B 样条曲线。轨迹由控制点集合决定：
 
-\[
+$$
 Q=\{Q_1,Q_2,\cdots,Q_{N_c}\}, \quad Q_i \in \mathbb{R}^3
-\]
+$$
 
 整体优化目标为：
 
-\[
+$$
 \min_Q J=\lambda_sJ_s+\lambda_cJ_c+\lambda_dJ_d
-\]
+$$
 
-其中，\(J_s\) 表示平滑度代价，\(J_c\) 表示碰撞代价，\(J_d\) 表示动力学可行性代价。三个部分共同作用，使轨迹在保持平滑的同时远离障碍物，并满足速度、加速度和 jerk 等动力学约束。
+其中，$J_s$ 表示平滑度代价，$J_c$ 表示碰撞代价，$J_d$ 表示动力学可行性代价。三个部分共同作用，使轨迹在保持平滑的同时远离障碍物，并满足速度、加速度和 jerk 等动力学约束。
 
-EGO-Planner 的核心创新在于碰撞项的构造。传统方法依赖 ESDF 提供障碍物距离和梯度，而 EGO-Planner 在检测到轨迹与障碍物发生碰撞后，利用 A* 在局部生成一条无碰撞引导路径 \(\Gamma\)。随后，对于碰撞段中的每个控制点 \(Q_i\)，系统为其分配若干组障碍物信息：
+EGO-Planner 的核心创新在于碰撞项的构造。传统方法依赖 ESDF 提供障碍物距离和梯度，而 EGO-Planner 在检测到轨迹与障碍物发生碰撞后，利用 A* 在局部生成一条无碰撞引导路径 $\Gamma$。随后，对于碰撞段中的每个控制点 $Q_i$，系统为其分配若干组障碍物信息：
 
-\[
+$$
 \{p_{ij},v_{ij}\}
-\]
+$$
 
-其中，\(p_{ij}\) 是障碍物表面附近的锚点，\(v_{ij}\) 是与该锚点相关的排斥方向向量。控制点到障碍物的等效有符号距离被定义为：
+其中，$p_{ij}$ 是障碍物表面附近的锚点，$v_{ij}$ 是与该锚点相关的排斥方向向量。控制点到障碍物的等效有符号距离被定义为：
 
-\[
+$$
 d_{ij}=(Q_i-p_{ij})^\top v_{ij}
-\]
+$$
 
-若 \(d_{ij}\) 小于安全距离 \(s_f\)，则说明该控制点距离障碍物过近，需要受到碰撞惩罚。由于 \(p_{ij}\) 与 \(v_{ij}\) 在一次优化迭代中被视为固定量，碰撞代价对控制点的梯度可以直接由上式解析求得，无需查询 ESDF，也无需对体素地图进行三线性插值。
+若 $d_{ij}$ 小于安全距离 $s_f$，则说明该控制点距离障碍物过近，需要受到碰撞惩罚。由于 $p_{ij}$ 与 $v_{ij}$ 在一次优化迭代中被视为固定量，碰撞代价对控制点的梯度可以直接由上式解析求得，无需查询 ESDF，也无需对体素地图进行三线性插值。
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
-### 2. 完整时序流程
+### 2. 算法流程
 
 EGO-Planner 的运行流程可以理解为一个在线局部重规划循环。无人机在飞行过程中持续感知周围环境，并根据当前状态、局部地图和目标点不断生成新的局部 B 样条轨迹。
 
 首先，系统接收当前无人机状态、局部环境信息和目标点。当前状态通常包括位置、速度和加速度，目标点可以是全局路径上的局部目标，也可以是任务指定的航点。规划器不会先构建 ESDF，而是直接根据当前状态和目标点初始化一条 B 样条轨迹。初始化轨迹通常只满足边界状态约束，并不保证完全避障。
 
-随后，规划器进入反弹式轨迹优化阶段。系统对当前 B 样条控制点或由控制点生成的轨迹段进行碰撞检测。如果轨迹没有发生碰撞，则说明当前轨迹在几何上可行，可以进入动力学检查。如果轨迹存在碰撞，系统会提取连续碰撞段，并针对每个碰撞段执行局部 A* 搜索，生成一条绕过障碍物的无碰撞引导路径 \(\Gamma\)。
+随后，规划器进入反弹式轨迹优化阶段。系统对当前 B 样条控制点或由控制点生成的轨迹段进行碰撞检测。如果轨迹没有发生碰撞，则说明当前轨迹在几何上可行，可以进入动力学检查。如果轨迹存在碰撞，系统会提取连续碰撞段，并针对每个碰撞段执行局部 A* 搜索，生成一条绕过障碍物的无碰撞引导路径 $\Gamma$。
 
-在得到引导路径后，系统会为碰撞段中的每个控制点分配障碍物锚点 \(p_{ij}\) 和排斥方向 \(v_{ij}\)。这些信息不会像 ESDF 那样覆盖整个局部地图，而是只绑定在对应的控制点上。一个控制点可以拥有多组 \(\{p,v\}\) 信息，这意味着它可能受到多个障碍物或多个局部碰撞约束的共同作用。
+在得到引导路径后，系统会为碰撞段中的每个控制点分配障碍物锚点 $p_{ij}$ 和排斥方向 $v_{ij}$。这些信息不会像 ESDF 那样覆盖整个局部地图，而是只绑定在对应的控制点上。一个控制点可以拥有多组 $\{p,v\}$ 信息，这意味着它可能受到多个障碍物或多个局部碰撞约束的共同作用。
 
 完成障碍物信息提取后，系统构造完整优化目标：
 
-\[
+$$
 J=\lambda_sJ_s+\lambda_cJ_c+\lambda_dJ_d
-\]
+$$
 
 其中，平滑项使轨迹的加速度和 jerk 尽量小，碰撞项将控制点从障碍物中推出，动力学项限制速度、加速度和 jerk 不超过设定上限。然后使用 L-BFGS 对控制点进行优化。L-BFGS 不显式计算 Hessian，而是利用历史梯度信息近似逆 Hessian，因此适合 EGO-Planner 中这种需要快速重启、目标函数随着新障碍物信息变化的优化问题。
 
@@ -64,46 +64,46 @@ J=\lambda_sJ_s+\lambda_cJ_c+\lambda_dJ_d
 
 时间重分配阶段首先计算动力学超限比例：
 
-\[
+$$
 r_e=\max\left\{
 \left|\frac{V_{i,r}}{v_m}\right|,
 \sqrt{\left|\frac{A_{j,r}}{a_m}\right|},
 \sqrt[3]{\left|\frac{J_{k,r}}{j_m}\right|},
 1
 \right\}
-\]
+$$
 
 速度与时间间隔成反比，加速度与时间间隔平方成反比，jerk 与时间间隔三次方成反比。因此，系统根据最大超限比例放大 B 样条时间间隔：
 
-\[
+$$
 \Delta t'=r_e\Delta t
-\]
+$$
 
-时间被拉长后，原先超限的速度、加速度和 jerk 会下降。但单纯改变时间间隔可能破坏轨迹的平滑性和几何性质，因此 EGO-Planner 进一步使用各向异性曲线拟合方法生成新的 B 样条轨迹 \(\Phi_f\)，使其在保持原安全轨迹 \(\Phi_s\) 几何形状的同时，优化动力学可行性。
+时间被拉长后，原先超限的速度、加速度和 jerk 会下降。但单纯改变时间间隔可能破坏轨迹的平滑性和几何性质，因此 EGO-Planner 进一步使用各向异性曲线拟合方法生成新的 B 样条轨迹 $\Phi_f$，使其在保持原安全轨迹 $\Phi_s$ 几何形状的同时，优化动力学可行性。
 
 各向异性拟合的关键是将新轨迹点与原轨迹点之间的误差分解为切向误差和径向误差。沿轨迹切向方向的误差对应路径前后方向的偏移，对安全性影响较小，因此惩罚较弱。垂直于轨迹切向方向的径向误差可能导致轨迹偏离原来的安全通道，因此惩罚较强。
 
 最终，经过碰撞检测、反弹优化、动力学检查、时间重分配和轨迹精修后，EGO-Planner 输出一条满足局部避障、安全距离、平滑性和动力学约束的 B 样条轨迹。
 
-### 2.论文核心理论推导
+### 2.理论推导
 
 #### 2.1 B 样条导数控制点
 
-EGO-Planner 使用均匀 B 样条。设相邻节点时间间隔为 \(\Delta t\)，位置控制点为 \(Q_i\)。根据均匀 B 样条的导数性质，速度、加速度和 jerk 的控制点可写为：
+EGO-Planner 使用均匀 B 样条。设相邻节点时间间隔为 $\Delta t$，位置控制点为 $Q_i$。根据均匀 B 样条的导数性质，速度、加速度和 jerk 的控制点可写为：
 
-\[
+$$
 V_i=\frac{Q_{i+1}-Q_i}{\Delta t}
-\]
+$$
 
-\[
+$$
 A_i=\frac{V_{i+1}-V_i}{\Delta t}
 =\frac{Q_{i+2}-2Q_{i+1}+Q_i}{\Delta t^2}
-\]
+$$
 
-\[
+$$
 J_i=\frac{A_{i+1}-A_i}{\Delta t}
 =\frac{Q_{i+3}-3Q_{i+2}+3Q_{i+1}-Q_i}{\Delta t^3}
-\]
+$$
 
 这些表达式说明，B 样条轨迹的高阶导数可以直接由控制点差分得到。由于 B 样条具有凸包性质，只要控制点导数满足约束，整条曲线也可以被有效约束在相应范围内。
 
@@ -139,7 +139,7 @@ $$
 
 这意味着同一个控制点可能同时受到多个障碍物约束的影响。
 
-##### 2.2.1 从碰撞轨迹到无碰撞引导路径
+##### 2.2.1 无碰撞引导路径
 
 初始阶段，系统先生成一条满足起终点边界条件的朴素 B 样条轨迹：
 
@@ -177,7 +177,7 @@ $$
 利用 Γ 为碰撞控制点生成 {p, v} 信息
 ```
 
-##### 2.2.2 避障信息对 `{p, v}` 的几何含义
+##### 2.2.2 避障信息对 `{p, v}`
 
 对于碰撞段中的某个控制点 $Q_i$，EGO-Planner 会根据无碰撞引导路径 $\Gamma$ 构造一组障碍物信息：
 
@@ -191,7 +191,7 @@ $$
 
 需要注意的是，${p, v}$ 不是全局地图信息，而是局部绑定到具体控制点上的信息。也就是说，EGO-Planner 不是提前为整个空间计算距离场，而是只在某个控制点碰撞时，为该控制点生成必要的局部障碍物约束。
 
-##### 2.2.3 `{p, v}` 的生成思路
+##### 2.2.3 避障信息对生成
 
 对于碰撞控制点 $Q_i$，首先构造其局部轨迹方向。论文中定义：
 
@@ -238,7 +238,7 @@ v_ij：从障碍物区域指向安全引导路径的方向
 
 该方向随后被用于构造碰撞代价梯度，使控制点沿着安全方向被推出障碍物。
 
-##### 2.2.4 基于 `{p, v}` 的等效距离定义
+##### 2.2.4 等效障碍物距离
 
 对控制点 $Q_i$ 及其第 $j$ 个障碍物信息对 ${p_{ij}, v_{ij}}$，论文定义其等效障碍物距离为：
 
@@ -266,7 +266,7 @@ $$
 
 该距离可以理解为一个局部线性化的有符号距离。不同于 ESDF 中每个空间点都有一个距离值，这里距离只对当前控制点和当前 ${p, v}$ 对有效。
 
-##### 2.2.5 局部距离场的含义
+##### 2.2.5 局部距离场
 
 由
 
@@ -344,7 +344,7 @@ $$
 1. 避免在同一个障碍物上重复生成冗余约束。
 2. 只保留对最终轨迹优化有贡献的必要障碍物信息。
 
-##### 2.2.7 与 ESDF 方法的区别
+##### 2.2.7 ESDF 方法比较
 
 传统 ESDF 方法的碰撞梯度来自预先构建的距离场。对于任意轨迹点 $x$，ESDF 给出：
 
@@ -379,7 +379,7 @@ EGO-Planner 的方法不同。它不构建完整 ESDF，而是：
 
 因此，它将避障梯度的来源从“全局距离场”转化为“局部无碰撞引导路径”。
 
-##### 2.2.8 避障力估计的本质
+##### 2.2.8 避障力与梯度
 
 从优化角度看，${p, v}$ 对实际上构造了一个局部虚拟力场。
 
@@ -414,7 +414,7 @@ $$
 
 这种避障力不是物理力，而是优化意义下的虚拟梯度。
 
-##### 2.2.9 算法流程总结
+##### 2.2.9 算法流程
 
 论文中的碰撞信息提取过程可以整理为：
 
@@ -446,7 +446,7 @@ $$
 
 该流程对应论文中的 `CheckAndAddObstacleInfo`，其核心是只在轨迹真实碰撞时提取障碍物信息。
 
-##### 2.2.10 与代码实现的对应关系
+##### 2.2.10 公式与实现对照
 
 该理论在代码中的对应关系可以理解为：
 
@@ -488,307 +488,307 @@ costFunctionRebound 中的碰撞项
 
 #### 2.3 代价函数梯度推导
 
-##### 2.3.1 平滑度代价 \(J_s\) 的梯度推导
+##### 2.3.1 平滑度梯度 $\nabla J_s$
 
 论文中平滑度代价由加速度控制点和 jerk 控制点的平方和构成：
 
-\[
+$$
 J_s=\sum_i \|A_i\|^2+\sum_i \|J_i\|^2
-\]
+$$
 
 将其拆成两部分：
 
-\[
+$$
 J_s=J_A+J_J
-\]
+$$
 
 其中：
 
-\[
+$$
 J_A=\sum_i \|A_i\|^2
-\]
+$$
 
-\[
+$$
 J_J=\sum_i \|J_i\|^2
-\]
+$$
 
 对于加速度项：
 
-\[
+$$
 A_i=\frac{Q_{i+2}-2Q_{i+1}+Q_i}{\Delta t^2}
-\]
+$$
 
 单个加速度代价为：
 
-\[
+$$
 \|A_i\|^2=A_i^\top A_i
-\]
+$$
 
 对控制点求导：
 
-\[
+$$
 \frac{\partial \|A_i\|^2}{\partial Q_k}
 =
 2A_i^\top \frac{\partial A_i}{\partial Q_k}
-\]
+$$
 
-由于 \(A_i\) 只与 \(Q_i,Q_{i+1},Q_{i+2}\) 有关，因此：
+由于 $A_i$ 只与 $Q_i,Q_{i+1},Q_{i+2}$ 有关，因此：
 
-\[
+$$
 \frac{\partial A_i}{\partial Q_i}=\frac{I}{\Delta t^2}
-\]
+$$
 
-\[
+$$
 \frac{\partial A_i}{\partial Q_{i+1}}=-\frac{2I}{\Delta t^2}
-\]
+$$
 
-\[
+$$
 \frac{\partial A_i}{\partial Q_{i+2}}=\frac{I}{\Delta t^2}
-\]
+$$
 
 于是有：
 
-\[
+$$
 \frac{\partial \|A_i\|^2}{\partial Q_i}
 =
 \frac{2A_i}{\Delta t^2}
-\]
+$$
 
-\[
+$$
 \frac{\partial \|A_i\|^2}{\partial Q_{i+1}}
 =
 -\frac{4A_i}{\Delta t^2}
-\]
+$$
 
-\[
+$$
 \frac{\partial \|A_i\|^2}{\partial Q_{i+2}}
 =
 \frac{2A_i}{\Delta t^2}
-\]
+$$
 
-因此，任意控制点 \(Q_k\) 接收到来自加速度平滑项的梯度为：
+因此，任意控制点 $Q_k$ 接收到来自加速度平滑项的梯度为：
 
-\[
+$$
 \frac{\partial J_A}{\partial Q_k}
 =
 \frac{2}{\Delta t^2}A_k
 -\frac{4}{\Delta t^2}A_{k-1}
 +\frac{2}{\Delta t^2}A_{k-2}
-\]
+$$
 
 不存在的下标项直接忽略。
 
 对于 jerk 项：
 
-\[
+$$
 J_i=\frac{Q_{i+3}-3Q_{i+2}+3Q_{i+1}-Q_i}{\Delta t^3}
-\]
+$$
 
 单个 jerk 代价为：
 
-\[
+$$
 \|J_i\|^2=J_i^\top J_i
-\]
+$$
 
 同理：
 
-\[
+$$
 \frac{\partial \|J_i\|^2}{\partial Q_k}
 =
 2J_i^\top \frac{\partial J_i}{\partial Q_k}
-\]
+$$
 
-由于 \(J_i\) 只与 \(Q_i,Q_{i+1},Q_{i+2},Q_{i+3}\) 有关，因此：
+由于 $J_i$ 只与 $Q_i,Q_{i+1},Q_{i+2},Q_{i+3}$ 有关，因此：
 
-\[
+$$
 \frac{\partial J_i}{\partial Q_i}=-\frac{I}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial J_i}{\partial Q_{i+1}}=\frac{3I}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial J_i}{\partial Q_{i+2}}=-\frac{3I}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial J_i}{\partial Q_{i+3}}=\frac{I}{\Delta t^3}
-\]
+$$
 
 于是有：
 
-\[
+$$
 \frac{\partial \|J_i\|^2}{\partial Q_i}
 =
 -\frac{2J_i}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial \|J_i\|^2}{\partial Q_{i+1}}
 =
 \frac{6J_i}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial \|J_i\|^2}{\partial Q_{i+2}}
 =
 -\frac{6J_i}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial \|J_i\|^2}{\partial Q_{i+3}}
 =
 \frac{2J_i}{\Delta t^3}
-\]
+$$
 
-因此，任意控制点 \(Q_k\) 接收到来自 jerk 平滑项的梯度为：
+因此，任意控制点 $Q_k$ 接收到来自 jerk 平滑项的梯度为：
 
-\[
+$$
 \frac{\partial J_J}{\partial Q_k}
 =
 -\frac{2}{\Delta t^3}J_k
 +\frac{6}{\Delta t^3}J_{k-1}
 -\frac{6}{\Delta t^3}J_{k-2}
 +\frac{2}{\Delta t^3}J_{k-3}
-\]
+$$
 
 最终，平滑度项的梯度为：
 
-\[
+$$
 \frac{\partial J_s}{\partial Q_k}
 =
 \frac{\partial J_A}{\partial Q_k}
 +
 \frac{\partial J_J}{\partial Q_k}
-\]
+$$
 
 如果考虑总目标函数中的权重，则该部分贡献为：
 
-\[
+$$
 \lambda_s\frac{\partial J_s}{\partial Q_k}
-\]
+$$
 
-##### 2.3.2 碰撞代价 \(J_c\) 的梯度推导
+##### 2.3.2 碰撞代价梯度 $\nabla J_c$
 
-碰撞项是 EGO-Planner 区别于 ESDF 方法的核心。对于控制点 \(Q_i\) 及其对应的第 \(j\) 个障碍物信息对 \(\{p_{ij},v_{ij}\}\)，距离定义为：
+碰撞项是 EGO-Planner 区别于 ESDF 方法的核心。对于控制点 $Q_i$ 及其对应的第 $j$ 个障碍物信息对 $\{p_{ij},v_{ij}\}$，距离定义为：
 
-\[
+$$
 d_{ij}=(Q_i-p_{ij})^\top v_{ij}
-\]
+$$
 
 定义安全距离残差：
 
-\[
+$$
 c_{ij}=s_f-d_{ij}
-\]
+$$
 
-当 \(c_{ij}\leq 0\) 时，说明控制点到障碍物的距离已经大于等于安全距离，不产生碰撞惩罚。当 \(c_{ij}>0\) 时，说明控制点进入安全距离范围，需要产生惩罚。
+当 $c_{ij}\leq 0$ 时，说明控制点到障碍物的距离已经大于等于安全距离，不产生碰撞惩罚。当 $c_{ij}>0$ 时，说明控制点进入安全距离范围，需要产生惩罚。
 
 论文采用二阶连续的分段碰撞惩罚函数：
 
-\[
+$$
 j_c(i,j)=
 \begin{cases}
 0, & c_{ij}\leq 0\\
 c_{ij}^3, & 0<c_{ij}\leq s_f\\
 3s_fc_{ij}^2-3s_f^2c_{ij}+s_f^3, & c_{ij}>s_f
 \end{cases}
-\]
+$$
 
 总碰撞代价为：
 
-\[
+$$
 J_c=\sum_i\sum_j j_c(i,j)
-\]
+$$
 
 首先计算：
 
-\[
+$$
 \frac{\partial d_{ij}}{\partial Q_i}=v_{ij}
-\]
+$$
 
 又因为：
 
-\[
+$$
 c_{ij}=s_f-d_{ij}
-\]
+$$
 
 所以：
 
-\[
+$$
 \frac{\partial c_{ij}}{\partial Q_i}
 =
 -\frac{\partial d_{ij}}{\partial Q_i}
 =
 -v_{ij}
-\]
+$$
 
 分段求导。
 
-当 \(c_{ij}\leq 0\) 时：
+当 $c_{ij}\leq 0$ 时：
 
-\[
+$$
 j_c(i,j)=0
-\]
+$$
 
 因此：
 
-\[
+$$
 \frac{\partial j_c(i,j)}{\partial Q_i}=0
-\]
+$$
 
-当 \(0<c_{ij}\leq s_f\) 时：
+当 $0<c_{ij}\leq s_f$ 时：
 
-\[
+$$
 j_c(i,j)=c_{ij}^3
-\]
+$$
 
-先对 \(c_{ij}\) 求导：
+先对 $c_{ij}$ 求导：
 
-\[
+$$
 \frac{\partial j_c}{\partial c_{ij}}=3c_{ij}^2
-\]
+$$
 
 再乘以：
 
-\[
+$$
 \frac{\partial c_{ij}}{\partial Q_i}=-v_{ij}
-\]
+$$
 
 得到：
 
-\[
+$$
 \frac{\partial j_c(i,j)}{\partial Q_i}
 =
 -3c_{ij}^2v_{ij}
-\]
+$$
 
-当 \(c_{ij}>s_f\) 时：
+当 $c_{ij}>s_f$ 时：
 
-\[
+$$
 j_c(i,j)=3s_fc_{ij}^2-3s_f^2c_{ij}+s_f^3
-\]
+$$
 
-对 \(c_{ij}\) 求导：
+对 $c_{ij}$ 求导：
 
-\[
+$$
 \frac{\partial j_c}{\partial c_{ij}}
 =
 6s_fc_{ij}-3s_f^2
-\]
+$$
 
 因此：
 
-\[
+$$
 \frac{\partial j_c(i,j)}{\partial Q_i}
 =
 -(6s_fc_{ij}-3s_f^2)v_{ij}
-\]
+$$
 
-最终，控制点 \(Q_i\) 的碰撞梯度为：
+最终，控制点 $Q_i$ 的碰撞梯度为：
 
-\[
+$$
 \frac{\partial J_c}{\partial Q_i}
 =
 \sum_j
@@ -797,40 +797,40 @@ j_c(i,j)=3s_fc_{ij}^2-3s_f^2c_{ij}+s_f^3
 -3c_{ij}^2v_{ij}, & 0<c_{ij}\leq s_f\\
 -(6s_fc_{ij}-3s_f^2)v_{ij}, & c_{ij}>s_f
 \end{cases}
-\]
+$$
 
 考虑总目标函数权重后，碰撞项对优化的贡献为：
 
-\[
+$$
 \lambda_c\frac{\partial J_c}{\partial Q_i}
-\]
+$$
 
-该梯度的方向与 \(v_{ij}\) 的定义有关。若 \(v_{ij}\) 被定义为距离增大的方向，则在梯度下降中，控制点会沿着 \(v_{ij}\) 所指示的方向移动，从而被推出障碍物区域。
+该梯度的方向与 $v_{ij}$ 的定义有关。若 $v_{ij}$ 被定义为距离增大的方向，则在梯度下降中，控制点会沿着 $v_{ij}$ 所指示的方向移动，从而被推出障碍物区域。
 
-##### 2.3.3 动力学可行性代价 \(J_d\) 的梯度推导
+##### 2.3.3 动力学可行性梯度 $\nabla J_d$
 
 动力学可行性项用于限制速度、加速度和 jerk。论文中的形式为：
 
-\[
+$$
 J_d=
 \sum_i w_vF(V_i)
 +
 \sum_i w_aF(A_i)
 +
 \sum_i w_jF(J_i)
-\]
+$$
 
 其中：
 
-\[
+$$
 F(C)=\sum_{r=x,y,z}f(c_r)
-\]
+$$
 
-这里 \(C\) 可以是速度控制点 \(V_i\)、加速度控制点 \(A_i\) 或 jerk 控制点 \(J_i\)，\(c_r\) 表示其在某一个坐标轴上的分量。
+这里 $C$ 可以是速度控制点 $V_i$、加速度控制点 $A_i$ 或 jerk 控制点 $J_i$，$c_r$ 表示其在某一个坐标轴上的分量。
 
 论文采用一个二阶连续的分段惩罚函数：
 
-\[
+$$
 f(c_r)=
 \begin{cases}
 a_1c_r^2+b_1c_r+c_1, & c_r\leq -c_j\\
@@ -839,13 +839,13 @@ a_1c_r^2+b_1c_r+c_1, & c_r\leq -c_j\\
 (c_r-\lambda c_m)^3, & \lambda c_m<c_r<c_j\\
 a_2c_r^2+b_2c_r+c_2, & c_r\geq c_j
 \end{cases}
-\]
+$$
 
-其中，\(c_m\) 是对应导数的限制值，\(\lambda\) 是小于 1 的弹性系数，\(c_j\) 是三次段与二次段的分界点。这个函数在允许范围内为零，超过软阈值后开始产生惩罚，并在更大超限区域使用二次函数抑制斜率过大。
+其中，$c_m$ 是对应导数的限制值，$\lambda$ 是小于 1 的弹性系数，$c_j$ 是三次段与二次段的分界点。这个函数在允许范围内为零，超过软阈值后开始产生惩罚，并在更大超限区域使用二次函数抑制斜率过大。
 
 先给出标量函数的导数：
 
-\[
+$$
 f'(c_r)=
 \begin{cases}
 2a_1c_r+b_1, & c_r\leq -c_j\\
@@ -854,118 +854,118 @@ f'(c_r)=
 3(c_r-\lambda c_m)^2, & \lambda c_m<c_r<c_j\\
 2a_2c_r+b_2, & c_r\geq c_j
 \end{cases}
-\]
+$$
 
-因此，对三维向量 \(C=[c_x,c_y,c_z]^\top\)，有：
+因此，对三维向量 $C=[c_x,c_y,c_z]^\top$，有：
 
-\[
+$$
 \nabla_CF(C)=
 \begin{bmatrix}
 f'(c_x)\\
 f'(c_y)\\
 f'(c_z)
 \end{bmatrix}
-\]
+$$
 
 记：
 
-\[
+$$
 g^V_i=\nabla_{V_i}F(V_i)
-\]
+$$
 
-\[
+$$
 g^A_i=\nabla_{A_i}F(A_i)
-\]
+$$
 
-\[
+$$
 g^J_i=\nabla_{J_i}F(J_i)
-\]
+$$
 
-下面分别将这些导数通过链式法则传递到位置控制点 \(Q_k\)。
+下面分别将这些导数通过链式法则传递到位置控制点 $Q_k$。
 
 速度项：
 
-\[
+$$
 V_i=\frac{Q_{i+1}-Q_i}{\Delta t}
-\]
+$$
 
 所以：
 
-\[
+$$
 \frac{\partial V_i}{\partial Q_i}=-\frac{I}{\Delta t}
-\]
+$$
 
-\[
+$$
 \frac{\partial V_i}{\partial Q_{i+1}}=\frac{I}{\Delta t}
-\]
+$$
 
-单个速度惩罚 \(w_vF(V_i)\) 对控制点的梯度为：
+单个速度惩罚 $w_vF(V_i)$ 对控制点的梯度为：
 
-\[
+$$
 \frac{\partial w_vF(V_i)}{\partial Q_i}
 =
 -\frac{w_v}{\Delta t}g^V_i
-\]
+$$
 
-\[
+$$
 \frac{\partial w_vF(V_i)}{\partial Q_{i+1}}
 =
 \frac{w_v}{\Delta t}g^V_i
-\]
+$$
 
-因此，任意控制点 \(Q_k\) 接收到的速度可行性梯度为：
+因此，任意控制点 $Q_k$ 接收到的速度可行性梯度为：
 
-\[
+$$
 \frac{\partial J_{d,V}}{\partial Q_k}
 =
 \frac{w_v}{\Delta t}g^V_{k-1}
 -
 \frac{w_v}{\Delta t}g^V_k
-\]
+$$
 
 加速度项：
 
-\[
+$$
 A_i=\frac{Q_{i+2}-2Q_{i+1}+Q_i}{\Delta t^2}
-\]
+$$
 
 所以：
 
-\[
+$$
 \frac{\partial A_i}{\partial Q_i}=\frac{I}{\Delta t^2}
-\]
+$$
 
-\[
+$$
 \frac{\partial A_i}{\partial Q_{i+1}}=-\frac{2I}{\Delta t^2}
-\]
+$$
 
-\[
+$$
 \frac{\partial A_i}{\partial Q_{i+2}}=\frac{I}{\Delta t^2}
-\]
+$$
 
-单个加速度惩罚 \(w_aF(A_i)\) 对控制点的梯度为：
+单个加速度惩罚 $w_aF(A_i)$ 对控制点的梯度为：
 
-\[
+$$
 \frac{\partial w_aF(A_i)}{\partial Q_i}
 =
 \frac{w_a}{\Delta t^2}g^A_i
-\]
+$$
 
-\[
+$$
 \frac{\partial w_aF(A_i)}{\partial Q_{i+1}}
 =
 -\frac{2w_a}{\Delta t^2}g^A_i
-\]
+$$
 
-\[
+$$
 \frac{\partial w_aF(A_i)}{\partial Q_{i+2}}
 =
 \frac{w_a}{\Delta t^2}g^A_i
-\]
+$$
 
-因此，任意控制点 \(Q_k\) 接收到的加速度可行性梯度为：
+因此，任意控制点 $Q_k$ 接收到的加速度可行性梯度为：
 
-\[
+$$
 \frac{\partial J_{d,A}}{\partial Q_k}
 =
 \frac{w_a}{\Delta t^2}g^A_k
@@ -973,61 +973,61 @@ A_i=\frac{Q_{i+2}-2Q_{i+1}+Q_i}{\Delta t^2}
 \frac{2w_a}{\Delta t^2}g^A_{k-1}
 +
 \frac{w_a}{\Delta t^2}g^A_{k-2}
-\]
+$$
 
 jerk 项：
 
-\[
+$$
 J_i=\frac{Q_{i+3}-3Q_{i+2}+3Q_{i+1}-Q_i}{\Delta t^3}
-\]
+$$
 
 所以：
 
-\[
+$$
 \frac{\partial J_i}{\partial Q_i}=-\frac{I}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial J_i}{\partial Q_{i+1}}=\frac{3I}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial J_i}{\partial Q_{i+2}}=-\frac{3I}{\Delta t^3}
-\]
+$$
 
-\[
+$$
 \frac{\partial J_i}{\partial Q_{i+3}}=\frac{I}{\Delta t^3}
-\]
+$$
 
-单个 jerk 惩罚 \(w_jF(J_i)\) 对控制点的梯度为：
+单个 jerk 惩罚 $w_jF(J_i)$ 对控制点的梯度为：
 
-\[
+$$
 \frac{\partial w_jF(J_i)}{\partial Q_i}
 =
 -\frac{w_j}{\Delta t^3}g^J_i
-\]
+$$
 
-\[
+$$
 \frac{\partial w_jF(J_i)}{\partial Q_{i+1}}
 =
 \frac{3w_j}{\Delta t^3}g^J_i
-\]
+$$
 
-\[
+$$
 \frac{\partial w_jF(J_i)}{\partial Q_{i+2}}
 =
 -\frac{3w_j}{\Delta t^3}g^J_i
-\]
+$$
 
-\[
+$$
 \frac{\partial w_jF(J_i)}{\partial Q_{i+3}}
 =
 \frac{w_j}{\Delta t^3}g^J_i
-\]
+$$
 
-因此，任意控制点 \(Q_k\) 接收到的 jerk 可行性梯度为：
+因此，任意控制点 $Q_k$ 接收到的 jerk 可行性梯度为：
 
-\[
+$$
 \frac{\partial J_{d,J}}{\partial Q_k}
 =
 -\frac{w_j}{\Delta t^3}g^J_k
@@ -1037,11 +1037,11 @@ J_i=\frac{Q_{i+3}-3Q_{i+2}+3Q_{i+1}-Q_i}{\Delta t^3}
 \frac{3w_j}{\Delta t^3}g^J_{k-2}
 +
 \frac{w_j}{\Delta t^3}g^J_{k-3}
-\]
+$$
 
 最终，动力学可行性项的总梯度为：
 
-\[
+$$
 \frac{\partial J_d}{\partial Q_k}
 =
 \frac{\partial J_{d,V}}{\partial Q_k}
@@ -1049,79 +1049,79 @@ J_i=\frac{Q_{i+3}-3Q_{i+2}+3Q_{i+1}-Q_i}{\Delta t^3}
 \frac{\partial J_{d,A}}{\partial Q_k}
 +
 \frac{\partial J_{d,J}}{\partial Q_k}
-\]
+$$
 
 考虑总目标函数权重后，其优化贡献为：
 
-\[
+$$
 \lambda_d\frac{\partial J_d}{\partial Q_k}
-\]
+$$
 
-##### 2.3.4  各向异性拟合项 \(J_f\) 的梯度推导
+##### 2.3.4  各向异性拟合梯度 $\nabla J_f$
 
 当反弹优化后的轨迹在几何上安全但动力学不可行时，EGO-Planner 会进行时间重分配，并通过各向异性曲线拟合生成新的轨迹。拟合目标为：
 
-\[
+$$
 J'=\lambda_sJ_s+\lambda_dJ_d+\lambda_fJ_f
-\]
+$$
 
-其中 \(J_f\) 用于让新轨迹 \(\Phi_f\) 贴近原安全轨迹 \(\Phi_s\)。
+其中 $J_f$ 用于让新轨迹 $\Phi_f$ 贴近原安全轨迹 $\Phi_s$。
 
-对归一化时间 \(\alpha\in[0,1]\)，定义新轨迹与安全轨迹之间的位移：
+对归一化时间 $\alpha\in[0,1]$，定义新轨迹与安全轨迹之间的位移：
 
-\[
+$$
 e(\alpha)=\Phi_f(\alpha T')-\Phi_s(\alpha T)
-\]
+$$
 
 令原安全轨迹的单位切向量为：
 
-\[
+$$
 u(\alpha)=\frac{\dot{\Phi}_s(\alpha T)}{\|\dot{\Phi}_s(\alpha T)\|}
-\]
+$$
 
 切向误差为：
 
-\[
+$$
 d_a=e^\top u
-\]
+$$
 
 径向误差为：
 
-\[
+$$
 d_r=\|e\times u\|
-\]
+$$
 
-由于 \(u\) 为单位向量，有：
+由于 $u$ 为单位向量，有：
 
-\[
+$$
 d_r^2=\|e\|^2-(e^\top u)^2
-\]
+$$
 
 各向异性拟合代价为：
 
-\[
+$$
 J_f=\int_0^1
 \left(
 \frac{d_a^2}{a^2}
 +
 \frac{d_r^2}{b^2}
 \right)d\alpha
-\]
+$$
 
-将 \(d_r^2\) 展开：
+将 $d_r^2$ 展开：
 
-\[
+$$
 J_f=\int_0^1
 \left[
 \frac{(e^\top u)^2}{a^2}
 +
 \frac{\|e\|^2-(e^\top u)^2}{b^2}
 \right]d\alpha
-\]
+$$
 
 整理得：
 
-\[
+$$
 J_f=\int_0^1
 e^\top
 \left[
@@ -1130,74 +1130,74 @@ e^\top
 \right]
 e
 \,d\alpha
-\]
+$$
 
 定义各向异性度量矩阵：
 
-\[
+$$
 M(\alpha)=
 \frac{1}{b^2}I+
 \left(\frac{1}{a^2}-\frac{1}{b^2}\right)u(\alpha)u(\alpha)^\top
-\]
+$$
 
 则：
 
-\[
+$$
 J_f=\int_0^1 e(\alpha)^\top M(\alpha)e(\alpha)d\alpha
-\]
+$$
 
-对新轨迹点 \(\Phi_f\) 求导：
+对新轨迹点 $\Phi_f$ 求导：
 
-\[
+$$
 \frac{\partial J_f}{\partial \Phi_f(\alpha T')}
 =
 2M(\alpha)e(\alpha)
-\]
+$$
 
-由于 \(\Phi_f\) 是 B 样条曲线，可以写为：
+由于 $\Phi_f$ 是 B 样条曲线，可以写为：
 
-\[
+$$
 \Phi_f(t)=\sum_k B_k(t)Q_k
-\]
+$$
 
-其中 \(B_k(t)\) 是第 \(k\) 个控制点对应的 B 样条基函数。因此：
+其中 $B_k(t)$ 是第 $k$ 个控制点对应的 B 样条基函数。因此：
 
-\[
+$$
 \frac{\partial \Phi_f(t)}{\partial Q_k}=B_k(t)I
-\]
+$$
 
 由链式法则：
 
-\[
+$$
 \frac{\partial J_f}{\partial Q_k}
 =
 \int_0^1
 2B_k(\alpha T')M(\alpha)e(\alpha)
 \,d\alpha
-\]
+$$
 
-实际实现中，积分会离散化为有限个采样点。若采样点为 \(\alpha_l\)，权重为 \(\omega_l\)，则：
+实际实现中，积分会离散化为有限个采样点。若采样点为 $\alpha_l$，权重为 $\omega_l$，则：
 
-\[
+$$
 \frac{\partial J_f}{\partial Q_k}
 \approx
 \sum_l
 2\omega_lB_k(\alpha_lT')M(\alpha_l)e(\alpha_l)
-\]
+$$
 
 考虑总目标函数权重后，各向异性拟合项贡献为：
 
-\[
+$$
 \lambda_f\frac{\partial J_f}{\partial Q_k}
-\]
+$$
 
-该梯度的意义是：如果新轨迹偏离原安全轨迹，优化器会将其拉回；但由于 \(M(\alpha)\) 在切向和径向上的权重不同，轨迹更容易沿切向调整，而不容易沿径向偏离安全通道。
+该梯度的意义是：如果新轨迹偏离原安全轨迹，优化器会将其拉回；但由于 $M(\alpha)$ 在切向和径向上的权重不同，轨迹更容易沿切向调整，而不容易沿径向偏离安全通道。
 
-##### 2.3.5 完整优化梯度汇总
+##### 2.3.5 目标函数梯度
 
-在反弹优化阶段，EGO-Planner 对每个控制点 \(Q_k\) 使用的总梯度为：
+在反弹优化阶段，EGO-Planner 对每个控制点 $Q_k$ 使用的总梯度为：
 
-\[
+$$
 \frac{\partial J}{\partial Q_k}
 =
 \lambda_s\frac{\partial J_s}{\partial Q_k}
@@ -1205,19 +1205,19 @@ J_f=\int_0^1 e(\alpha)^\top M(\alpha)e(\alpha)d\alpha
 \lambda_c\frac{\partial J_c}{\partial Q_k}
 +
 \lambda_d\frac{\partial J_d}{\partial Q_k}
-\]
+$$
 
 其中：
 
-\[
+$$
 \frac{\partial J_s}{\partial Q_k}
 =
 \frac{\partial J_A}{\partial Q_k}
 +
 \frac{\partial J_J}{\partial Q_k}
-\]
+$$
 
-\[
+$$
 \frac{\partial J_d}{\partial Q_k}
 =
 \frac{\partial J_{d,V}}{\partial Q_k}
@@ -1225,17 +1225,17 @@ J_f=\int_0^1 e(\alpha)^\top M(\alpha)e(\alpha)d\alpha
 \frac{\partial J_{d,A}}{\partial Q_k}
 +
 \frac{\partial J_{d,J}}{\partial Q_k}
-\]
+$$
 
 在时间重分配后的轨迹精修阶段，优化目标变为：
 
-\[
+$$
 J'=\lambda_sJ_s+\lambda_dJ_d+\lambda_fJ_f
-\]
+$$
 
 对应梯度为：
 
-\[
+$$
 \frac{\partial J'}{\partial Q_k}
 =
 \lambda_s\frac{\partial J_s}{\partial Q_k}
@@ -1243,15 +1243,15 @@ J'=\lambda_sJ_s+\lambda_dJ_d+\lambda_fJ_f
 \lambda_d\frac{\partial J_d}{\partial Q_k}
 +
 \lambda_f\frac{\partial J_f}{\partial Q_k}
-\]
+$$
 
 因此，EGO-Planner 的优化本质可以概括为：平滑项降低轨迹高阶导数，碰撞项沿局部障碍物排斥方向推出控制点，动力学项将速度、加速度和 jerk 拉回可行范围，拟合项在时间重分配后保持轨迹形状不偏离原安全通道。整个过程不依赖 ESDF，而是只在轨迹碰撞处提取必要障碍物信息，从而显著降低了局部规划计算量。
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
-### 3. EGO-Planner框架讲解
+### 3. EGO-Planner 系统框架
 
-#### 3.1 EGO-Planner 状态机切换流程
+#### 3.1 重规划状态机
 
 ```text
 INIT
@@ -1352,7 +1352,7 @@ EMERGENCY_STOP
         GEN_NEW_TRAJ
 ```
 
-#### 3.2 EGO-Planner 核心 replan 部分
+#### 3.2 重规划模块 replan
 
 这里对应状态机的GEN_NEW_TRAJ和REPLAN_TRAJ的两个状态
 
@@ -1473,7 +1473,7 @@ EMERGENCY_STOP
 ```
 接收到的B样条马上会在轨迹规划部分执行
 
-#### 3.3 EGO-Planner 轨迹执行 exec_traj 部分
+#### 3.3 轨迹执行模块 exec_traj
 
 这里对应EXEC_TRAJ的部分
 核心是将接收到的B样条根据时间发布出合理的指令
@@ -1483,7 +1483,7 @@ EMERGENCY_STOP
   pos_cmd_pub = node.advertise<quadrotor_msgs::PositionCommand>("/position_cmd", 50);
 ```
 
-#### 3.4 EGO-Planner 核心函数目录
+#### 3.4 核心函数索引
 
 ```text
 simple_run.launch
@@ -1705,10 +1705,10 @@ odom 反馈
   -> SO3ControlNodelet::odom_callback()
 ```
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 > 待补充。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

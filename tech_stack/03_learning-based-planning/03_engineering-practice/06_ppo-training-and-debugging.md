@@ -1,16 +1,16 @@
 # PPO 训练与调试实录
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > **状态：草稿** — Knowledge Tree V2 规划章节，正文撰写中。
 
 训练全流程的系统性调试方法。本篇大纲先行，正文完成后进入正式发布：
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 ### 训练前检查
 
@@ -24,18 +24,18 @@
 
 系统化实验与对照
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 > 待补充。
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 ### 指标诊断
 
 从 TensorBoard 曲线定位问题
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
-### 与走读/避坑篇的关系
+### 工程实践
 
 进阶实战记录

@@ -1,18 +1,18 @@
 # 占据网格与 ESDF 地图
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > 待补充。
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
-### 1. 增量式ESDF构建 (基于 Voxblox)
+### 1. Voxblox 增量 ESDF
 
-#### 1.1 数学定义与构造概念
+#### 1.1 数学定义
 
 在 Voxblox 框架中，机器人的空间感知首先被融合进截断符号距离场（TSDF）中，用于平滑传感器噪声并提取物体表面。随后，算法利用 TSDF 提供的表面距离信息，向未知的自由空间传播，构建欧氏符号距离场（ESDF）。
 
@@ -30,7 +30,7 @@
    证明：设真实距离为 $d$，射线与表面的入射角为 $\theta$。投影误差为 $r_p(\theta) = d \sin(\theta) - d$。Voxblox 证明，通过多次独立观测同一体素，该投影误差会迅速收敛。对3次以上的观测，95%置信度下的误差上限可降至 $0.5\delta$（$\delta$ 为截断距离）。
 2. **准欧氏近似 (Quasi-Euclidean Approximation)**
    为加快传播速度，ESDF 沿网格连线（26邻域）计算距离，而非严格欧氏距离。
-   证明：射线与网格连线最大夹角出现在 $\phi = 22.5^\circ$ 处。积分计算可知，准欧氏距离引入的最大理论误差为实际距离的 $8.24%$，预期误差为 $5.48%$。工程上通常将机器人碰撞包围盒膨胀 $8.5%$ 来完全抵消此误差。
+   证明：射线与网格连线最大夹角出现在 $\phi = 22.5^\circ$ 处。积分计算可知，准欧氏距离引入的最大理论误差为实际距离的 $8.24\%$，预期误差为 $5.48\%$。工程上通常将机器人碰撞包围盒膨胀 $8.5\%$ 来完全抵消此误差。
 
 #### 1.3 算法伪代码
 
@@ -38,7 +38,7 @@
 Algorithm Voxblox_ESDF_Propagate(map_TSDF, map_ESDF):
     // 1. 初始化波前
     For each updated_voxel v_T in map_TSDF:
-        If is_fixed_band(v_T): 
+        If is_fixed_band(v_T):
             If v_E.d > v_T.d: // 发现更近的表面
                 v_E.d = v_T.d
                 lower_queue.push(v_E)
@@ -46,7 +46,7 @@ Algorithm Voxblox_ESDF_Propagate(map_TSDF, map_ESDF):
                 v_E.d = v_T.d
                 raise_queue.push(v_E)
                 lower_queue.push(v_E)
-                
+
     // 2. 处理失效的体素
     While raise_queue not empty:
         curr = raise_queue.pop()
@@ -56,7 +56,7 @@ Algorithm Voxblox_ESDF_Propagate(map_TSDF, map_ESDF):
                 raise_queue.push(neighbor)
             Else:
                 lower_queue.push(neighbor)
-                
+
     // 3. 处理距离更新的体素
     While lower_queue not empty:
         curr = lower_queue.pop()
@@ -68,7 +68,7 @@ Algorithm Voxblox_ESDF_Propagate(map_TSDF, map_ESDF):
                 lower_queue.push(neighbor)
 ```
 
-#### 1.4 C++代码实现
+#### 1.4 C++ 实现
 
 ```cpp
 #include <queue>
@@ -92,7 +92,7 @@ public:
         while (!raise_queue.empty()) {
             Voxel* curr = raise_queue.front();
             raise_queue.pop();
-            curr->distance = 1e6; 
+            curr->distance = 1e6;
 
             for (Voxel* neighbor : curr->neighbors) {
                 if (neighbor->parent == curr) {
@@ -111,7 +111,7 @@ public:
 
             for (Voxel* neighbor : curr->neighbors) {
                 // 使用准欧氏近似计算距离 (假设相邻网格间距为 1 或 sqrt(2) 等)
-                double dist_step = 1.0; 
+                double dist_step = 1.0;
                 if (curr->distance + dist_step < neighbor->distance) {
                     neighbor->distance = curr->distance + dist_step;
                     neighbor->parent = curr;
@@ -123,13 +123,13 @@ public:
 };
 ```
 
-### 2. 极速增量ESDF构建 (FIESTA)
+### 2. FIESTA 增量 ESDF
 
-#### 2.1 数学定义与构造概念
+#### 2.1 数学定义
 
 Voxblox 依赖 TSDF，且在处理动态障碍物消失时计算开销巨大。FIESTA 直接基于**占据栅格地图 (Occupancy Grid Map)** 构建 ESDF，并引入了全新的核心数据结构。
 
-1. **分离更新队列**：拆分为插入队列 (Insert Queue) 和删除队列 (Delete Queue)。
+1. **分离更新队列**：拆分为插入队列和删除队列。
 2. **双向链表 (Doubly Linked Lists, DLL)**：每个体素维护一个 DLL，记录所有“将当前体素作为最近障碍物”的其他体素。当某障碍物被删除时，只需沿着 DLL 精准失效依赖它的体素，避免了全局重算。
 3. **最近障碍物坐标 (coc, Closest Obstacle Coordinate)**：体素严格存储欧氏空间下的障碍物坐标，基于坐标差计算严格欧氏距离，消除了准欧氏近似误差。
 
@@ -152,13 +152,13 @@ Algorithm FIESTA_ESDF_Update(insertQueue, deleteQueue):
             delete_from_DLL(voxel.coc, voxel)
             voxel.coc = Infinity
             voxel.distance = Infinity
-            
+
             // 尝试从邻居处获取新的最近障碍物
             For each nbr in voxel.neighbors:
                 If nbr.coc exists and DIST(nbr.coc, voxel) < voxel.distance:
                     voxel.distance = DIST(nbr.coc, voxel)
                     voxel.coc = nbr.coc
-            
+
             insert_into_DLL(voxel.coc, voxel)
             updateQueue.push(voxel)
 
@@ -183,7 +183,7 @@ Algorithm FIESTA_ESDF_Update(insertQueue, deleteQueue):
                 updateQueue.push(nbr)
 ```
 
-#### 2.4 C++代码实现
+#### 2.4 C++ 实现
 
 这里展示包含核心 DLL 逻辑的 Voxel 数据结构及 BFS 拓展逻辑。
 
@@ -204,11 +204,11 @@ struct VIS { // Voxel Information Structure
     Point pos;
     double distance = 1e6;
     Point coc; // Closest Obstacle Coordinate
-    
+
     // 双向链表实现，存储所有 coc 指向当前 VIS 的体素
-    std::list<VIS*> dll; 
+    std::list<VIS*> dll;
     std::list<VIS*>::iterator dll_it; // 自身在父节点 DLL 中的迭代器，用于 O(1) 删除
-    
+
     std::vector<VIS*> neighbors;
 };
 
@@ -238,15 +238,15 @@ public:
                 double new_dist = curr->coc.distTo(nbr->pos);
                 if (new_dist < nbr->distance) {
                     nbr->distance = new_dist;
-                    
+
                     // 假设可以从全局索引获取原 coc 对应的 VIS 指针 origin_coc_ptr
                     VIS* origin_coc_ptr = /* Get by nbr->coc */;
                     deleteFromDLL(origin_coc_ptr, nbr);
-                    
+
                     nbr->coc = curr->coc;
                     VIS* new_coc_ptr = /* Get by curr->coc */;
                     insertIntoDLL(new_coc_ptr, nbr);
-                    
+
                     updateQueue.push(nbr);
                 }
             }
@@ -255,14 +255,14 @@ public:
 };
 ```
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 > 待补充。
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 > 待补充。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

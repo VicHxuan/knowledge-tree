@@ -1,95 +1,95 @@
 # Minimum Snap 轨迹生成方法与当前 C++ 代码解析
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > 待补充。
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
-### 0. 统一符号
+### 0. 符号约定
 
-设轨迹由 \(m\) 段组成：
+设轨迹由 $m$ 段组成：
 
-\[
+$$
 m=\text{seg\_num}
-\]
+$$
 
 给定路径点：
 
-\[
+$$
 \mathbf q_0,\mathbf q_1,\dots,\mathbf q_m\in\mathbb R^3
-\]
+$$
 
 其中：
 
-\[
+$$
 \mathbf q_i=
 \begin{bmatrix}
 x_i\\
 y_i\\
 z_i
 \end{bmatrix}
-\]
+$$
 
 每段时间为：
 
-\[
+$$
 T_i,\quad i=0,1,\dots,m-1
-\]
+$$
 
 对应代码中的：
 
-\[
+$$
 T_i=\text{Time}(i)
-\]
+$$
 
-对单个维度 \(w\in\{x,y,z\}\)，第 \(i\) 段多项式为：
+对单个维度 $w\in\{x,y,z\}$，第 $i$ 段多项式为：
 
-\[
+$$
 w_i(t)=\sum_{r=0}^{n}p_{i,r}t^r,\quad t\in[0,T_i]
-\]
+$$
 
 系数向量为：
 
-\[
+$$
 \mathbf p_i=
 \begin{bmatrix}
 p_{i,0}&p_{i,1}&\cdots&p_{i,n}
 \end{bmatrix}^T
-\]
+$$
 
 三维轨迹为：
 
-\[
+$$
 \mathbf r_i(t)=
 \begin{bmatrix}
 x_i(t)\\
 y_i(t)\\
 z_i(t)
 \end{bmatrix}
-\]
+$$
 
 最终输出为每一段、每一个维度的多项式系数：
 
-\[
+$$
 \left\{
 \mathbf p_{x,i},
 \mathbf p_{y,i},
 \mathbf p_{z,i}
 \right\}_{i=0}^{m-1}
-\]
+$$
 
 ---
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
-### 1. 原始 Minimum Snap 轨迹生成方法
+### 1. Minimum Snap 轨迹生成
 
-#### 1.1 输入与输出
+#### 1.1 输入输出
 
 输入：
 
-\[
+$$
 \mathcal I=
 \left\{
 \mathbf q_0,\dots,\mathbf q_m,
@@ -97,50 +97,50 @@ T_0,\dots,T_{m-1},
 \mathbf v_s,\mathbf v_e,
 \mathbf a_s,\mathbf a_e
 \right\}
-\]
+$$
 
 其中：
 
-\[
+$$
 \mathbf v_s=\dot{\mathbf r}(0)
-\]
+$$
 
-\[
+$$
 \mathbf v_e=\dot{\mathbf r}(T)
-\]
+$$
 
-\[
+$$
 \mathbf a_s=\ddot{\mathbf r}(0)
-\]
+$$
 
-\[
+$$
 \mathbf a_e=\ddot{\mathbf r}(T)
-\]
+$$
 
 输出：
 
-\[
+$$
 \mathcal O=
 \left\{
 \mathbf p_{x,i},
 \mathbf p_{y,i},
 \mathbf p_{z,i}
 \right\}_{i=0}^{m-1}
-\]
+$$
 
 即：
 
-\[
+$$
 x_i(t)=\sum_{r=0}^{n}p_{x,i,r}t^r
-\]
+$$
 
-\[
+$$
 y_i(t)=\sum_{r=0}^{n}p_{y,i,r}t^r
-\]
+$$
 
-\[
+$$
 z_i(t)=\sum_{r=0}^{n}p_{z,i,r}t^r
-\]
+$$
 
 ---
 
@@ -148,7 +148,7 @@ z_i(t)=\sum_{r=0}^{n}p_{z,i,r}t^r
 
 原始论文以 flat output 表示四旋翼轨迹：
 
-\[
+$$
 \sigma(t)=
 \begin{bmatrix}
 x(t)\\
@@ -156,22 +156,22 @@ y(t)\\
 z(t)\\
 \psi(t)
 \end{bmatrix}
-\]
+$$
 
 位置轨迹为：
 
-\[
+$$
 \mathbf r(t)=
 \begin{bmatrix}
 x(t)\\
 y(t)\\
 z(t)
 \end{bmatrix}
-\]
+$$
 
 分段多项式形式为：
 
-\[
+$$
 \sigma(t)=
 \begin{cases}
 \sum_{r=0}^{n}\sigma_{0,r}t^r,&t_0\le t<t_1\\
@@ -179,19 +179,19 @@ z(t)
 \vdots\\
 \sum_{r=0}^{n}\sigma_{m-1,r}t^r,&t_{m-1}\le t\le t_m
 \end{cases}
-\]
+$$
 
-对单维度 \(w\)：
+对单维度 $w$：
 
-\[
+$$
 w_i(t)=\sum_{r=0}^{n}p_{i,r}t^r
-\]
+$$
 
-其 \(k\) 阶导数为：
+其 $k$ 阶导数为：
 
-\[
+$$
 w_i^{(k)}(t)=\sum_{r=k}^{n}\frac{r!}{(r-k)!}p_{i,r}t^{r-k}
-\]
+$$
 
 ---
 
@@ -199,33 +199,33 @@ w_i^{(k)}(t)=\sum_{r=k}^{n}\frac{r!}{(r-k)!}p_{i,r}t^{r-k}
 
 minimum snap 最小化位置四阶导数平方积分：
 
-\[
+$$
 J_s=\int_{0}^{T}\left|\mathbf r^{(4)}(t)\right|^2dt
-\]
+$$
 
 展开为：
 
-\[
+$$
 J_s=\int_{0}^{T}\left[x^{(4)}(t)^2+y^{(4)}(t)^2+z^{(4)}(t)^2\right]dt
-\]
+$$
 
 多段形式为：
 
-\[
+$$
 J_s=\sum_{i=0}^{m-1}\int_{0}^{T_i}\left|\mathbf r_i^{(4)}(t)\right|^2dt
-\]
+$$
 
 若同时优化 yaw：
 
-\[
+$$
 J_\psi=\int_{0}^{T}\left[\psi^{(2)}(t)\right]^2dt
-\]
+$$
 
 综合目标为：
 
-\[
+$$
 J=\mu_r\int_{0}^{T}\left|\mathbf r^{(4)}(t)\right|^2dt+\mu_\psi\int_{0}^{T}\left[\psi^{(2)}(t)\right]^2dt
-\]
+$$
 
 本文后续只讨论位置部分。
 
@@ -233,61 +233,61 @@ J=\mu_r\int_{0}^{T}\left|\mathbf r^{(4)}(t)\right|^2dt+\mu_\psi\int_{0}^{T}\left
 
 #### 1.4 单段代价矩阵
 
-对单维度第 \(i\) 段：
+对单维度第 $i$ 段：
 
-\[
+$$
 w_i(t)=\sum_{r=0}^{n}p_{i,r}t^r
-\]
+$$
 
 minimum snap 代价为：
 
-\[
+$$
 J_i=\int_0^{T_i}\left[w_i^{(4)}(t)\right]^2dt
-\]
+$$
 
 四阶导数为：
 
-\[
+$$
 w_i^{(4)}(t)=\sum_{r=4}^{n}\frac{r!}{(r-4)!}p_{i,r}t^{r-4}
-\]
+$$
 
 代入目标函数：
 
-\[
+$$
 J_i=\sum_{r=4}^{n}\sum_{s=4}^{n}p_{i,r}p_{i,s}\frac{r!}{(r-4)!}\frac{s!}{(s-4)!}\int_0^{T_i}t^{r+s-8}dt
-\]
+$$
 
 积分项为：
 
-\[
+$$
 \int_0^{T_i}t^{r+s-8}dt=\frac{T_i^{r+s-7}}{r+s-7}
-\]
+$$
 
 因此：
 
-\[
+$$
 J_i=\mathbf p_i^TQ_i\mathbf p_i
-\]
+$$
 
 其中：
 
-\[
+$$
 (Q_i)_{r,s}=\frac{r!}{(r-4)!}\frac{s!}{(s-4)!}\frac{T_i^{r+s-7}}{r+s-7},\quad r,s\ge4
-\]
+$$
 
-若 \(r<4\) 或 \(s<4\)，则：
+若 $r<4$ 或 $s<4$，则：
 
-\[
+$$
 (Q_i)_{r,s}=0
-\]
+$$
 
 ---
 
-#### 1.5 多段整体代价矩阵
+#### 1.5 多段代价矩阵
 
 将所有段系数拼接：
 
-\[
+$$
 \mathbf p=
 \begin{bmatrix}
 \mathbf p_0\\
@@ -295,19 +295,19 @@ J_i=\mathbf p_i^TQ_i\mathbf p_i
 \vdots\\
 \mathbf p_{m-1}
 \end{bmatrix}
-\]
+$$
 
 整体代价为：
 
-\[
+$$
 J=\mathbf p^TQ\mathbf p
-\]
+$$
 
 其中：
 
-\[
+$$
 Q=\operatorname{blkdiag}(Q_0,Q_1,\dots,Q_{m-1})
-\]
+$$
 
 ---
 
@@ -315,77 +315,77 @@ Q=\operatorname{blkdiag}(Q_0,Q_1,\dots,Q_{m-1})
 
 路径点约束：
 
-\[
+$$
 \mathbf r_i(0)=\mathbf q_i
-\]
+$$
 
-\[
+$$
 \mathbf r_i(T_i)=\mathbf q_{i+1}
-\]
+$$
 
 起点导数约束：
 
-\[
+$$
 \dot{\mathbf r}_0(0)=\mathbf v_s
-\]
+$$
 
-\[
+$$
 \ddot{\mathbf r}_0(0)=\mathbf a_s
-\]
+$$
 
 终点导数约束：
 
-\[
+$$
 \dot{\mathbf r}_{m-1}(T_{m-1})=\mathbf v_e
-\]
+$$
 
-\[
+$$
 \ddot{\mathbf r}_{m-1}(T_{m-1})=\mathbf a_e
-\]
+$$
 
 中间点连续性约束：
 
-\[
+$$
 \mathbf r_i^{(k)}(T_i)=\mathbf r_{i+1}^{(k)}(0),\quad k=0,1,2,3
-\]
+$$
 
 minimum snap 通常要求至少三阶导数连续。
 
 ---
 
-#### 1.7 原始 QP 形式
+#### 1.7 QP 形式
 
 将所有维度的多项式系数拼接为：
 
-\[
+$$
 \mathbf c
-\]
+$$
 
 原始论文将问题写成二次规划：
 
-\[
+$$
 \min_{\mathbf c}\quad\mathbf c^TH\mathbf c+\mathbf f^T\mathbf c
-\]
+$$
 
 满足：
 
-\[
+$$
 A\mathbf c\le \mathbf b
-\]
+$$
 
 若只考虑等式约束，可写为：
 
-\[
+$$
 \min_{\mathbf p}\quad\mathbf p^TQ\mathbf p
-\]
+$$
 
-\[
+$$
 \text{s.t.}\quad A_{eq}\mathbf p=\mathbf b_{eq}
-\]
+$$
 
 对应 KKT 系统为：
 
-\[
+$$
 \begin{bmatrix}
 2Q&A_{eq}^T\\
 A_{eq}&0
@@ -399,19 +399,19 @@ A_{eq}&0
 0\\
 \mathbf b_{eq}
 \end{bmatrix}
-\]
+$$
 
 求解后得到：
 
-\[
+$$
 \mathbf p^*
-\]
+$$
 
 即所有分段多项式系数。
 
 ---
 
-#### 1.8 原始方法流程
+#### 1.8 算法流程
 
 ```text
 Algorithm Original_Minimum_Snap
@@ -438,13 +438,13 @@ Output:
 
 原始方法的本质是：
 
-\[
+$$
 \boxed{
 \min_{\mathbf p}\mathbf p^TQ\mathbf p\quad\text{s.t.}\quad A_{eq}\mathbf p=\mathbf b_{eq}
 }
-\]
+$$
 
-#### 1.9 KKT 方法求解示例
+#### 1.9 KKT 求解示例
 
 为了更直观地理解上一节中的 KKT 系统，下面给出一个单维度、单段轨迹的求解示例。
 
@@ -551,7 +551,7 @@ $$
 
 ---
 
-##### 1.9.2 构造等式约束
+##### 1.9.2 等式约束
 
 由起点约束可得：
 
@@ -627,7 +627,7 @@ $$
 
 ---
 
-##### 1.9.3 构造 KKT 系统
+##### 1.9.3 KKT 系统
 
 原始优化问题为：
 
@@ -698,7 +698,7 @@ $$
 
 ---
 
-##### 1.9.4 KKT 系统求解结果
+##### 1.9.4 KKT 求解结果
 
 对于上述示例，求解 KKT 系统可以得到：
 
@@ -764,7 +764,7 @@ $$
 
 ---
 
-##### 1.9.5 对应的 Eigen 求解代码
+##### 1.9.5 Eigen 求解实现
 
 上述 KKT 系统可以直接使用 Eigen 求解。
 
@@ -846,7 +846,7 @@ $$
 
 ---
 
-##### 1.9.6 与多段轨迹的关系
+##### 1.9.6 多段轨迹扩展
 
 上述示例只考虑了单维度、单段轨迹，因此所有约束都来自起点和终点边界条件。
 
@@ -934,33 +934,33 @@ $$
 
 ---
 
-### 2. Polynomial 论文中的改进方法
+### 2. Polynomial 端点导数参数化
 
-#### 2.1 核心思想
+#### 2.1 端点导数优化
 
 原始方法直接优化多项式系数：
 
-\[
+$$
 \mathbf p
-\]
+$$
 
 Polynomial 方法改为优化端点导数：
 
-\[
+$$
 \mathbf d
-\]
+$$
 
 多项式系数和端点导数之间满足：
 
-\[
+$$
 A\mathbf p=\mathbf d
-\]
+$$
 
 因此：
 
-\[
+$$
 \mathbf p=A^{-1}\mathbf d
-\]
+$$
 
 将其代入代价函数后，可将问题转为关于端点导数的无约束二次优化。
 
@@ -968,11 +968,11 @@ A\mathbf p=\mathbf d
 注意，这里是无约束二次优化
 因此SFC引入的“凸约束”在这里不再起作用
 
-#### 2.2 输入与输出
+#### 2.2 输入输出
 
 输入保持不变：
 
-\[
+$$
 \mathcal I=
 \left\{
 \mathbf q_0,\dots,\mathbf q_m,
@@ -980,26 +980,26 @@ T_0,\dots,T_{m-1},
 \mathbf v_s,\mathbf v_e,
 \mathbf a_s,\mathbf a_e
 \right\}
-\]
+$$
 
 输出保持不变：
 
-\[
+$$
 \mathcal O=
 \left\{
 \mathbf p_{x,i},
 \mathbf p_{y,i},
 \mathbf p_{z,i}
 \right\}_{i=0}^{m-1}
-\]
+$$
 
 ---
 
 #### 2.3 端点导数向量
 
-对第 \(i\) 段、单维度 \(w\)，定义：
+对第 $i$ 段、单维度 $w$，定义：
 
-\[
+$$
 \mathbf d_i=
 \begin{bmatrix}
 w_i(0)\\
@@ -1010,11 +1010,11 @@ w_i^{(2)}(0)\\
 w_i^{(2)}(T_i)\\
 \vdots
 \end{bmatrix}
-\]
+$$
 
 标准 minimum snap 通常使用到三阶导数：
 
-\[
+$$
 \mathbf d_i=
 \begin{bmatrix}
 w_i(0)\\
@@ -1026,11 +1026,11 @@ w_i^{(2)}(T_i)\\
 w_i^{(3)}(0)\\
 w_i^{(3)}(T_i)
 \end{bmatrix}
-\]
+$$
 
 当前 C++ 代码使用到二阶导数：
 
-\[
+$$
 \mathbf d_i=
 \begin{bmatrix}
 w_i(0)\\
@@ -1040,36 +1040,36 @@ w_i^{(1)}(T_i)\\
 w_i^{(2)}(0)\\
 w_i^{(2)}(T_i)
 \end{bmatrix}
-\]
+$$
 
 ---
 
-#### 2.4 Mapping Matrix
+#### 2.4 映射矩阵
 
 对当前代码中的五次多项式：
 
-\[
+$$
 w_i(t)=p_0+p_1t+p_2t^2+p_3t^3+p_4t^4+p_5t^5
-\]
+$$
 
 有：
 
-\[
+$$
 \mathbf p_i=
 \begin{bmatrix}
 p_0&p_1&p_2&p_3&p_4&p_5
 \end{bmatrix}^T
-\]
+$$
 
 端点导数满足：
 
-\[
+$$
 A_i\mathbf p_i=\mathbf d_i
-\]
+$$
 
 其中：
 
-\[
+$$
 A_i=
 \begin{bmatrix}
 1&0&0&0&0&0\\
@@ -1079,51 +1079,51 @@ A_i=
 0&0&2&0&0&0\\
 0&0&2&6T_i&12T_i^2&20T_i^3
 \end{bmatrix}
-\]
+$$
 
 多段整体矩阵为：
 
-\[
+$$
 A=\operatorname{blkdiag}(A_0,A_1,\dots,A_{m-1})
-\]
+$$
 
 因此：
 
-\[
+$$
 A\mathbf p=\mathbf d
-\]
+$$
 
-\[
+$$
 \mathbf p=A^{-1}\mathbf d
-\]
+$$
 
 ---
 
-#### 2.5 从系数空间转到导数空间
+#### 2.5 系数空间与导数空间变换
 
 原代价函数为：
 
-\[
+$$
 J=\mathbf p^TQ\mathbf p
-\]
+$$
 
 代入：
 
-\[
+$$
 \mathbf p=A^{-1}\mathbf d
-\]
+$$
 
 得到：
 
-\[
+$$
 J=(A^{-1}\mathbf d)^TQ(A^{-1}\mathbf d)
-\]
+$$
 
 因此：
 
-\[
+$$
 J=\mathbf d^TA^{-T}QA^{-1}\mathbf d
-\]
+$$
 
 ---
 
@@ -1131,51 +1131,51 @@ J=\mathbf d^TA^{-T}QA^{-1}\mathbf d
 
 将端点导数分为固定导数和自由导数：
 
-\[
+$$
 \tilde{\mathbf d}=
 \begin{bmatrix}
 \mathbf d_F\\
 \mathbf d_P
 \end{bmatrix}
-\]
+$$
 
 其中：
 
-\[
+$$
 \mathbf d_F
-\]
+$$
 
 表示固定导数，包括路径点位置、起点速度、起点加速度、终点速度、终点加速度。
 
-\[
+$$
 \mathbf d_P
-\]
+$$
 
 表示自由导数，包括中间路径点速度和加速度。
 
-通过选择矩阵 \(C_t\) 映射回原始导数顺序：
+通过选择矩阵 $C_t$ 映射回原始导数顺序：
 
-\[
+$$
 \mathbf d=C_t\tilde{\mathbf d}
-\]
+$$
 
 代入目标函数：
 
-\[
+$$
 J=\tilde{\mathbf d}^TC_t^TA^{-T}QA^{-1}C_t\tilde{\mathbf d}
-\]
+$$
 
 定义：
 
-\[
+$$
 R=C_t^TA^{-T}QA^{-1}C_t
-\]
+$$
 
 则：
 
-\[
+$$
 J=\tilde{\mathbf d}^TR\tilde{\mathbf d}
-\]
+$$
 
 ---
 
@@ -1183,17 +1183,17 @@ J=\tilde{\mathbf d}^TR\tilde{\mathbf d}
 
 按照固定导数和自由导数划分：
 
-\[
+$$
 R=
 \begin{bmatrix}
 R_{FF}&R_{FP}\\
 R_{PF}&R_{PP}
 \end{bmatrix}
-\]
+$$
 
 于是：
 
-\[
+$$
 J=
 \begin{bmatrix}
 \mathbf d_F\\
@@ -1207,79 +1207,79 @@ R_{PF}&R_{PP}
 \mathbf d_F\\
 \mathbf d_P
 \end{bmatrix}
-\]
+$$
 
 展开：
 
-\[
+$$
 J=\mathbf d_F^TR_{FF}\mathbf d_F+\mathbf d_F^TR_{FP}\mathbf d_P+\mathbf d_P^TR_{PF}\mathbf d_F+\mathbf d_P^TR_{PP}\mathbf d_P
-\]
+$$
 
 ---
 
 #### 2.8 自由导数闭式解
 
-对 \(\mathbf d_P\) 求导：
+对 $\mathbf d_P$ 求导：
 
-\[
+$$
 \frac{\partial J}{\partial \mathbf d_P}=2R_{PF}\mathbf d_F+2R_{PP}\mathbf d_P
-\]
+$$
 
 令梯度为零：
 
-\[
+$$
 2R_{PF}\mathbf d_F+2R_{PP}\mathbf d_P=0
-\]
+$$
 
 得到：
 
-\[
+$$
 R_{PP}\mathbf d_P=-R_{PF}\mathbf d_F
-\]
+$$
 
 因此：
 
-\[
+$$
 \mathbf d_P^*=-R_{PP}^{-1}R_{PF}\mathbf d_F
-\]
+$$
 
 由于：
 
-\[
+$$
 R_{PF}=R_{FP}^T
-\]
+$$
 
 所以：
 
-\[
+$$
 \boxed{
 \mathbf d_P^*=-R_{PP}^{-1}R_{FP}^T\mathbf d_F
 }
-\]
+$$
 
 ---
 
-#### 2.9 恢复多项式系数
+#### 2.9 多项式系数恢复
 
 求得：
 
-\[
+$$
 \tilde{\mathbf d}^*=
 \begin{bmatrix}
 \mathbf d_F\\
 \mathbf d_P^*
 \end{bmatrix}
-\]
+$$
 
 恢复原始导数顺序：
 
-\[
+$$
 \mathbf d^*=C_t\tilde{\mathbf d}^*
-\]
+$$
 
 恢复多项式系数：
 
-\[
+$$
 \boxed{
 \mathbf p^*=A^{-1}C_t
 \begin{bmatrix}
@@ -1287,11 +1287,11 @@ R_{PF}=R_{FP}^T
 \mathbf d_P^*
 \end{bmatrix}
 }
-\]
+$$
 
 ---
 
-#### 2.10 Polynomial 方法流程
+#### 2.10 Polynomial 求解流程
 
 ```text
 Algorithm Polynomial_Minimum_Snap
@@ -1319,13 +1319,13 @@ Output:
 
 Polynomial 方法本质为：
 
-\[
+$$
 \boxed{
 \mathbf d_P^*=-R_{PP}^{-1}R_{FP}^T\mathbf d_F
 }
-\]
+$$
 
-\[
+$$
 \boxed{
 \mathbf p^*=A^{-1}C_t
 \begin{bmatrix}
@@ -1333,81 +1333,81 @@ Polynomial 方法本质为：
 \mathbf d_P^*
 \end{bmatrix}
 }
-\]
+$$
 
 ---
 
-### 5. 当前代码的完整数学问题
+### 5. Minimum Jerk 优化模型
 
-对单维度 \(w\)，当前代码求解：
+对单维度 $w$，当前代码求解：
 
-\[
+$$
 \min\quad\sum_{i=0}^{m-1}\int_0^{T_i}\left[w_i^{(3)}(t)\right]^2dt
-\]
+$$
 
 约束为：
 
-\[
+$$
 w_i(0)=w_i
-\]
+$$
 
-\[
+$$
 w_i(T_i)=w_{i+1}
-\]
+$$
 
 起点约束：
 
-\[
+$$
 \dot w_0(0)=v_s
-\]
+$$
 
-\[
+$$
 \ddot w_0(0)=a_s
-\]
+$$
 
 终点约束：
 
-\[
+$$
 \dot w_{m-1}(T_{m-1})=v_e
-\]
+$$
 
-\[
+$$
 \ddot w_{m-1}(T_{m-1})=a_e
-\]
+$$
 
 中间速度连续：
 
-\[
+$$
 \dot w_{i-1}(T_{i-1})=\dot w_i(0),\quad i=1,\dots,m-1
-\]
+$$
 
 中间加速度连续：
 
-\[
+$$
 \ddot w_{i-1}(T_{i-1})=\ddot w_i(0),\quad i=1,\dots,m-1
-\]
+$$
 
 因此当前代码生成的是：
 
-\[
+$$
 C^2
-\]
+$$
 
 连续的五次多项式轨迹。
 
 ---
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
-### 3. EGO-Planner实际 C++ 代码逐段解析
+### 3. EGO-Planner 多项式实现
 
-#### 3.1 当前代码的实际优化目标
+#### 3.1 Minimum Jerk 目标函数
 
 当前代码使用五次多项式：
 
-\[
+$$
 w_i(t)=p_0+p_1t+p_2t^2+p_3t^3+p_4t^4+p_5t^5
-\]
+$$
 
 代码中的代价矩阵从三阶导数开始构造：
 
@@ -1417,23 +1417,23 @@ for (int i = 3; i < 6; i++)
 
 因此实际代价为：
 
-\[
+$$
 J=\sum_{i=0}^{m-1}\int_0^{T_i}\left[w_i^{(3)}(t)\right]^2dt
-\]
+$$
 
 这对应 minimum jerk，而不是标准 minimum snap。
 
 标准 minimum snap 应为：
 
-\[
+$$
 J_s=\sum_{i=0}^{m-1}\int_0^{T_i}\left[w_i^{(4)}(t)\right]^2dt
-\]
+$$
 
 因此当前代码的结构属于 Polynomial 方法，但具体目标是五次多项式 minimum jerk。
 
 ---
 
-#### 3.2 函数定义与变量初始化
+#### 3.2 函数接口与初始化
 
 ```cpp
 PolynomialTraj PolynomialTraj::minSnapTraj(const Eigen::MatrixXd &Pos, const Eigen::Vector3d &start_vel,
@@ -1450,30 +1450,30 @@ PolynomialTraj PolynomialTraj::minSnapTraj(const Eigen::MatrixXd &Pos, const Eig
 
 路径点矩阵为：
 
-\[
+$$
 Pos=
 \begin{bmatrix}
 x_0&x_1&\cdots&x_m\\
 y_0&y_1&\cdots&y_m\\
 z_0&z_1&\cdots&z_m
 \end{bmatrix}
-\]
+$$
 
 段数为：
 
-\[
+$$
 m=\text{seg\_num}
-\]
+$$
 
 每段五次多项式有 6 个系数，三维共有 18 个系数：
 
-\[
+$$
 \text{poly\_coeff}\in\mathbb R^{m\times18}
-\]
+$$
 
-所有 \(x\) 方向系数拼接为：
+所有 $x$ 方向系数拼接为：
 
-\[
+$$
 P_x=
 \begin{bmatrix}
 \mathbf p_{x,0}\\
@@ -1482,13 +1482,13 @@ P_x=
 \mathbf p_{x,m-1}
 \end{bmatrix}
 \in\mathbb R^{6m}
-\]
+$$
 
 同理：
 
-\[
+$$
 P_y,P_z\in\mathbb R^{6m}
-\]
+$$
 
 ---
 
@@ -1505,19 +1505,19 @@ P_y,P_z\in\mathbb R^{6m}
 
 该函数计算：
 
-\[
+$$
 x!
-\]
+$$
 
 用于构造多项式导数系数：
 
-\[
+$$
 \frac{d^k}{dt^k}t^j=\frac{j!}{(j-k)!}t^{j-k}
-\]
+$$
 
 ---
 
-#### 3.4 构造端点导数向量
+#### 3.4 端点导数向量
 
 ```cpp
   /* ---------- end point derivative ---------- */
@@ -1526,9 +1526,9 @@ x!
   Eigen::VectorXd Dz = Eigen::VectorXd::Zero(seg_num * 6);
 ```
 
-对第 \(k\) 段、单维度 \(w\)，端点导数顺序为：
+对第 $k$ 段、单维度 $w$，端点导数顺序为：
 
-\[
+$$
 \mathbf d_k=
 \begin{bmatrix}
 w_k(0)\\
@@ -1538,11 +1538,11 @@ w_k(T_k)\\
 \ddot w_k(0)\\
 \ddot w_k(T_k)
 \end{bmatrix}
-\]
+$$
 
 整体向量为：
 
-\[
+$$
 D_w=
 \begin{bmatrix}
 \mathbf d_0\\
@@ -1551,17 +1551,17 @@ D_w=
 \mathbf d_{m-1}
 \end{bmatrix}
 \in\mathbb R^{6m}
-\]
+$$
 
 代码分别构造：
 
-\[
+$$
 D_x,D_y,D_z
-\]
+$$
 
 ---
 
-#### 3.5 写入每段起点和终点位置
+#### 3.5 分段位置约束
 
 ```cpp
   for (int k = 0; k < seg_num; k++)
@@ -1577,43 +1577,43 @@ D_x,D_y,D_z
 
 对应：
 
-\[
+$$
 x_k(0)=x_k
-\]
+$$
 
-\[
+$$
 x_k(T_k)=x_{k+1}
-\]
+$$
 
-\[
+$$
 y_k(0)=y_k
-\]
+$$
 
-\[
+$$
 y_k(T_k)=y_{k+1}
-\]
+$$
 
-\[
+$$
 z_k(0)=z_k
-\]
+$$
 
-\[
+$$
 z_k(T_k)=z_{k+1}
-\]
+$$
 
 即：
 
-\[
+$$
 \mathbf r_k(0)=\mathbf q_k
-\]
+$$
 
-\[
+$$
 \mathbf r_k(T_k)=\mathbf q_{k+1}
-\]
+$$
 
 ---
 
-#### 3.6 写入起点速度和起点加速度
+#### 3.6 起点导数约束
 
 ```cpp
     if (k == 0)
@@ -1630,47 +1630,47 @@ z_k(T_k)=z_{k+1}
 
 起点速度约束：
 
-\[
+$$
 \dot{\mathbf r}_0(0)=\mathbf v_s
-\]
+$$
 
 即：
 
-\[
+$$
 \dot x_0(0)=v_{s,x}
-\]
+$$
 
-\[
+$$
 \dot y_0(0)=v_{s,y}
-\]
+$$
 
-\[
+$$
 \dot z_0(0)=v_{s,z}
-\]
+$$
 
 起点加速度约束：
 
-\[
+$$
 \ddot{\mathbf r}_0(0)=\mathbf a_s
-\]
+$$
 
 即：
 
-\[
+$$
 \ddot x_0(0)=a_{s,x}
-\]
+$$
 
-\[
+$$
 \ddot y_0(0)=a_{s,y}
-\]
+$$
 
-\[
+$$
 \ddot z_0(0)=a_{s,z}
-\]
+$$
 
 ---
 
-#### 3.7 写入终点速度和终点加速度
+#### 3.7 终点导数约束
 
 ```cpp
     else if (k == seg_num - 1)
@@ -1688,19 +1688,19 @@ z_k(T_k)=z_{k+1}
 
 终点速度约束：
 
-\[
+$$
 \dot{\mathbf r}_{m-1}(T_{m-1})=\mathbf v_e
-\]
+$$
 
 终点加速度约束：
 
-\[
+$$
 \ddot{\mathbf r}_{m-1}(T_{m-1})=\mathbf a_e
-\]
+$$
 
 ---
 
-#### 3.8 构造 Mapping Matrix \(A\)
+#### 3.8 映射矩阵 $A$
 
 ```cpp
   /* ---------- Mapping Matrix A ---------- */
@@ -1720,21 +1720,21 @@ z_k(T_k)=z_{k+1}
   }
 ```
 
-第 \(k\) 段五次多项式为：
+第 $k$ 段五次多项式为：
 
-\[
+$$
 w_k(t)=p_0+p_1t+p_2t^2+p_3t^3+p_4t^4+p_5t^5
-\]
+$$
 
 端点导数与系数满足：
 
-\[
+$$
 A_k\mathbf p_k=\mathbf d_k
-\]
+$$
 
 其中：
 
-\[
+$$
 A_k=
 \begin{bmatrix}
 1&0&0&0&0&0\\
@@ -1744,29 +1744,29 @@ A_k=
 0&0&2&0&0&0\\
 0&0&2&6T_k&12T_k^2&20T_k^3
 \end{bmatrix}
-\]
+$$
 
 整体矩阵为：
 
-\[
+$$
 A=\operatorname{blkdiag}(A_0,A_1,\dots,A_{m-1})
-\]
+$$
 
 满足：
 
-\[
+$$
 A\mathbf p=\mathbf d
-\]
+$$
 
 因此：
 
-\[
+$$
 \mathbf p=A^{-1}\mathbf d
-\]
+$$
 
 ---
 
-#### 3.9 构造选择矩阵 \(C_t\)
+#### 3.9 选择矩阵 $C_t$
 
 ```cpp
   /* ---------- Produce Selection Matrix C' ---------- */
@@ -1780,51 +1780,51 @@ A\mathbf p=\mathbf d
 
 总导数数量为：
 
-\[
+$$
 n_d=6m
-\]
+$$
 
 固定变量数量为：
 
-\[
+$$
 n_f=2m+4
-\]
+$$
 
 自由变量数量为：
 
-\[
+$$
 n_p=2m-2
-\]
+$$
 
 选择矩阵：
 
-\[
+$$
 C_t\in\mathbb R^{6m\times(4m+2)}
-\]
+$$
 
 满足：
 
-\[
+$$
 \mathbf d=C_t
 \begin{bmatrix}
 \mathbf d_F\\
 \mathbf d_P
 \end{bmatrix}
-\]
+$$
 
 其中：
 
-\[
+$$
 \mathbf d_F\in\mathbb R^{2m+4}
-\]
+$$
 
-\[
+$$
 \mathbf d_P\in\mathbb R^{2m-2}
-\]
+$$
 
 ---
 
-#### 3.10 第一段选择矩阵赋值
+#### 3.10 首段选择矩阵
 
 ```cpp
   Ct(0, 0) = 1;
@@ -1837,7 +1837,7 @@ C_t\in\mathbb R^{6m\times(4m+2)}
 
 第一段导数向量为：
 
-\[
+$$
 \mathbf d_0=
 \begin{bmatrix}
 w_0(0)\\
@@ -1847,39 +1847,39 @@ w_0(T_0)\\
 \ddot w_0(0)\\
 \ddot w_0(T_0)
 \end{bmatrix}
-\]
+$$
 
 对应关系为：
 
-\[
+$$
 w_0(0)\in\mathbf d_F
-\]
+$$
 
-\[
+$$
 \dot w_0(0)\in\mathbf d_F
-\]
+$$
 
-\[
+$$
 \ddot w_0(0)\in\mathbf d_F
-\]
+$$
 
-\[
+$$
 w_0(T_0)\in\mathbf d_F
-\]
+$$
 
-\[
+$$
 \dot w_0(T_0)\in\mathbf d_P
-\]
+$$
 
-\[
+$$
 \ddot w_0(T_0)\in\mathbf d_P
-\]
+$$
 
 第一段终点速度和加速度是第一个中间点的自由导数。
 
 ---
 
-#### 3.11 最后一段选择矩阵赋值
+#### 3.11 末段选择矩阵
 
 ```cpp
   Ct(6 * (seg_num - 1) + 0, 2 * seg_num + 0) = 1;
@@ -1892,13 +1892,13 @@ w_0(T_0)\in\mathbf d_F
 
 最后一段编号为：
 
-\[
+$$
 k=m-1
-\]
+$$
 
 最后一段导数向量为：
 
-\[
+$$
 \mathbf d_{m-1}=
 \begin{bmatrix}
 w_{m-1}(0)\\
@@ -1908,39 +1908,39 @@ w_{m-1}(T_{m-1})\\
 \ddot w_{m-1}(0)\\
 \ddot w_{m-1}(T_{m-1})
 \end{bmatrix}
-\]
+$$
 
 对应关系为：
 
-\[
+$$
 w_{m-1}(0)\in\mathbf d_F
-\]
+$$
 
-\[
+$$
 w_{m-1}(T_{m-1})\in\mathbf d_F
-\]
+$$
 
-\[
+$$
 \dot w_{m-1}(0)\in\mathbf d_P
-\]
+$$
 
-\[
+$$
 \dot w_{m-1}(T_{m-1})\in\mathbf d_F
-\]
+$$
 
-\[
+$$
 \ddot w_{m-1}(0)\in\mathbf d_P
-\]
+$$
 
-\[
+$$
 \ddot w_{m-1}(T_{m-1})\in\mathbf d_F
-\]
+$$
 
 最后一段起点速度和加速度是最后一个中间点的自由导数。
 
 ---
 
-#### 3.12 中间段选择矩阵赋值
+#### 3.12 中间段选择矩阵
 
 ```cpp
   for (int j = 2; j < seg_num; j++)
@@ -1956,45 +1956,45 @@ w_{m-1}(T_{m-1})\in\mathbf d_F
 
 令：
 
-\[
+$$
 k=j-1
-\]
+$$
 
-该循环处理第 \(1\) 段到第 \(m-2\) 段。
+该循环处理第 $1$ 段到第 $m-2$ 段。
 
 位置约束为：
 
-\[
+$$
 w_k(0)=w_k
-\]
+$$
 
-\[
+$$
 w_k(T_k)=w_{k+1}
-\]
+$$
 
 中间速度共享同一自由变量：
 
-\[
+$$
 \dot w_{k-1}(T_{k-1})=\dot w_k(0)
-\]
+$$
 
 中间加速度共享同一自由变量：
 
-\[
+$$
 \ddot w_{k-1}(T_{k-1})=\ddot w_k(0)
-\]
+$$
 
 因此轨迹满足：
 
-\[
+$$
 C^2
-\]
+$$
 
 连续。
 
 ---
 
-#### 3.13 重排端点导数
+#### 3.13 端点导数重排
 
 ```cpp
   C = Ct.transpose();
@@ -2006,49 +2006,49 @@ C^2
 
 因为：
 
-\[
+$$
 \mathbf d=C_t
 \begin{bmatrix}
 \mathbf d_F\\
 \mathbf d_P
 \end{bmatrix}
-\]
+$$
 
 所以：
 
-\[
+$$
 C=C_t^T
-\]
+$$
 
 得到：
 
-\[
+$$
 D_{x,1}=C_t^TD_x
-\]
+$$
 
-\[
+$$
 D_{y,1}=C_t^TD_y
-\]
+$$
 
-\[
+$$
 D_{z,1}=C_t^TD_z
-\]
+$$
 
 此时：
 
-\[
+$$
 D_{x,1}=
 \begin{bmatrix}
 D_{x,F}\\
 D_{x,P}
 \end{bmatrix}
-\]
+$$
 
 后续会重新计算自由部分。
 
 ---
 
-#### 3.14 构造代价矩阵 \(Q\)
+#### 3.14 代价矩阵 $Q$
 
 ```cpp
   /* ---------- minimum snap matrix ---------- */
@@ -2069,55 +2069,55 @@ D_{x,P}
 
 对五次多项式：
 
-\[
+$$
 w(t)=\sum_{r=0}^{5}p_rt^r
-\]
+$$
 
 三阶导数为：
 
-\[
+$$
 w^{(3)}(t)=\sum_{r=3}^{5}r(r-1)(r-2)p_rt^{r-3}
-\]
+$$
 
 单段代价为：
 
-\[
+$$
 J_k=\int_0^{T_k}\left[w_k^{(3)}(t)\right]^2dt
-\]
+$$
 
 展开：
 
-\[
+$$
 J_k=\sum_{i=3}^{5}\sum_{j=3}^{5}p_ip_j\,i(i-1)(i-2)\,j(j-1)(j-2)\int_0^{T_k}t^{i+j-6}dt
-\]
+$$
 
 积分项为：
 
-\[
+$$
 \int_0^{T_k}t^{i+j-6}dt=\frac{T_k^{i+j-5}}{i+j-5}
-\]
+$$
 
 因此：
 
-\[
+$$
 (Q_k)_{i,j}=i(i-1)(i-2)\,j(j-1)(j-2)\,\frac{T_k^{i+j-5}}{i+j-5}
-\]
+$$
 
 这正对应代码中的：
 
-\[
+$$
 i(i-1)(i-2)j(j-1)(j-2)\frac{T_k^{i+j-5}}{i+j-5}
-\]
+$$
 
 整体矩阵为：
 
-\[
+$$
 Q=\operatorname{blkdiag}(Q_0,Q_1,\dots,Q_{m-1})
-\]
+$$
 
 ---
 
-#### 3.15 构造 \(R\) 矩阵
+#### 3.15 导数空间代价矩阵 $R$
 
 ```cpp
   /* ---------- R matrix ---------- */
@@ -2126,61 +2126,61 @@ Q=\operatorname{blkdiag}(Q_0,Q_1,\dots,Q_{m-1})
 
 由：
 
-\[
+$$
 A\mathbf p=\mathbf d
-\]
+$$
 
 得：
 
-\[
+$$
 \mathbf p=A^{-1}\mathbf d
-\]
+$$
 
 由：
 
-\[
+$$
 \mathbf d=C_t\tilde{\mathbf d}
-\]
+$$
 
 得：
 
-\[
+$$
 \mathbf p=A^{-1}C_t\tilde{\mathbf d}
-\]
+$$
 
 代入：
 
-\[
+$$
 J=\mathbf p^TQ\mathbf p
-\]
+$$
 
 得到：
 
-\[
+$$
 J=\tilde{\mathbf d}^TC_t^TA^{-T}QA^{-1}C_t\tilde{\mathbf d}
-\]
+$$
 
 因此：
 
-\[
+$$
 R=C_t^TA^{-T}QA^{-1}C_t
-\]
+$$
 
 代码中：
 
-\[
+$$
 C=C_t^T
-\]
+$$
 
 所以：
 
-\[
+$$
 R=CA^{-T}QA^{-1}C_t
-\]
+$$
 
 ---
 
-#### 3.16 提取固定导数
+#### 3.16 固定导数
 
 ```cpp
   Eigen::VectorXd Dxf(2 * seg_num + 4), Dyf(2 * seg_num + 4), Dzf(2 * seg_num + 4);
@@ -2192,27 +2192,27 @@ R=CA^{-T}QA^{-1}C_t
 
 固定导数数量为：
 
-\[
+$$
 n_f=2m+4
-\]
+$$
 
 因此：
 
-\[
+$$
 D_{x,F}=D_{x,1}[0:n_f]
-\]
+$$
 
-\[
+$$
 D_{y,F}=D_{y,1}[0:n_f]
-\]
+$$
 
-\[
+$$
 D_{z,F}=D_{z,1}[0:n_f]
-\]
+$$
 
 ---
 
-#### 3.17 分块 \(R\) 矩阵
+#### 3.17 $R$ 矩阵分块
 
 ```cpp
   Eigen::MatrixXd Rff(2 * seg_num + 4, 2 * seg_num + 4);
@@ -2228,45 +2228,45 @@ D_{z,F}=D_{z,1}[0:n_f]
 
 按照：
 
-\[
+$$
 \tilde{\mathbf d}=
 \begin{bmatrix}
 \mathbf d_F\\
 \mathbf d_P
 \end{bmatrix}
-\]
+$$
 
-将 \(R\) 分块：
+将 $R$ 分块：
 
-\[
+$$
 R=
 \begin{bmatrix}
 R_{FF}&R_{FP}\\
 R_{PF}&R_{PP}
 \end{bmatrix}
-\]
+$$
 
 其中：
 
-\[
+$$
 R_{FF}\in\mathbb R^{n_f\times n_f}
-\]
+$$
 
-\[
+$$
 R_{FP}\in\mathbb R^{n_f\times n_p}
-\]
+$$
 
-\[
+$$
 R_{PF}\in\mathbb R^{n_p\times n_f}
-\]
+$$
 
-\[
+$$
 R_{PP}\in\mathbb R^{n_p\times n_p}
-\]
+$$
 
 ---
 
-#### 3.18 闭式求解自由导数
+#### 3.18 自由导数闭式解
 
 ```cpp
   /* ---------- close form solution ---------- */
@@ -2279,7 +2279,7 @@ R_{PP}\in\mathbb R^{n_p\times n_p}
 
 目标函数为：
 
-\[
+$$
 J=
 \begin{bmatrix}
 D_F\\
@@ -2293,61 +2293,61 @@ R_{PF}&R_{PP}
 D_F\\
 D_P
 \end{bmatrix}
-\]
+$$
 
 展开：
 
-\[
+$$
 J=D_F^TR_{FF}D_F+D_F^TR_{FP}D_P+D_P^TR_{PF}D_F+D_P^TR_{PP}D_P
-\]
+$$
 
-对 \(D_P\) 求导：
+对 $D_P$ 求导：
 
-\[
+$$
 \frac{\partial J}{\partial D_P}=2R_{PF}D_F+2R_{PP}D_P
-\]
+$$
 
 令其为零：
 
-\[
+$$
 R_{PP}D_P=-R_{PF}D_F
-\]
+$$
 
 得到：
 
-\[
+$$
 D_P^*=-R_{PP}^{-1}R_{PF}D_F
-\]
+$$
 
 由于：
 
-\[
+$$
 R_{PF}=R_{FP}^T
-\]
+$$
 
 所以：
 
-\[
+$$
 D_P^*=-R_{PP}^{-1}R_{FP}^TD_F
-\]
+$$
 
 代码分别计算：
 
-\[
+$$
 D_{x,P}^*=-R_{PP}^{-1}R_{FP}^TD_{x,F}
-\]
+$$
 
-\[
+$$
 D_{y,P}^*=-R_{PP}^{-1}R_{FP}^TD_{y,F}
-\]
+$$
 
-\[
+$$
 D_{z,P}^*=-R_{PP}^{-1}R_{FP}^TD_{z,F}
-\]
+$$
 
 ---
 
-#### 3.19 写回自由导数
+#### 3.19 自由导数赋值
 
 ```cpp
   Dx1.segment(2 * seg_num + 4, 2 * seg_num - 2) = Dxp;
@@ -2357,45 +2357,45 @@ D_{z,P}^*=-R_{PP}^{-1}R_{FP}^TD_{z,F}
 
 重排后的导数向量为：
 
-\[
+$$
 D_{x,1}=
 \begin{bmatrix}
 D_{x,F}\\
 D_{x,P}
 \end{bmatrix}
-\]
+$$
 
 将最优自由导数写回：
 
-\[
+$$
 D_{x,1}=
 \begin{bmatrix}
 D_{x,F}\\
 D_{x,P}^*
 \end{bmatrix}
-\]
+$$
 
 同理：
 
-\[
+$$
 D_{y,1}=
 \begin{bmatrix}
 D_{y,F}\\
 D_{y,P}^*
 \end{bmatrix}
-\]
+$$
 
-\[
+$$
 D_{z,1}=
 \begin{bmatrix}
 D_{z,F}\\
 D_{z,P}^*
 \end{bmatrix}
-\]
+$$
 
 ---
 
-#### 3.20 恢复多项式系数
+#### 3.20 多项式系数恢复
 
 ```cpp
   Px = (A.inverse() * Ct) * Dx1;
@@ -2405,49 +2405,49 @@ D_{z,P}^*
 
 由：
 
-\[
+$$
 \mathbf d=C_t\tilde{\mathbf d}
-\]
+$$
 
-\[
+$$
 \mathbf p=A^{-1}\mathbf d
-\]
+$$
 
 得到：
 
-\[
+$$
 \mathbf p=A^{-1}C_t\tilde{\mathbf d}
-\]
+$$
 
 因此：
 
-\[
+$$
 P_x=A^{-1}C_t
 \begin{bmatrix}
 D_{x,F}\\
 D_{x,P}^*
 \end{bmatrix}
-\]
+$$
 
-\[
+$$
 P_y=A^{-1}C_t
 \begin{bmatrix}
 D_{y,F}\\
 D_{y,P}^*
 \end{bmatrix}
-\]
+$$
 
-\[
+$$
 P_z=A^{-1}C_t
 \begin{bmatrix}
 D_{z,F}\\
 D_{z,P}^*
 \end{bmatrix}
-\]
+$$
 
 ---
 
-#### 3.21 整理系数矩阵
+#### 3.21 系数矩阵排列
 
 ```cpp
   for (int i = 0; i < seg_num; i++)
@@ -2458,37 +2458,37 @@ D_{z,P}^*
   }
 ```
 
-对第 \(i\) 段：
+对第 $i$ 段：
 
-\[
+$$
 \mathbf p_{x,i}=P_x[6i:6i+5]
-\]
+$$
 
-\[
+$$
 \mathbf p_{y,i}=P_y[6i:6i+5]
-\]
+$$
 
-\[
+$$
 \mathbf p_{z,i}=P_z[6i:6i+5]
-\]
+$$
 
 写入：
 
-\[
+$$
 \text{poly\_coeff}(i,0:5)=\mathbf p_{x,i}^T
-\]
+$$
 
-\[
+$$
 \text{poly\_coeff}(i,6:11)=\mathbf p_{y,i}^T
-\]
+$$
 
-\[
+$$
 \text{poly\_coeff}(i,12:17)=\mathbf p_{z,i}^T
-\]
+$$
 
 ---
 
-#### 3.22 构造轨迹对象
+#### 3.22 轨迹对象
 
 ```cpp
   /* ---------- use polynomials ---------- */
@@ -2510,48 +2510,48 @@ D_{z,P}^*
 
 `poly_coeff` 中的系数顺序为：
 
-\[
+$$
 [p_0,p_1,p_2,p_3,p_4,p_5]
-\]
+$$
 
 对应：
 
-\[
+$$
 w(t)=p_0+p_1t+p_2t^2+p_3t^3+p_4t^4+p_5t^5
-\]
+$$
 
 反转后变为：
 
-\[
+$$
 [p_5,p_4,p_3,p_2,p_1,p_0]
-\]
+$$
 
 对应高次到低次排列：
 
-\[
+$$
 w(t)=p_5t^5+p_4t^4+p_3t^3+p_2t^2+p_1t+p_0
-\]
+$$
 
 每段时间为：
 
-\[
+$$
 t_s=T_i
-\]
+$$
 
-`addSegment` 将第 \(i\) 段加入轨迹：
+`addSegment` 将第 $i$ 段加入轨迹：
 
-\[
+$$
 \mathbf r_i(t)=
 \begin{bmatrix}
 x_i(t)\\
 y_i(t)\\
 z_i(t)
 \end{bmatrix},\quad t\in[0,T_i]
-\]
+$$
 
 ---
 
-#### 3.23 返回轨迹
+#### 3.23 轨迹输出
 
 ```cpp
   return poly_traj;
@@ -2560,7 +2560,7 @@ z_i(t)
 
 最终返回：
 
-\[
+$$
 \mathcal T=
 \left\{
 \mathbf r_0(t),
@@ -2568,39 +2568,39 @@ z_i(t)
 \dots,
 \mathbf r_{m-1}(t)
 \right\}
-\]
+$$
 
 其中：
 
-\[
+$$
 x_i(t)=\sum_{r=0}^{5}p_{x,i,r}t^r
-\]
+$$
 
-\[
+$$
 y_i(t)=\sum_{r=0}^{5}p_{y,i,r}t^r
-\]
+$$
 
-\[
+$$
 z_i(t)=\sum_{r=0}^{5}p_{z,i,r}t^r
-\]
+$$
 
 ---
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
-### 4. 当前代码与两篇论文的关系
+### 4. 理论与实现对照
 
-#### 4.1 与原始 Minimum Snap 方法的关系
+#### 4.1 Minimum Snap 方法对照
 
 原始方法为：
 
-\[
+$$
 \min_{\mathbf p}\quad\mathbf p^TQ\mathbf p
-\]
+$$
 
-\[
+$$
 \text{s.t.}\quad A_{eq}\mathbf p=\mathbf b_{eq}
-\]
+$$
 
 其特点是：
 
@@ -2613,41 +2613,41 @@ z_i(t)=\sum_{r=0}^{5}p_{z,i,r}t^r
 
 当前代码没有显式构造：
 
-\[
+$$
 A_{eq}\mathbf p=\mathbf b_{eq}
-\]
+$$
 
 也没有求解 KKT 系统，因此不是原始方法的直接实现。
 
 ---
 
-#### 4.2 与 Polynomial 方法的关系
+#### 4.2 Polynomial 方法对照
 
 Polynomial 方法为：
 
-\[
+$$
 \mathbf p=A^{-1}C_t
 \begin{bmatrix}
 \mathbf d_F\\
 \mathbf d_P
 \end{bmatrix}
-\]
+$$
 
-\[
+$$
 R=C_t^TA^{-T}QA^{-1}C_t
-\]
+$$
 
-\[
+$$
 \mathbf d_P^*=-R_{PP}^{-1}R_{FP}^T\mathbf d_F
-\]
+$$
 
-\[
+$$
 \mathbf p^*=A^{-1}C_t
 \begin{bmatrix}
 \mathbf d_F\\
 \mathbf d_P^*
 \end{bmatrix}
-\]
+$$
 
 当前代码正是该结构。
 
@@ -2655,22 +2655,22 @@ R=C_t^TA^{-T}QA^{-1}C_t
 
 | 数学符号 | 代码变量 |
 | --- | --- |
-| \(m\) | `seg_num` |
-| \(T_i\) | `Time(i)` |
-| \(D_x,D_y,D_z\) | `Dx`, `Dy`, `Dz` |
-| \(A\) | `A` |
-| \(A_i\) | `Ab` |
-| \(C_t\) | `Ct` |
-| \(C_t^T\) | `C` |
-| \(Q\) | `Q` |
-| \(R\) | `R` |
-| \(R_{FF}\) | `Rff` |
-| \(R_{FP}\) | `Rfp` |
-| \(R_{PF}\) | `Rpf` |
-| \(R_{PP}\) | `Rpp` |
-| \(D_F\) | `Dxf`, `Dyf`, `Dzf` |
-| \(D_P^*\) | `Dxp`, `Dyp`, `Dzp` |
-| \(P_x,P_y,P_z\) | `Px`, `Py`, `Pz` |
+| $m$ | `seg_num` |
+| $T_i$ | `Time(i)` |
+| $D_x,D_y,D_z$ | `Dx`, `Dy`, `Dz` |
+| $A$ | `A` |
+| $A_i$ | `Ab` |
+| $C_t$ | `Ct` |
+| $C_t^T$ | `C` |
+| $Q$ | `Q` |
+| $R$ | `R` |
+| $R_{FF}$ | `Rff` |
+| $R_{FP}$ | `Rfp` |
+| $R_{PF}$ | `Rpf` |
+| $R_{PP}$ | `Rpp` |
+| $D_F$ | `Dxf`, `Dyf`, `Dzf` |
+| $D_P^*$ | `Dxp`, `Dyp`, `Dzp` |
+| $P_x,P_y,P_z$ | `Px`, `Py`, `Pz` |
 
 ---
 
@@ -2678,23 +2678,23 @@ R=C_t^TA^{-T}QA^{-1}C_t
 
 原始 minimum snap 方法可以概括为：
 
-\[
+$$
 \boxed{
 \min_{\mathbf p}\mathbf p^TQ\mathbf p\quad\text{s.t.}\quad A_{eq}\mathbf p=\mathbf b_{eq}
 }
-\]
+$$
 
 它直接优化多项式系数，并通过约束 QP 保证路径点、边界导数和连续性。
 
 Polynomial 方法可以概括为：
 
-\[
+$$
 \boxed{
 \mathbf d_P^*=-R_{PP}^{-1}R_{FP}^T\mathbf d_F
 }
-\]
+$$
 
-\[
+$$
 \boxed{
 \mathbf p^*=A^{-1}C_t
 \begin{bmatrix}
@@ -2702,7 +2702,7 @@ Polynomial 方法可以概括为：
 \mathbf d_P^*
 \end{bmatrix}
 }
-\]
+$$
 
 它将优化变量从多项式系数转为端点导数，并通过闭式解得到中间自由导数。
 
@@ -2722,15 +2722,15 @@ Polynomial 方法可以概括为：
 
 但当前代码实际最小化的是 jerk：
 
-\[
+$$
 \int\left[w^{(3)}(t)\right]^2dt
-\]
+$$
 
 而不是标准 minimum snap：
 
-\[
+$$
 \int\left[w^{(4)}(t)\right]^2dt
-\]
+$$
 
 因此，当前代码更准确地说是：
 
@@ -2738,6 +2738,6 @@ Polynomial 方法可以概括为：
 基于 Polynomial 消元思想的五次多项式 minimum jerk 轨迹生成器。
 ```
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

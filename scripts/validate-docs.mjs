@@ -12,21 +12,23 @@
  *    chains must not cycle.
  *
  * 六模块结构（P0）：
- * 4. published 文章骨架 = 1 个 H1 + 按序出现的六个标准 `##` 模块。模块标题
+ * 4. 全部技术文章（含 draft）骨架 = 1 个 H1 + 按序出现的六个标准 `##` 模块。模块标题
  *    从 tech_stack/TECHNICAL_ARTICLE_TEMPLATE.md 的骨架围栏中提取（不自行
- *    编造），仅检查、不自动修复；草稿与手写页豁免。
+ *    编造），仅检查、不自动修复；手写导航/项目页豁免。
  *
  * 数据一致性（P0）：
  * 5. content-map：source/slug/output 唯一、status 合法、source 落盘、output
  *    遵循 `src/content/docs/<slug>.md` 约定、slug 顶层目录是已注册知识域。
- * 6. knowledge-relations：节点 id 唯一且对应映射条目、边端点存在、无重复边、
- *    无自环、prerequisite 无环（DAG）、展示字段与 content-map 漂移时告警。
+ * 6. knowledge-relations：节点由映射条目派生、边端点存在、无重复边、
+ *    无自环、prerequisite 无环（DAG）。
  */
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, relative, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { posix } from 'node:path';
 import { DOMAINS } from '../src/data/domains.mjs';
+import { splitTarget, flattenRedirects, sourceDomain, validateSlug } from './lib/docs-model.mjs';
+import { markFences, readArticleModules } from './lib/article-structure.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = join(ROOT, 'src/content/docs');
@@ -50,25 +52,6 @@ function walkDocs(dir, out = []) {
   return out;
 }
 
-/** fence-aware 每行围栏标记（与 sync-docs 同规则） */
-function markFences(lines) {
-  const inFence = new Array(lines.length).fill(false);
-  let open = null;
-  for (let i = 0; i < lines.length; i++) {
-    const m = lines[i].match(/^\s{0,3}(`{3,}|~{3,})/);
-    if (open) {
-      if (m && m[1][0] === open.ch && m[1].length >= open.len && !/\S/.test(lines[i].slice(lines[i].indexOf(m[1]) + m[1].length))) {
-        open = null;
-      }
-      inFence[i] = true;
-    } else if (m) {
-      open = { ch: m[1][0], len: m[1].length };
-      inFence[i] = true;
-    }
-  }
-  return inFence;
-}
-
 function slugOf(file) {
   let s = posix.normalize(relative(DOCS, file).split('\\').join('/'));
   s = s.replace(/\.(md|mdx)$/, '');
@@ -79,20 +62,22 @@ function slugOf(file) {
 
 // ---------- known slugs ----------
 const map = JSON.parse(readFileSync(join(ROOT, 'src/data/content-map.json'), 'utf8'));
-const mapBySlug = new Map(map.entries.map((e) => [e.slug, e]));
 const published = new Set(map.entries.filter((e) => e.status === 'published').map((e) => e.slug));
 const drafts = new Set(map.entries.filter((e) => e.status === 'draft').map((e) => e.slug));
 const files = walkDocs(DOCS);
 const known = new Set([...published]);
+const redirects = JSON.parse(readFileSync(REDIRECTS_PATH, 'utf8'));
+const redirectSlugs = new Set(Object.keys(redirects).map((s) => s.replace(/^\/+|\/+$/g, '')));
 for (const f of files) {
   const s = slugOf(f);
-  if (s === '404') continue;
+  if (s === '404' || drafts.has(s)) continue;
   known.add(s);
 }
 
 // ---------- 1. link scan ----------
 console.log('[links] 扫描站内链接…');
 for (const f of files) {
+  if (drafts.has(slugOf(f))) continue; // Unpublished draft links cannot produce public 404s.
   const rel = relative(ROOT, f);
   const lines = readFileSync(f, 'utf8').split(/\r?\n/);
   const inFence = markFences(lines);
@@ -107,11 +92,11 @@ for (const f of files) {
         continue;
       }
       if (!t.startsWith(SITE_BASE + '/')) continue;
-      const slug = t.slice(SITE_BASE.length).replace(/^\/+/, '').replace(/\/+$/, '');
+      const slug = splitTarget(t).pathname.slice(SITE_BASE.length).replace(/^\/+/, '').replace(/\/+$/, '');
       if (drafts.has(slug)) {
         console.error(`${rel}:${i + 1}: link to draft page (excluded from prod): ${t}`);
         errors++;
-      } else if (!known.has(slug)) {
+      } else if (!known.has(slug) && !redirectSlugs.has(slug) && !/\.[a-z0-9]+$/i.test(slug)) {
         console.error(`${rel}:${i + 1}: broken internal link: ${t}`);
         errors++;
       }
@@ -122,7 +107,6 @@ for (const f of files) {
 // ---------- 2. redirects ----------
 if (existsSync(REDIRECTS_PATH)) {
   console.log('[redirects] 校验重定向表…');
-  const redirects = JSON.parse(readFileSync(REDIRECTS_PATH, 'utf8'));
   for (const [from, to] of Object.entries(redirects)) {
     const f = from.replace(/^\/+/, '').replace(/\/+$/, '');
     const t = to.replace(/^\/+/, '').replace(/\/+$/, '');
@@ -130,36 +114,16 @@ if (existsSync(REDIRECTS_PATH)) {
     if (drafts.has(t)) err(`redirect target is a draft page: ${to}`);
     else if (!known.has(t)) err(`redirect target does not exist: ${to}`);
   }
-  // 链式重定向环检测：A→B→…→A
-  for (const from of Object.keys(redirects)) {
-    const seen = new Set([from.replace(/^\/+|\/+$/g, '')]);
-    let cur = from.replace(/^\/+|\/+$/g, '');
-    while (redirects[cur] != null) {
-      cur = redirects[cur].replace(/^\/+|\/+$/g, '');
-      if (seen.has(cur)) { err(`redirect cycle detected starting at: ${from}`); break; }
-      seen.add(cur);
-    }
-  }
+  try { flattenRedirects(redirects); } catch (error) { err(error.message); }
+
 }
 
 // ---------- 3. 六模块结构 ----------
-console.log('[structure] 校验已发布文章的六模块结构…');
-function templateModules() {
-  const lines = readFileSync(TEMPLATE_PATH, 'utf8').split(/\r?\n/);
-  const inFence = markFences(lines);
-  const out = [];
-  lines.forEach((line, i) => {
-    if (!inFence[i]) return;
-    if (/^##\s+\d+\.\s\S/.test(line)) out.push(line.replace(/^##\s+/, '').replace(/\s+$/, ''));
-  });
-  if (out.length !== 6) throw new Error(`template skeleton expected 6 module headings, got ${out.length}`);
-  return out;
-}
-const MODULES = templateModules();
+console.log('[structure] 校验全部技术文章（含草稿）的六模块结构…');
+const MODULES = readArticleModules(TEMPLATE_PATH);
 
 let structChecked = 0;
 for (const e of map.entries) {
-  if (e.status !== 'published') continue;
   const src = join(ROOT, e.source);
   if (!existsSync(src)) continue; // source 缺失在一致性检查里报
   const rel = relative(ROOT, src);
@@ -199,7 +163,7 @@ for (const e of map.entries) {
   }
 }
 console.log(`  六模块标准：${MODULES.join(' / ')}`);
-console.log(`  checked ${structChecked} published article(s)`);
+console.log(`  checked ${structChecked} article(s), including drafts`);
 
 // ---------- 4. data consistency ----------
 console.log('[consistency] 校验 content-map / knowledge-relations…');
@@ -209,6 +173,7 @@ const DOMAIN_IDS = new Set(DOMAINS.map((d) => d.id));
   const bySlug = new Set();
   const byOutput = new Set();
   for (const e of map.entries) {
+    try { sourceDomain(e.source, DOMAINS); validateSlug(e.slug, DOMAINS); } catch (error) { err(error.message); }
     if (!['published', 'draft'].includes(e.status)) err(`content-map ${e.slug}: invalid status "${e.status}"`);
     if (bySlug.has(e.slug)) err(`content-map duplicate slug: ${e.slug}`);
     if (bySource.has(e.source)) err(`content-map duplicate source: ${e.source}`);
@@ -222,19 +187,8 @@ const DOMAIN_IDS = new Set(DOMAINS.map((d) => d.id));
 }
 {
   const relations = JSON.parse(readFileSync(RELATIONS_PATH, 'utf8'));
-  const nodeIds = new Set();
-  for (const n of relations.nodes) {
-    if (nodeIds.has(n.id)) { err(`relations duplicate node id: ${n.id}`); continue; }
-    nodeIds.add(n.id);
-    const m = mapBySlug.get(n.id);
-    if (!m) {
-      err(`relations node not present in content-map: ${n.id}`);
-    } else {
-      if (n.domain !== n.id.split('/')[0]) warn(`relations node ${n.id}: domain "${n.domain}" != slug domain "${n.id.split('/')[0]}"`);
-      if (m.status !== n.status) warn(`relations node ${n.id}: status "${n.status}" drifted from content-map "${m.status}" (display uses content-map)`);
-      if (m.title !== n.title) warn(`relations node ${n.id}: title drifted from content-map (display uses content-map)`);
-    }
-  }
+  if (relations.version !== 3 || 'nodes' in relations) err('knowledge-relations must use version 3 (edges only; nodes come from content-map)');
+  const nodeIds = new Set(map.entries.map((e) => e.slug));
   const edgeKeys = new Set();
   for (const e of relations.edges) {
     if (!['prerequisite', 'related'].includes(e.type)) { err(`relations edge with unknown type "${e.type}": ${e.from} -> ${e.to}`); continue; }
@@ -266,7 +220,7 @@ const DOMAIN_IDS = new Set(DOMAINS.map((d) => d.id));
     stack.pop();
     color.set(id, 2);
   };
-  for (const n of relations.nodes) visit(n.id);
+  for (const id of nodeIds) visit(id);
 }
 
 if (errors) { console.error(`validation FAILED (${errors} error(s), ${warnings} warning(s))`); process.exit(1); }

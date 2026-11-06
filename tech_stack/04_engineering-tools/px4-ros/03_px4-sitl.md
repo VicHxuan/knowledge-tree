@@ -1,79 +1,12 @@
 # PX4 / MAVROS 面试知识点整理
 
-## 1. 概述（Overview）
+## 1. 概述
 
-````markdown
-# PX4 / MAVROS 面试知识点整理
+本文按飞控内部控制链、通信组件与 setpoint 接口整理 PX4 / MAVROS 知识。阅读主线是先区分控制层级，再确定上层算法通过哪个接口交给飞控执行。
 
-# 1. PX4 内部处理流程
+## 2. 基础与定义
 
-PX4 内部控制可以理解为一条级联控制链路。上层算法可以根据自身输出形式，选择从位置、速度、加速度、姿态、角速度等不同层级接入。
-
-```text
-位置 setpoint
-Xsp = [x, y, z, yaw]
-        ↓
-位置控制器
-        ↓
-速度 setpoint
-Vsp = [vx, vy, vz, yaw]
-        ↓
-速度控制器
-        ↓
-加速度 setpoint
-Asp = [ax, ay, az, yaw]
-        ↓
-加速度 + yaw 转换为姿态与推力
-        ↓
-姿态 setpoint
-qsp = [roll, pitch, yaw] + thrust
-        ↓
-姿态控制器
-        ↓
-角速度 setpoint
-Ωsp = [wx, wy, wz] + thrust
-        ↓
-角速度控制器
-        ↓
-三轴力矩 + 总推力
-        ↓
-Mixer / Control Allocation
-        ↓
-四个电机推力
-T1, T2, T3, T4
-````
-
-核心理解：
-
-```text
-位置 setpoint
-    PX4 负责位置环、速度环、姿态环、角速度环。
-
-速度 setpoint
-    上层直接给速度，PX4 负责速度环之后的控制。
-
-加速度 setpoint
-    上层给期望加速度，PX4 将其转换为姿态和推力。
-
-姿态 setpoint
-    上层给姿态和推力，PX4 主要负责姿态环和角速度环。
-
-角速度 setpoint
-    上层给机体系角速度和推力，PX4 主要负责角速度环和混控。
-
-电机推力
-    最底层输出，直接对应各电机控制量。
-```
-
-面试表达：
-
-```text
-PX4 内部不是简单接收一个控制指令后直接驱动电机，而是通过位置、速度、姿态、角速度等多层级联控制逐步生成电机输出。MAVROS 的不同 setpoint 接口，本质上对应 PX4 控制链路中不同深度的接入点。
-```
-
-## 2. 基础与定义（Foundations）
-
-### 2. PX4-Autopilot、Pixhawk、MAVROS 和 MAVLink 的关系
+### 2.1 PX4 系统组件与通信架构
 
 ```text
 PX4-Autopilot
@@ -131,7 +64,7 @@ MAVLink 是 PX4、MAVROS、QGroundControl 等模块之间使用的通信协议�
     上层算法通过 /mavros/setpoint_* 向 PX4 发布控制指令。
 ```
 
-### 4. SITL、Gazebo、AirSim、MAVROS 和 QGroundControl
+### 2.2 PX4 仿真架构
 
 ```text
 SITL
@@ -188,17 +121,81 @@ PX4-Autopilot
     除了验证接口，还必须关注解锁、模式切换、遥控器接管、failsafe、定位质量和安全边界。
 ```
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
-> 待补充。
+### 3.1 PX4 控制流程
 
-## 4. 实现与应用（Implementation & Applications）
+PX4 内部控制可以理解为一条级联控制链路。上层算法可以根据自身输出形式，选择从位置、速度、加速度、姿态、角速度等不同层级接入。
 
-### 3. MAVROS setpoint 系列
+```text
+位置 setpoint
+Xsp = [x, y, z, yaw]
+        ↓
+位置控制器
+        ↓
+速度 setpoint
+Vsp = [vx, vy, vz, yaw]
+        ↓
+速度控制器
+        ↓
+加速度 setpoint
+Asp = [ax, ay, az, yaw]
+        ↓
+加速度 + yaw 转换为姿态与推力
+        ↓
+姿态 setpoint
+qsp = [roll, pitch, yaw] + thrust
+        ↓
+姿态控制器
+        ↓
+角速度 setpoint
+Ωsp = [wx, wy, wz] + thrust
+        ↓
+角速度控制器
+        ↓
+三轴力矩 + 总推力
+        ↓
+Mixer / Control Allocation
+        ↓
+四个电机推力
+T1, T2, T3, T4
+```
+
+核心理解：
+
+```text
+位置 setpoint
+    PX4 负责位置环、速度环、姿态环、角速度环。
+
+速度 setpoint
+    上层直接给速度，PX4 负责速度环之后的控制。
+
+加速度 setpoint
+    上层给期望加速度，PX4 将其转换为姿态和推力。
+
+姿态 setpoint
+    上层给姿态和推力，PX4 主要负责姿态环和角速度环。
+
+角速度 setpoint
+    上层给机体系角速度和推力，PX4 主要负责角速度环和混控。
+
+电机推力
+    最底层输出，直接对应各电机控制量。
+```
+
+面试表达：
+
+```text
+PX4 内部不是简单接收一个控制指令后直接驱动电机，而是通过位置、速度、姿态、角速度等多层级联控制逐步生成电机输出。MAVROS 的不同 setpoint 接口，本质上对应 PX4 控制链路中不同深度的接入点。
+```
+
+## 4. 实现与应用
+
+### 4.1 MAVROS setpoint 接口
 
 我目前主要使用 `/mavros/setpoint_*` 系列接口，应当按 PX4 控制层级理解这些 topic。
 
-#### 3.1 `/mavros/setpoint_position/local`
+#### 4.1.1 `/mavros/setpoint_position/local`
 
 ```text
 作用：
@@ -228,7 +225,7 @@ PX4 位置控制
 电机输出
 ```
 
-#### 3.2 `/mavros/setpoint_velocity/cmd_vel`
+#### 4.1.2 `/mavros/setpoint_velocity/cmd_vel`
 
 ```text
 作用：
@@ -257,7 +254,7 @@ PX4 速度控制
 电机输出
 ```
 
-#### 3.3 `/mavros/setpoint_raw/local`
+#### 4.1.3 `/mavros/setpoint_raw/local`
 
 ```text
 作用：
@@ -303,7 +300,7 @@ PX4 根据 type_mask 解析有效字段
 电机输出
 ```
 
-#### 3.4 `/mavros/setpoint_raw/attitude`
+#### 4.1.4 `/mavros/setpoint_raw/attitude`
 
 ```text
 作用：
@@ -341,9 +338,9 @@ Mixer / Control Allocation
 实机中必须做好限幅、failsafe 和遥控器接管。
 ```
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
-### 5. 结合个人经历的面试表达
+### 5.1 项目经验表述
 
 ```text
 我在项目中使用过 PX4 系列飞控。仿真阶段使用 PX4-Autopilot 配合 Gazebo / AirSim，通过 MAVROS 与 ROS1 上层算法通信；实机阶段使用 Pixhawk 硬件飞控。
@@ -353,9 +350,7 @@ Mixer / Control Allocation
 我对 PX4 的理解主要集中在上层接口和控制链路上：不同 setpoint 对应 PX4 内部不同控制层级。位置 setpoint 依赖 PX4 完成更多外环控制；速度和 raw local setpoint 适合局部规划和自定义轨迹跟踪；attitude setpoint 更接近底层控制，需要更严格的限幅和安全保护。
 ```
 
-```
-```
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

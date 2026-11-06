@@ -81,18 +81,18 @@ const SITE_BASE = '/knowledge-tree';
 
 {
 	toc && (
-		<starlight-toc data-min-h={toc.minHeadingLevel} data-max-h={toc.maxHeadingLevel}>
+		<kt-table-of-contents data-min-h={toc.minHeadingLevel} data-max-h={toc.maxHeadingLevel}>
 			<nav aria-labelledby="starlight__on-this-page">
 				<h2 id="starlight__on-this-page">{Astro.locals.t('tableOfContents.onThisPage')}</h2>
 				<TocList toc={toc.items} depth={0} />
 			</nav>
-		</starlight-toc>
+		</kt-table-of-contents>
 	)
 }
 
 <script>
 	// 内联 Starlight starlight-toc 滚动高亮（PAGE_TITLE_ID = '_top'）
-	class StarlightTOC extends HTMLElement {
+	class KnowledgeTreeTOC extends HTMLElement {
 		_current = this.querySelector('a[aria-current="true"]');
 		minH = parseInt(this.dataset.minH || '2', 10);
 		maxH = parseInt(this.dataset.maxH || '3', 10);
@@ -170,7 +170,10 @@ const SITE_BASE = '/knowledge-tree';
 			return `-${top}px 0% ${top + 53 - document.documentElement.clientHeight}px`;
 		}
 	}
-	customElements.define('starlight-toc', StarlightTOC);
+	// 移动端目录会导入 Starlight 自己的 starlight-toc，桌面覆盖件使用独立名称。
+	if (!customElements.get('kt-table-of-contents')) {
+		customElements.define('kt-table-of-contents', KnowledgeTreeTOC);
+	}
 </script>
 
 <style>

@@ -1,12 +1,12 @@
 # 视觉惯性里程计（VIO）
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > **状态：草稿** — Knowledge Tree V2 规划章节，正文撰写中。
 
 视觉与 IMU 紧耦合状态估计。本篇大纲先行，正文完成后进入正式发布：
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 ### VIO 问题定义
 
@@ -16,7 +16,7 @@
 
 特征点法与直接法
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 ### IMU 预积分
 
@@ -30,15 +30,15 @@
 
 主流实现的关键设计
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
 > 待补充。
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 > 待补充。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 ### 与 FAST-LIO 的关系
 

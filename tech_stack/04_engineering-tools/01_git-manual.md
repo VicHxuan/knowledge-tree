@@ -1,20 +1,20 @@
 # Git 常用指令手册
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > 待补充。
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 > 待补充。
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
-### 一、Git 常用指令
+### 一、Git 命令索引
 
 #### 1. `git clone <仓库地址>`
 
@@ -506,7 +506,7 @@ git push origin v1.0
 
 ---
 
-### 二、从 Git Clone 到最终提交的完整工作流程
+### 二、克隆与提交流程
 
 假设远程仓库为：
 
@@ -528,7 +528,7 @@ feat/minco-hjr
 
 ---
 
-#### 第 1 步：克隆仓库
+#### 1. 仓库克隆
 
 ```bash
 git clone https://github.com/xxx/YOPO-swarm.git
@@ -537,7 +537,7 @@ cd YOPO-swarm
 
 ---
 
-#### 第 2 步：检查远程仓库
+#### 2. 远程仓库检查
 
 ```bash
 git remote -v
@@ -545,7 +545,7 @@ git remote -v
 
 ---
 
-#### 第 3 步：同步远程分支
+#### 3. 远程分支同步
 
 ```bash
 git fetch origin --prune
@@ -567,7 +567,7 @@ git branch -a
 
 ---
 
-#### 第 4 步：基于远程分支创建自己的分支
+#### 4. 本地分支创建
 
 ```bash
 git switch -c feat/minco-hjr origin/feat/minco
@@ -587,7 +587,7 @@ feat/minco-hjr
 
 ---
 
-#### 第 5 步：第一次上传自己的分支
+#### 5. 分支首次推送
 
 ```bash
 git push -u origin feat/minco-hjr
@@ -609,7 +609,7 @@ origin/feat/minco-hjr
 
 ---
 
-#### 第 6 步：进行代码开发
+#### 6. 代码开发
 
 修改代码后检查状态：
 
@@ -625,7 +625,7 @@ git diff
 
 ---
 
-#### 第 7 步：加入暂存区
+#### 7. 修改暂存
 
 全部加入：
 
@@ -647,7 +647,7 @@ git status
 
 ---
 
-#### 第 8 步：提交修改
+#### 8. 修改提交
 
 ```bash
 git commit -m "Add MINCO trajectory optimization"
@@ -661,7 +661,7 @@ git log --oneline
 
 ---
 
-#### 第 9 步：推送到自己的远程分支
+#### 9. 远程分支推送
 
 ```bash
 git push
@@ -673,7 +673,7 @@ git push -u origin HEAD
 
 ---
 
-### 三、日常开发推荐流程
+### 三、日常开发流程
 
 每次开始开发：
 
@@ -729,9 +729,9 @@ git push
 
 ---
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
-### 四、YOPO 项目推荐分支结构
+### 四、YOPO 分支结构
 
 ```text
 origin/feat/minco
@@ -752,6 +752,6 @@ origin/feat/minco-hjr
 * `origin/feat/minco-hjr`：自己的远程开发分支。
 * 日常修改尽量只在 `feat/minco-hjr` 上进行。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

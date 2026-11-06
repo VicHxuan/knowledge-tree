@@ -2,7 +2,7 @@
 /**
  * LearningPathsOverview — 学习路径进度总览（学习路径首页用）。
  * 每条路径一行：标题 + 概要 + 进度条（读取本浏览器 kt-lp:<pathId> 的保存值）。
- * 步骤总数直接取保存数组的长度，无需与路径页共享数据。
+ * 步骤总数取路径页最近保存的记录，兼容旧数组与按步骤 ID 保存的 v2 对象。
  * 无保存进度时显示「尚未开始」，点击卡片进入路径页。
  */
 interface PathMeta {
@@ -36,6 +36,8 @@ const { paths } = Astro.props;
 </div>
 
 <script>
+	import { summarizeProgress } from '../data/learning-progress.mjs';
+
 	document.querySelectorAll<HTMLElement>('.lpo-row[data-lp-id]').forEach((row) => {
 		const id = row.dataset.lpId;
 		if (!id) return;
@@ -45,18 +47,18 @@ const { paths } = Astro.props;
 		} catch {
 			arr = null;
 		}
-		if (!Array.isArray(arr) || arr.length === 0) return;
-		const done = arr.filter((s) => s === 2).length;
-		const pct = Math.round((done / arr.length) * 100);
+		const { done, total, started } = summarizeProgress(arr, id);
+		if (!total) return;
+		const pct = Math.round((done / total) * 100);
 		const fill = row.querySelector<HTMLElement>('.lpo-fill');
 		const pctEl = row.querySelector<HTMLElement>('.lpo-pct');
 		if (fill) fill.style.width = `${pct}%`;
 		if (pctEl) {
-			if (done === arr.length) pctEl.textContent = `🎉 已完成 ${done}/${arr.length}`;
-			else if (done > 0 || arr.some((s) => s === 1)) {
-				pctEl.textContent = `进行中 ${done}/${arr.length}（${pct}%）`;
+			if (done === total) pctEl.textContent = `已完成 ${done}/${total}`;
+			else if (started) {
+				pctEl.textContent = `进行中 ${done}/${total}（${pct}%）`;
 				row.classList.add('lpo-started');
-			} else pctEl.textContent = `0/${arr.length}`;
+			} else pctEl.textContent = `0/${total}`;
 		}
 	});
 </script>

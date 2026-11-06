@@ -30,3 +30,9 @@ pnpm-debug.log*
 # 本地评审文档（仅限本地，永不入库）
 /SITE-AND-WORKFLOW.md
 /MIGRATION_REPORT.md
+
+# Temporary browser/Python validation output
+/test-results/
+/playwright-report/
+__pycache__/
+*.pyc

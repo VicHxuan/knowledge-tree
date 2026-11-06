@@ -1,18 +1,18 @@
 # GCOPTER-MINCO 框架
 
-## 1. 概述（Overview）
+## 1. 概述
 
 > 待补充。
 
-## 2. 基础与定义（Foundations）
+## 2. 基础与定义
 
 > 待补充。
 
-## 3. 核心原理（Core Principles）
+## 3. 核心原理
 
 ### 1. GCOPTER-MINCO 轨迹规划框架
 
-#### 1.1 数学定义与系统构造
+#### 1.1 系统模型
 
 GCOPTER 提出了一种能够将严格的几何约束与连续时间动力学约束转化为无约束优化的多旋翼轨迹生成框架。该框架的底层基石是 MINCO 轨迹类。
 
@@ -82,9 +82,9 @@ Algorithm GCOPTER_MINCO(Start, Goal, Safe_Flight_Corridors):
     Return Construct_Trajectory(xi, tau)
 ```
 
-## 4. 实现与应用（Implementation & Applications）
+## 4. 实现与应用
 
-### 3. C++代码实现
+### 3. C++ 实现
 
 以下代码展示 GCOPTER 中最核心的 MINCO 时空变形梯度反向传播逻辑。为了突出 $O(M)$ 复杂度的带状矩阵求解思想，忽略了外部 L-BFGS 和微分同胚映射的封包细节。
 
@@ -163,10 +163,10 @@ private:
 };
 ```
 
-## 5. 分析与总结（Analysis & Summary）
+## 5. 分析与总结
 
 > 待补充。
 
-## 6. 关联与参考（Related Topics & References）
+## 6. 关联与参考
 
 > 待补充。

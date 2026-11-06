@@ -19,7 +19,7 @@
  * 页面定位：Astro 在 vfile 上提供 file.data.astro.frontmatter，但 slug 以
  * file.path（src/content/docs/ 下的绝对路径）反推更稳，不依赖 frontmatter 形态。
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { dirname, isAbsolute, join, posix, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DOMAINS, DOMAIN_BY_ID } from '../src/data/domains.mjs';
@@ -46,7 +46,8 @@ function sectionTitle(domainId, sectionDir) {
 	if (SECTION_TITLE.has(key)) return SECTION_TITLE.get(key);
 	let title = null;
 	try {
-		const fm = readFileSync(join(DOCS, domainId, sectionDir, 'index.md'), 'utf8');
+		const mdx = join(DOCS, domainId, sectionDir, 'index.mdx');
+		const fm = readFileSync(existsSync(mdx) ? mdx : join(DOCS, domainId, sectionDir, 'index.md'), 'utf8');
 		const m = fm.match(/^title:\s*(?:"([^"]*)"|'([^']*)'|(.+?))\s*(?:#.*)?$/m);
 		if (m) title = (m[1] ?? m[2] ?? m[3] ?? '').trim() || null;
 	} catch {
@@ -78,7 +79,7 @@ function breadcrumb(slug) {
 		crumbs.push(link(`${SITE_BASE}/${domain.id}/`, domain.label));
 		for (let i = 1; i < parts.length - 1; i++) {
 			const prefix = parts.slice(0, i + 1).join('/');
-			crumbs.push(sep(), link(`${SITE_BASE}/${prefix}/`, sectionTitle(parts[0], parts[i]) ?? parts[i]));
+			crumbs.push(sep(), link(`${SITE_BASE}/${prefix}/`, sectionTitle(parts[0], parts.slice(1, i + 1).join('/')) ?? parts[i]));
 		}
 	} else {
 		crumbs.push(link(`${SITE_BASE}/${parts[0]}/`, parts[0]));

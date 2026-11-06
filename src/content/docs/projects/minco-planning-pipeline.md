@@ -9,7 +9,9 @@ sidebar:
 
 以 **MINCO 轨迹参数化**为核心的经典轨迹优化管线：把轨迹表示成可微分的时间分配 + 空间多项式组合，再交给优化器求解。这是 GCOPTER 系列工作的数学基础，也是理解现代轨迹规划器（Fast-Planner、EGO-Planner、GCOPTER）之间差异的钥匙。
 
-## 方法族谱
+## 系统与知识关系
+
+### 方法族谱
 
 经典规划管线自上而下：
 
@@ -24,14 +26,14 @@ sidebar:
 
 | 方法 | 轨迹表示 | 特点 |
 | --- | --- | --- |
-| Minimum Snap | 单段多项式 | 微分平坦理论的起点 |
-| Fast-Planner | B 样条 | 安全飞行走廊内优化 |
+| Minimum Snap | 分段多项式 | 以高阶导数代价构造平滑轨迹 |
+| Fast-Planner | B 样条 | 动力学搜索与梯度轨迹优化 |
 | EGO-Planner | B 样条（梯度版） | 免 ESDF 的局部优化 |
-| GCOPTER | MINCO | 联合优化时间与空间，凸包性质保证安全 |
+| GCOPTER | MINCO | 联合优化空间与时间，结合几何及动力学约束 |
 
 对应站点章节：[轨迹表示与参数化](/knowledge-tree/classical-planning-control/trajectory-optimization/trajectory-representation-parameterization/)、[微分平坦与 Minimum Snap](/knowledge-tree/classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap/)、[GCOPTER-MINCO 框架](/knowledge-tree/classical-planning-control/trajectory-optimization/gcopter-minco/)；MINCO 轨迹参数化的专题章节撰写中（🚧）。
 
-## 与学习式路线的关系
+### 与学习式路线的关系
 
 MINCO 管线在这个知识体系里承担两个角色：
 
@@ -40,6 +42,12 @@ MINCO 管线在这个知识体系里承担两个角色：
 
 两条路线的完整对比在[学习式轨迹规划总览](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/)（🚧 撰写中）中展开。
 
-## 状态
+## 实践入口
+
+从[轨迹表示](/knowledge-tree/classical-planning-control/trajectory-optimization/trajectory-representation-parameterization/)进入，再读[GCOPTER-MINCO](/knowledge-tree/classical-planning-control/trajectory-optimization/gcopter-minco/)。实现和示例依据 [GCOPTER 官方仓库](https://github.com/ZJU-FAST-Lab/GCOPTER)与 [Fast-Planner 官方仓库](https://github.com/HKUST-Aerial-Robotics/Fast-Planner)；对比时记录地图、动力学约束、求解预算和失败条件。
+
+## 进展与证据
 
 GCOPTER-MINCO 框架走读已发布；MINCO 参数化专题与实现笔记撰写中。
+
+本页整理知识与复现入口；具体实验结论需附配置、评估协议及结果记录后补充。

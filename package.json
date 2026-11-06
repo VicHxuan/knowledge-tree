@@ -14,6 +14,9 @@
     "docs:check": "node scripts/sync-docs.mjs --check && node scripts/validate-docs.mjs",
     "docs:add": "node scripts/docs-add.mjs",
     "docs:rename": "node scripts/docs-rename.mjs",
+    "site:check": "node scripts/validate-site.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test",
     "privacy:check": "node scripts/privacy-check.mjs"
   },
   "dependencies": {
@@ -29,5 +32,9 @@
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "parse5": "^7.3.0"
   }
 }

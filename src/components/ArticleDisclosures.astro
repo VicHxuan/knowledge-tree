@@ -1,0 +1,123 @@
+---
+/** 原生 details 的渐进增强；正文与键盘开合不依赖此脚本。 */
+---
+
+<script>
+	// Starlight 当前的 Pagefind 配置未暴露 highlightParam。给原生搜索链接
+	// 附上查询词，让落地页能展开命中的推导；保留点击、新标签页与 history 行为。
+	const carrySearchTerms = (event: Event) => {
+		const link = event.target instanceof Element
+			? event.target.closest<HTMLAnchorElement>('site-search a.pagefind-ui__result-link') : null;
+		if (!link) return;
+		const term = link.closest('site-search')?.querySelector<HTMLInputElement>('.pagefind-ui__search-input')?.value.trim();
+		if (!term) return;
+		const url = new URL(link.href, location.href);
+		if (url.origin !== location.origin) return;
+		url.searchParams.set('highlight', term);
+		link.href = url.href;
+	};
+	document.addEventListener('pointerdown', carrySearchTerms, true);
+	document.addEventListener('click', carrySearchTerms, true);
+
+	const article = document.querySelector<HTMLElement>('.sl-markdown-content');
+	const disclosures = [...(article?.querySelectorAll<HTMLDetailsElement>('details.kt-derivation') ?? [])];
+
+	if (article && disclosures.length) {
+		const controls = document.createElement('div');
+		controls.className = 'kt-disclosure-controls';
+		controls.setAttribute('role', 'group');
+		controls.setAttribute('aria-label', '文章细节显示');
+		controls.setAttribute('data-pagefind-ignore', 'all');
+
+		const status = document.createElement('span');
+		status.className = 'kt-disclosure-status';
+		status.setAttribute('aria-live', 'polite');
+		status.setAttribute('aria-atomic', 'true');
+
+		const expand = document.createElement('button');
+		expand.type = 'button';
+		expand.textContent = '展开全部细节';
+		const collapse = document.createElement('button');
+		collapse.type = 'button';
+		collapse.textContent = '收起全部细节';
+
+		const syncControls = () => {
+			const openCount = disclosures.filter((detail) => detail.open).length;
+			status.textContent = `细节 ${openCount} / ${disclosures.length} 已展开`;
+			// 保留按钮焦点，避免点击后禁用当前按钮造成键盘焦点丢失。
+			expand.setAttribute('aria-disabled', String(openCount === disclosures.length));
+			collapse.setAttribute('aria-disabled', String(openCount === 0));
+		};
+		const setAll = (open: boolean) => {
+			disclosures.forEach((detail) => { detail.open = open; });
+			syncControls();
+		};
+		expand.addEventListener('click', () => setAll(true));
+		collapse.addEventListener('click', () => setAll(false));
+		disclosures.forEach((detail) => detail.addEventListener('toggle', syncControls));
+		controls.append(status, expand, collapse);
+		const articleBar = article.querySelector(':scope > .kt-article-bar');
+		if (articleBar) articleBar.after(controls);
+		else article.prepend(controls);
+		syncControls();
+
+		let pendingScroll = 0;
+		const revealHash = (hash: string) => {
+			if (!hash || hash === '#') return false;
+			const rawId = hash.slice(1);
+			let id = rawId;
+			try { id = decodeURIComponent(rawId); } catch { /* 容忍手写 URL 中未转义的 %。 */ }
+			const target = document.getElementById(id) ?? document.getElementById(rawId);
+			if (!target || !article.contains(target) || !target.closest('details.kt-derivation')) return false;
+
+			// target 可以是 summary、details 自身，或任意内部锚点。
+			for (let node: Element | null = target; node && node !== article; node = node.parentElement) {
+				if (node instanceof HTMLDetailsElement) node.open = true;
+			}
+			syncControls();
+			cancelAnimationFrame(pendingScroll);
+			pendingScroll = requestAnimationFrame(() => {
+				// 等待开合与移动端目录的布局更新后再定位，不修改 history。
+				target.scrollIntoView({ block: 'start', behavior: 'instant' });
+			});
+			return true;
+		};
+
+		window.addEventListener('hashchange', () => revealHash(location.hash));
+		window.addEventListener('pageshow', (event) => {
+			if (event.persisted) revealHash(location.hash);
+		});
+		document.addEventListener('click', (event) => {
+			if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+			const anchor = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href]') : null;
+			if (!anchor || anchor.hasAttribute('download') || (anchor.target && anchor.target !== '_self')) return;
+			const url = new URL(anchor.href, location.href);
+			if (url.origin !== location.origin || url.pathname !== location.pathname || url.search !== location.search) return;
+			// 相同 hash 的再次点击不会触发 hashchange，需在普通导航前展开。
+			revealHash(url.hash);
+		});
+		const query = new URLSearchParams(location.search).get('highlight') ?? '';
+		const terms = query.normalize('NFKC').toLocaleLowerCase().split(/\s+/).map((term) => term.replace(/^["']+|["']+$/g, '')).filter(Boolean);
+		const matches = terms.length ? disclosures.filter((detail) => {
+			const text = (detail.textContent ?? '').normalize('NFKC').toLocaleLowerCase();
+			return terms.some((term) => text.includes(term));
+		}) : [];
+		matches.forEach((detail) => { detail.open = true; });
+		syncControls();
+		// 搜索子结果可能指向推导外的 H3，此时定位到实际命中的折叠块。
+		if (!revealHash(location.hash) && matches[0]) {
+			pendingScroll = requestAnimationFrame(() => matches[0].scrollIntoView({ block: 'start', behavior: 'instant' }));
+		}
+
+		let printState: Map<HTMLDetailsElement, boolean> | undefined;
+		window.addEventListener('beforeprint', () => {
+			printState ??= new Map(disclosures.map((detail) => [detail, detail.open]));
+			setAll(true);
+		});
+		window.addEventListener('afterprint', () => {
+			printState?.forEach((open, detail) => { detail.open = open; });
+			printState = undefined;
+			syncControls();
+		});
+	}
+</script>

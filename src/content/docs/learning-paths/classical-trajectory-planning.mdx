@@ -1,28 +1,45 @@
 ---
 title: "经典轨迹规划学习路径"
-description: "从轨迹表示到控制器实现的推荐学习顺序，附本地进度追踪"
+description: "从轨迹表示到控制器实现：明确学习目标、推荐步骤与完成标准，支持本地进度追踪"
 sidebar:
   order: 2
 ---
 
 import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 
-按依赖关系推荐的学习顺序。点击每一步左侧的圆点可以标记学习进度（未开始 → 进行中 → 已完成，进度保存在本浏览器）：
+## 学习目标
+
+串起「轨迹表示 → 轨迹生成与优化 → 跟踪控制 → 飞控执行」：知道每一层输入输出是什么，以及规划得到的轨迹怎样转化为可执行的控制量。
+
+## 开始之前
+
+需要基本线性代数、微积分和 C++ 阅读能力。第一步补齐优化语言；板块入口可以按当前任务选择已发布文章，先建立整体链路，再深入具体规划器。
+
+## 学习步骤
+
+按轨迹从数学表示到飞控执行的顺序推进，点击每一步左侧按钮记录进度。
 
 <LearningPathStepper
 	pathId="classical-trajectory-planning"
+	legacyStepIds={['optimization-theory', 'trajectory-representation', 'minimum-snap', 'section-trajectory-optimization', 'section-tracking-control', 'px4-controller', 'work-pipeline']}
 	steps={[
-		{ title: '数学优化理论', href: '/knowledge-tree/mathematics/calculus-optimization/optimization-theory/', note: '数学底座' },
-		{ title: '轨迹表示与参数化', href: '/knowledge-tree/classical-planning-control/trajectory-optimization/trajectory-representation-parameterization/', note: '先理解轨迹如何被数学表示与参数化' },
-		{ title: '微分平坦与 Minimum Snap', href: '/knowledge-tree/classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap/', note: '轨迹生成的基本范式' },
-		{ title: '轨迹优化板块', href: '/knowledge-tree/classical-planning-control/trajectory-optimization/', note: '安全飞行走廊、贝塞尔 / B 样条 / MINCO、Fast-Planner、EGO-Planner、GCOPTER' },
-		{ title: '跟踪控制板块', href: '/knowledge-tree/classical-planning-control/tracking-control/', note: 'PID、LQR、MPC 与 PX4 控制器如何跟踪并执行期望轨迹' },
-		{ title: 'PX4 控制器（姿态/角速率）', href: '/knowledge-tree/classical-planning-control/tracking-control/px4-controller-attitude-rate/', note: '从控制理论落到飞控固件' },
-		{ title: '小脑 Work Pipeline', href: '/knowledge-tree/learning-based-planning/engineering-practice/work-pipeline/', note: '应用视角：完整链路在实机上的组织方式' },
+		{ id: 'optimization-theory', slug: 'mathematics/calculus-optimization/optimization-theory', note: '数学底座' },
+		{ id: 'trajectory-representation', slug: 'classical-planning-control/trajectory-optimization/trajectory-representation-parameterization', note: '先理解轨迹如何被数学表示与参数化' },
+		{ id: 'minimum-snap', slug: 'classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap', note: '微分平坦与 Minimum Snap：轨迹生成的基本范式' },
+		{ id: 'section-trajectory-optimization', title: '轨迹优化板块', href: '/knowledge-tree/classical-planning-control/trajectory-optimization/', note: '安全飞行走廊、贝塞尔 / B 样条 / MINCO、Fast-Planner、EGO-Planner、GCOPTER' },
+		{ id: 'section-tracking-control', title: '跟踪控制板块', href: '/knowledge-tree/classical-planning-control/tracking-control/', note: 'PID、LQR、MPC 与 PX4 控制器如何跟踪并执行期望轨迹' },
+		{ id: 'px4-controller', slug: 'classical-planning-control/tracking-control/px4-controller-attitude-rate', note: '从姿态与角速率控制理论落到飞控固件' },
+		{ id: 'work-pipeline', slug: 'learning-based-planning/engineering-practice/work-pipeline', note: '应用视角：完整链路在实机上的组织方式' },
 	]}
 />
 
+## 完成标准
+
+- 能说明一段轨迹的表示方式、边界条件与连续性要求，并给出生成或优化问题的变量与约束。
+- 能解释期望位置、速度、加速度如何进入跟踪控制，以及姿态/角速率环各自承担的任务。
+- 能用一张图串起状态估计、规划、控制和执行接口，定位延迟或跟踪误差发生的环节。
+
 ## 延伸方向
 
-- **感知侧**：[卡尔曼滤波](/knowledge-tree/classical-planning-control/perception-slam/kalman-filters/)——跟踪控制的状态估计基础；
+- **感知侧**：[卡尔曼滤波](/knowledge-tree/classical-planning-control/perception-slam/kalman-filters/)——跟踪控制的状态估计基础。
 - **MINCO 专题**（撰写中）：轨迹优化板块中的 MINCO 章节将给出更完整的多项式轨迹库实现。

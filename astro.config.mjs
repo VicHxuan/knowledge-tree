@@ -10,6 +10,7 @@ import rehypeKatex from 'rehype-katex';
 import { DOMAINS } from './src/data/domains.mjs';
 import rehypeMermaid from './scripts/rehype-mermaid.mjs';
 import rehypeArticleTools from './scripts/rehype-article-tools.mjs';
+import rehypeHeadingAliases from './scripts/rehype-heading-aliases.mjs';
 
 const repository = 'https://github.com/VicHxuan/knowledge-tree';
 const homepage = 'https://vichxuan.github.io/';
@@ -41,6 +42,7 @@ export default defineConfig({
 		react(),
 		starlight({
 			title: 'VicHxuan Knowledge Tree',
+			routeMiddleware: './src/routeData.ts',
 			description: '传统规划控制、学习式规划与工程工具链的个人知识树',
 
 			// 单语言站点：界面使用简体中文，URL 不带语言前缀
@@ -92,7 +94,7 @@ export default defineConfig({
 
 	markdown: {
 		remarkPlugins: [remarkMath],
-		rehypePlugins: [rehypeKatex, rehypeMermaid, rehypeArticleTools],
+		rehypePlugins: [rehypeKatex, rehypeMermaid, rehypeArticleTools, rehypeHeadingAliases],
 		syntaxHighlight: { type: 'shiki', excludeLangs: ['mermaid'] },
 	},
 });
