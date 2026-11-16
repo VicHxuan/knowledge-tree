@@ -23,7 +23,7 @@
 2. `02_model-free-rl/`：DQN；PG/Actor-Critic/GAE → TRPO/PPO；DDPG → TD3/SAC。
 3. `03_model-based-rl/`：模型学习、Dyna、PETS、MBPO、MuZero、Dreamer 和可微模型优化。
 
-[PPO 文章](03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md)集中说明一轮算法的数据与参数更新；[工程走读](03_learning-based-planning/03_engineering-practice/01_ppo-walkthrough.md)负责训练循环、配置与诊断。基础专题尚未发布时，PPO 保留理解主线所需的推导。
+[PPO 文章](03_learning-based-planning/02_rl-algorithms/02_model-free-rl/03_ppo.md)集中说明一轮算法的数据与参数更新；[工程走读](03_learning-based-planning/03_engineering-practice/01_ppo-walkthrough.md)负责训练循环、配置与诊断。基础专题尚未发布时，PPO 保留理解主线所需的推导。
 
 ## 写作与维护
 

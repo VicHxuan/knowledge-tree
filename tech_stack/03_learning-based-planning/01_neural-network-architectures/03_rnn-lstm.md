@@ -1,47 +1,91 @@
-# 循环神经网络（RNN/LSTM）
+# 循环神经网络与 LSTM
 
 ## 1. 概述
 
-> 待补充。
+循环网络将当前输入与历史隐状态共同映射到下一状态，从序列中学习有限维记忆。时序损失沿展开的计算图回传；LSTM 通过门控的细胞状态提供更可控的跨时刻信息路径。
 
 ## 2. 基础与定义
 
-> 待补充。
+### 2.1 循环状态
+
+标准 RNN 的更新为
+
+$$
+h_t=\tanh(W_xx_t+W_hh_{t-1}+b),\qquad \hat y_t=g(h_t).
+$$
+
+$h_t$ 是历史输入的学习表示，其容量由状态维数与训练目标决定。
+
+### 2.2 时序目标
+
+逐步监督使用 $L=\sum_tm_t\ell(\hat y_t,y_t)$，其中 $m_t$ 标记有效时间步。序列分类可仅监督最后有效状态。
 
 ## 3. 核心原理
 
-### 1. 循环神经网络
+### 3.1 时间反向传播
 
-#### 1.1 数学定义
+隐状态的局部雅可比为
 
-给定时间步 $t$ 的输入向量 $x_t \in \mathbb{R}^{d_{in}}$ 以及上一时刻的隐藏状态 $h_{t-1} \in \mathbb{R}^{d_{h}}$，标准循环神经网络（RNN）通过内部的权重矩阵对序列数据进行单步状态更新，其数学解析式为：
+$$
+J_t=\frac{\partial h_t}{\partial h_{t-1}}
+=\operatorname{diag}(1-h_t^2)W_h.
+$$
 
-$$h_t = \tanh(W_{ih} x_t + b_{ih} + W_{hh} h_{t-1} + b_{hh})$$
+远期梯度经过 $J_tJ_{t-1}\cdots$ 的乘积传播，激活饱和与矩阵方向共同影响梯度衰减或增长。
+<details class="kt-derivation" id="rnn-bptt">
+<summary>时序梯度递推</summary>
 
-其中：
+令 $g_t=\partial L/\partial h_t$ 表示包含未来时刻影响的总梯度，$r_t$ 为当前输出损失对 $h_t$ 的局部梯度，则
 
-* $W_{ih} \in \mathbb{R}^{d_h \times d_{in}}$ 与 $W_{hh} \in \mathbb{R}^{d_h \times d_h}$ 为输入与隐状态的权重矩阵。
-* $b_{ih}, b_{hh} \in \mathbb{R}^{d_h}$ 为对应的偏置向量。
-* $\tanh$ 为双曲正切激活函数，将输出状态非线性映射至 $[-1, 1]$ 区间。
+$$
+g_t=r_t+J_{t+1}^\top g_{t+1}.
+$$
 
-序列的最终输出可通过额外的全连接层由 $h_t$ 映射得到。
+参数在各时间步共享，故参数梯度为所有展开节点贡献之和。截断反向传播在片段边界停止这一梯度递推，但可继续传递隐状态的数值。
 
-#### 1.2 网络结构
+</details>
 
-1. **时序记忆性**
-   当前时刻的隐状态 $h_t$ 包含了历史所有输入 $x_1, \dots, x_t$ 的累积信息，使网络具备处理不定长上下文序列的能力。
+### 3.2 LSTM 门控
 
-2. **参数共享**
-   在整个序列的时间步迭代中，所有时刻 $t$ 共享同一套权重矩阵 $W_{ih}$ 与 $W_{hh}$，这极大地控制了模型规模并使得网络对输入序列的长度免疫。
+用当前输入与上一步隐状态计算输入门 $i_t$、遗忘门 $f_t$、输出门 $o_t$ 与候选状态 $g_t$：
 
-3. **梯度消失与爆炸**
-   基于时间的反向传播在展开计算连续连乘的雅可比矩阵时，若权重矩阵的最大奇异值偏离 1，随着序列长度增加，梯度会呈指数级衰减或增长，导致长距离依赖难以学习。
+$$
+\begin{bmatrix}i_t\\f_t\\g_t\\o_t\end{bmatrix}
+=\begin{bmatrix}\sigma\\\sigma\\\tanh\\\sigma\end{bmatrix}
+\left(W\begin{bmatrix}x_t\\h_{t-1}\end{bmatrix}+b\right).
+$$
 
-#### 1.3 代码实现
+细胞状态与隐状态更新为
 
-以下实现接收整个时序序列，内部完成时间步循环，并输出最后一个时间步的隐藏状态。
+$$
+c_t=f_t\odot c_{t-1}+i_t\odot g_t,\qquad
+h_t=o_t\odot\tanh(c_t).
+$$
 
-##### 1.3.1 PyTorch 实现
+### 3.3 记忆梯度
+
+固定当前门值时，细胞状态直接路径的导数为 $\operatorname{diag}(f_t)$。遗忘门接近 1 时有利于保持梯度；完整导数还包含门值通过 $h_{t-1}$ 的依赖。
+<details class="kt-derivation" id="lstm-memory">
+<summary>细胞状态直接路径</summary>
+
+沿直接细胞通路展开，$c_t$ 中历史 $c_{t-k}$ 的系数为
+
+$$
+\prod_{j=t-k+1}^t f_j
+$$
+
+的逐元素乘积。因此加法结构提供独立的信息通路，而长期保持仍依赖门值。梯度裁剪控制爆炸，训练窗口长度影响可学习的时序依赖。
+
+</details>
+
+## 4. 实现与应用
+
+训练按序列组织批次，保留有效时间步掩码；在线推理逐步传递状态，回合边界复位状态。填充序列应取最后有效状态或使用打包序列。
+
+以下示例使用等长序列并返回末步隐状态；每次调用从零状态开始。流式部署需将初始与最终状态显式加入接口。C++ 示例展示前向计算。
+
+<details class="kt-derivation" id="implementation-0">
+<summary>PyTorch RNN</summary>
 
 ```python
 import torch
@@ -60,7 +104,10 @@ class SimpleRNN(nn.Module):
         return h_n.squeeze(0)
 ```
 
-##### 1.3.2 C++ 标准库实现
+</details>
+
+<details class="kt-derivation" id="implementation-1">
+<summary>C++ RNN</summary>
 
 ```cpp
 #include <vector>
@@ -73,8 +120,8 @@ private:
     std::vector<std::vector<double>> W_ih, W_hh;
     std::vector<double> b_h;
 
-    std::vector<double> linear_add(const std::vector<double>& x, const std::vector<std::vector<double>>& W_i, 
-                                   const std::vector<double>& h, const std::vector<std::vector<double>>& W_h, 
+    std::vector<double> linear_add(const std::vector<double>& x, const std::vector<std::vector<double>>& W_i,
+                                   const std::vector<double>& h, const std::vector<std::vector<double>>& W_h,
                                    const std::vector<double>& b) const {
         std::vector<double> out(hidden_dim, 0.0);
         for (int i = 0; i < hidden_dim; ++i) {
@@ -104,7 +151,10 @@ public:
 };
 ```
 
-##### 1.3.3 C++ Eigen 实现
+</details>
+
+<details class="kt-derivation" id="implementation-2">
+<summary>Eigen RNN</summary>
 
 ```cpp
 #include <vector>
@@ -133,39 +183,10 @@ public:
 };
 ```
 
-### 2. 长短期记忆网络
+</details>
 
-#### 2.1 数学定义
-
-为解决标准 RNN 的长程梯度衰减，长短期记忆网络（LSTM）引入了细胞状态 $c_t$ 和精密的门控结构。在时间步 $t$，根据输入 $x_t$ 与上一隐状态 $h_{t-1}$，计算过程分为以下阶段：
-
-1. **输入门、遗忘门、输出门与候选细胞状态**
-   $$i_t = \sigma(W_{ii} x_t + b_{ii} + W_{hi} h_{t-1} + b_{hi})$$
-   $$f_t = \sigma(W_{if} x_t + b_{if} + W_{hf} h_{t-1} + b_{hf})$$
-   $$o_t = \sigma(W_{io} x_t + b_{io} + W_{ho} h_{t-1} + b_{ho})$$
-   $$g_t = \tanh(W_{ig} x_t + b_{ig} + W_{hg} h_{t-1} + b_{hg})$$
-
-2. **状态更新**
-   基于遗忘门舍弃旧信息，基于输入门添加新信息，完成细胞状态 $c_t$ 的线性更新，并通过输出门过滤得到当前隐状态 $h_t$：
-   $$c_t = f_t \odot c_{t-1} + i_t \odot g_t$$
-   $$h_t = o_t \odot \tanh(c_t)$$
-
-其中 $\sigma$ 为 Sigmoid 函数，$\odot$ 为矩阵的逐元素乘法（Hadamard积）。
-
-#### 2.2 网络结构
-
-1. **门控机制**
-   门控数值被 Sigmoid 限制在 $[0,1]$。遗忘门控制历史记忆的留存比例，输入门控制当前观测的融合权重。该机制使得网络能自适应地选择性遗忘无效背景并记住关键特征。
-
-2. **双状态传递**
-   模型将记忆拆分为慢变的全局细胞状态 $c_t$ 和快变的局部隐藏状态 $h_t$。细胞状态类似传送带，贯穿整个序列；隐藏状态则用于对外输出当前步的综合响应。
-
-3. **长距离依赖**
-   细胞状态的更新 $c_t = f_t \odot c_{t-1} + \dots$ 是一种纯加法操作。在反向传播时，即使序列极长，梯度也能通过加法分支无损流淌，从根源上缓解了梯度消失问题。
-
-#### 2.3 代码实现
-
-##### 2.3.1 PyTorch 实现
+<details class="kt-derivation" id="implementation-3">
+<summary>PyTorch LSTM</summary>
 
 ```python
 import torch
@@ -182,7 +203,10 @@ class SimpleLSTM(nn.Module):
         return h_n.squeeze(0)
 ```
 
-##### 2.3.2 C++ 标准库实现
+</details>
+
+<details class="kt-derivation" id="implementation-4">
+<summary>C++ LSTM</summary>
 
 ```cpp
 #include <vector>
@@ -208,7 +232,7 @@ public:
     std::vector<double> forward(const std::vector<std::vector<double>>& x) const {
         std::vector<double> h(hidden_dim, 0.0);
         std::vector<double> c(hidden_dim, 0.0);
-        
+
         for (const auto& x_t : x) {
             std::vector<double> gates(4 * hidden_dim, 0.0);
             for (int i = 0; i < 4 * hidden_dim; ++i) {
@@ -232,7 +256,10 @@ public:
 };
 ```
 
-##### 2.3.3 C++ Eigen 实现
+</details>
+
+<details class="kt-derivation" id="implementation-5">
+<summary>Eigen LSTM</summary>
 
 ```cpp
 #include <vector>
@@ -261,7 +288,7 @@ public:
 
         for (const auto& x_t : x) {
             Eigen::VectorXf gates = W_ih * x_t + W_hh * h + b_h;
-            
+
             Eigen::VectorXf i_t = sigmoid(gates.segment(0, hidden_dim));
             Eigen::VectorXf f_t = sigmoid(gates.segment(hidden_dim, hidden_dim));
             Eigen::VectorXf g_t = gates.segment(2 * hidden_dim, hidden_dim).array().tanh().matrix();
@@ -275,14 +302,14 @@ public:
 };
 ```
 
-## 4. 实现与应用
-
-> 待补充。
+</details>
 
 ## 5. 分析与总结
 
-> 待补充。
+RNN 与 LSTM 用固定大小状态处理增长的历史，适合在线估计与部分可观测控制。状态复位、截断边界和训练部署一致性与网络结构同样影响效果。
 
 ## 6. 关联与参考
 
-> 待补充。
+- [Hochreiter 与 Schmidhuber：Long Short-Term Memory](https://www.bioinf.jku.at/publications/older/2604.pdf)
+- [PyTorch：LSTM](https://docs.pytorch.org/docs/stable/generated/torch.nn.LSTM.html)
+- [时序与多模态融合](07_temporal-multimodal-fusion.md)

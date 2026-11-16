@@ -1,7 +1,6 @@
 # BEGIN knowledge-tree generated files
 /ddpg.md
 /dqn.md
-/policy-gradient-actor-critic-gae.md
 /ppo.md
 /sac.md
 /td3.md

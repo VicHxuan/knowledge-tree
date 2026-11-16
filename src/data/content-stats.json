@@ -1,22 +1,22 @@
 {
   "version": 2,
   "entries": 91,
-  "published": 39,
-  "draft": 52,
+  "published": 67,
+  "draft": 24,
   "domains": {
     "mathematics": {
-      "published": 1,
-      "draft": 13,
+      "published": 14,
+      "draft": 0,
       "total": 14
     },
     "classical-planning-control": {
-      "published": 17,
-      "draft": 8,
+      "published": 25,
+      "draft": 0,
       "total": 25
     },
     "learning-based-planning": {
-      "published": 15,
-      "draft": 21,
+      "published": 22,
+      "draft": 14,
       "total": 36
     },
     "engineering-tools": {
@@ -38,31 +38,31 @@
   "recent": [
     {
       "slug": "classical-planning-control/path-search/heuristic-search",
-      "title": "启发式搜索（Dijkstra / A* / IDA* / JPS）",
+      "title": "图搜索与启发式搜索",
       "domain": "classical-planning-control",
       "date": "2026-11-06"
     },
     {
       "slug": "classical-planning-control/path-search/incremental-search",
-      "title": "增量式搜索（D* / D* Lite / LPA*）",
+      "title": "增量搜索与路径修复",
+      "domain": "classical-planning-control",
+      "date": "2026-11-06"
+    },
+    {
+      "slug": "classical-planning-control/path-search/kinodynamic-search",
+      "title": "动力学约束搜索",
       "domain": "classical-planning-control",
       "date": "2026-11-06"
     },
     {
       "slug": "classical-planning-control/path-search/sampling-based-search",
-      "title": "采样法搜索（RRT 系列）",
+      "title": "采样规划与路线图",
       "domain": "classical-planning-control",
       "date": "2026-11-06"
     },
     {
-      "slug": "classical-planning-control/perception-slam/fast-lio",
-      "title": "FAST-LIO 系列",
-      "domain": "classical-planning-control",
-      "date": "2026-11-06"
-    },
-    {
-      "slug": "classical-planning-control/perception-slam/kalman-filters",
-      "title": "卡尔曼滤波系列（BF/KF/EKF/PF）",
+      "slug": "classical-planning-control/perception-slam/dynamic-obstacle-tracking",
+      "title": "动态障碍物感知与跟踪",
       "domain": "classical-planning-control",
       "date": "2026-11-06"
     }
@@ -96,12 +96,6 @@
     "learning-based-planning/rl-algorithms/rl-foundations/model-free-vs-model-based": "2026-11-06",
     "learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies": "2026-11-06",
     "learning-based-planning/rl-algorithms/model-free-rl/dqn": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-free-rl/trpo": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-free-rl/ppo": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-free-rl/ddpg": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-free-rl/td3": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-free-rl/sac": "2026-11-06",
     "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations": "2026-11-06",
     "learning-based-planning/rl-algorithms/model-based-rl/dyna": "2026-11-06",
     "learning-based-planning/rl-algorithms/model-based-rl/pets": "2026-11-06",
@@ -160,5 +154,5 @@
     "simulation-evaluation/evaluation-methodology/generalization-and-ablation": "2026-11-06",
     "simulation-evaluation/sim-to-real/sim-to-real-gap": "2026-11-06"
   },
-  "contentHash": "f6865435a6ebff84b36f9711a1be0785"
+  "contentHash": "c69895e3e626e2345767c67167802ca5"
 }

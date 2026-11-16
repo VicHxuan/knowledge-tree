@@ -4,7 +4,7 @@
 
 一轮 PPO 训练可以沿着六个环节检查：**接口定义 → 采样 → 优势与价值目标 → 参数更新 → 日志解释 → checkpoint 与复现**。每个环节都应能说清楚输入来自哪里、输出交给谁，以及哪些量在本轮内保持固定。
 
-[PPO 算法页](../02_rl-algorithms/02_model-free-rl/04_ppo.md)解释目标函数、GAE 和梯度如何构成算法闭环；本文把这些机制对应到训练脚本、缓冲区、批量参数和实验记录。读完后，应能走读一份 PPO 实现，核对采样与更新次数，并用多种证据判断一次训练是否有效。
+[PPO 算法页](../02_rl-algorithms/02_model-free-rl/03_ppo.md)解释目标函数、GAE 和梯度如何构成算法闭环；本文把这些机制对应到训练脚本、缓冲区、批量参数和实验记录。读完后，应能走读一份 PPO 实现，核对采样与更新次数，并用多种证据判断一次训练是否有效。
 
 ## 2. 基础与定义
 
@@ -60,7 +60,7 @@ $$
 \hat R_t=\hat A_t+V_{\mathrm{old}}(o_t).
 $$
 
-随后可对 Actor 使用的优势副本做归一化；Critic 的 $\hat R_t$ 应来自归一化前的优势。本文采用同一轮 rollout 内固定 old log-prob、优势与 target 的流程。这样，逐 minibatch 重算的是当前策略的 log-prob 和当前价值预测，比较基准保持稳定。GAE 的完整递推与两个边界 mask 见 [PPO 算法页](../02_rl-algorithms/02_model-free-rl/04_ppo.md)。
+随后可对 Actor 使用的优势副本做归一化；Critic 的 $\hat R_t$ 应来自归一化前的优势。本文采用同一轮 rollout 内固定 old log-prob、优势与 target 的流程。这样，逐 minibatch 重算的是当前策略的 log-prob 和当前价值预测，比较基准保持稳定。GAE 的完整递推与两个边界 mask 见 [PPO 算法页](../02_rl-algorithms/02_model-free-rl/03_ppo.md)。
 
 进入第一个优化 step 前，用同一份观测、动作和预处理重新计算 log-prob，检查 $\exp(\log\pi-\log\pi_{\mathrm{old}})$ 是否接近 1。若已经明显偏离，先排查模型模式、观测归一化、动作变换、hidden state 和旧数据来源。
 
@@ -197,7 +197,7 @@ $$
 
 ### 6.1 知识关联
 
-- **算法主线**：[PPO](../02_rl-algorithms/02_model-free-rl/04_ppo.md)——目标函数、GAE、梯度路径与教学代码。
+- **算法主线**：[PPO](../02_rl-algorithms/02_model-free-rl/03_ppo.md)——目标函数、GAE、梯度路径与教学代码。
 - **实现边界**：[强化学习工程避坑指南](./02_rl-engineering-pitfalls.md)——接口、采样边界、训练与恢复的一致性。
 - **监控规范**：[TensorBoard 指标模板](./03_tensorboard-metrics.md)——指标含义和统计层级。
 - **部署实践**：[多服务器多 GPU 训练](../../04_engineering-tools/ppo-in-multi-GPU/01_multi-gpu-training-deployment-guide.md)——并行训练与运维入口。

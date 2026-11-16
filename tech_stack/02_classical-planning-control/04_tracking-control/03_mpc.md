@@ -1,118 +1,97 @@
-# 3. MPC 控制器
+# 模型预测控制
 
 ## 1. 概述
 
-> 待补充。
+MPC 在每个控制时刻求解有限时域优化，仅执行首个控制动作，再利用新状态滚动求解。预测模型连接未来动作与状态，约束和参考目标直接进入同一个优化问题。
 
 ## 2. 基础与定义
 
-> 待补充。
+### 2.1 预测模型
+
+线性离散系统为 $x_{k+1}=Ax_k+Bu_k$。在当前状态 $x_0$ 下优化 $N$ 个控制量，预测状态为 $x_1,\ldots,x_N$。
+
+### 2.2 优化目标
+
+调节问题的目标为
+
+$$
+J=\sum_{i=0}^{N-1}(x_i^\top Qx_i+u_i^\top Ru_i)+x_N^\top P_fx_N.
+$$
+
+跟踪问题使用状态与控制相对参考的偏差，并可加入控制增量代价。
 
 ## 3. 核心原理
 
-### 3.1 数学公式
+### 3.1 预测矩阵
 
-离散时间系统模型：
-$$x_{k+1} = A x_k + B u_k$$
+堆叠 $X=[x_1;\ldots;x_N]$、$U=[u_0;\ldots;u_{N-1}]$，得到
 
-在 $k$ 时刻，求解有限预测步长 $N$ 内的二次规划（QP）问题：
-$$\min_{u_{k|k}, \dots, u_{k+N-1|k}} \sum_{i=0}^{N-1} \left( x_{k+i|k}^T Q x_{k+i|k} + u_{k+i|k}^T R u_{k+i|k} \right) + x_{k+N|k}^T P_f x_{k+N|k}$$
+$$
+X=Mx_0+CU,\qquad M_i=A^i,\quad
+C_{ij}=\begin{cases}A^{i-1-j}B,&j<i,\\0,&j\ge i,\end{cases}
+$$
 
-受限于以下约束条件：
-$$x_{k+i+1|k} = A x_{k+i|k} + B u_{k+i|k} \quad \text{（系统动力学约束）}$$
-$$x_{min} \le x_{k+i|k} \le x_{max} \quad \text{（状态边界约束）}$$
-$$u_{min} \le u_{k+i|k} \le u_{max} \quad \text{（控制边界约束）}$$
+其中 $i=1,\ldots,N$、$j=0,\ldots,N-1$。
+
+### 3.2 二次规划
+
+令 $\bar Q=\operatorname{diag}(Q,\ldots,Q,P_f)$，$\bar R=\operatorname{diag}(R,\ldots,R)$，省略与 $U$ 无关的项：
+
+$$
+\min_U\frac12U^\top HU+f^\top U,
+\quad H=2(C^\top\bar QC+\bar R),\quad
+f=2C^\top\bar QMx_0.
+$$
+
+输入边界直接约束 $U$；状态边界转换为
+
+$$
+x_{\min}-Mx_0\le CU\le x_{\max}-Mx_0.
+$$
+
+这里上下界均按预测时域堆叠。
+<details class="kt-derivation" id="mpc-prediction">
+<summary>两步预测矩阵</summary>
+
+当 $N=2$，
+
+$$
+\begin{bmatrix}x_1\\x_2\end{bmatrix}
+=\begin{bmatrix}A\\A^2\end{bmatrix}x_0+
+\begin{bmatrix}B&0\\AB&B\end{bmatrix}
+\begin{bmatrix}u_0\\u_1\end{bmatrix}.
+$$
+
+同一输入对较远状态的作用需要经过更多次 $A$，因此预测矩阵的块顺序必须与时间下标一致。
+
+</details>
+
+### 3.3 递归可行性与稳定性
+
+终端代价、终端集合和局部控制律可共同建立递归可行性与稳定性。模型误差与扰动存在时，可使用约束收紧或鲁棒 MPC 保留裕量。求解状态、残差与截止时间均属于控制输出的有效性条件。
 
 ## 4. 实现与应用
 
-### 3.3 C++ 实现
+每个周期读取状态，更新参考与约束，使用上轮移位解热启动 QP，检查求解状态及原始残差，再执行 $U$ 的第一段。
 
-完整的MPC通常需要依赖第三方QP求解器（如OSQP、qpOASES）。以下代码展示MPC的结构框架及将控制问题转化为标准QP形式的过程。
-
-```cpp
-#include <Eigen/Dense>
-#include <vector>
-
-// 假设存在一个外部QP求解器接口
-// 求解形式: min 0.5 * U^T * H * U + f^T * U, s.t. lb <= U <= ub
-class QPSolver {
-public:
-    Eigen::VectorXd solve(const Eigen::MatrixXd& H, const Eigen::VectorXd& f,
-                          const Eigen::VectorXd& lb, const Eigen::VectorXd& ub) {
-        // 调用外部库求解二次规划，此处返回占位结果
-        return Eigen::VectorXd::Zero(f.size());
-    }
-};
-
-class MPCController {
-private:
-    Eigen::MatrixXd A, B, Q, R;
-    int N; // 预测步长
-    Eigen::VectorXd u_min, u_max;
-    QPSolver solver;
-
-public:
-    MPCController(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B,
-                  const Eigen::MatrixXd& Q, const Eigen::MatrixXd& R,
-                  int N, const Eigen::VectorXd& u_min, const Eigen::VectorXd& u_max)
-        : A(A), B(B), Q(Q), R(R), N(N), u_min(u_min), u_max(u_max) {}
-
-    Eigen::VectorXd calculate(const Eigen::VectorXd& current_state) {
-        int nx = A.rows();
-        int nu = B.cols();
-
-        // 构造增广矩阵 M 和 C (使 X = M * x0 + C * U)
-        Eigen::MatrixXd M = Eigen::MatrixXd::Zero(N * nx, nx);
-        Eigen::MatrixXd C = Eigen::MatrixXd::Zero(N * nx, N * nu);
-
-        Eigen::MatrixXd A_pow = Eigen::MatrixXd::Identity(nx, nx);
-        for (int i = 0; i < N; ++i) {
-            A_pow = A_pow * A;
-            M.block(i * nx, 0, nx, nx) = A_pow;
-
-            Eigen::MatrixXd A_pow_B = B;
-            for (int j = i; j >= 0; --j) {
-                C.block(i * nx, (i - j) * nu, nx, nu) = A_pow_B;
-                A_pow_B = A * A_pow_B;
-            }
-        }
-
-        // 构造增广权重矩阵 Q_bar 和 R_bar
-        Eigen::MatrixXd Q_bar = Eigen::MatrixXd::Zero(N * nx, N * nx);
-        Eigen::MatrixXd R_bar = Eigen::MatrixXd::Zero(N * nu, N * nu);
-        for (int i = 0; i < N; ++i) {
-            Q_bar.block(i * nx, i * nx, nx, nx) = Q;
-            R_bar.block(i * nu, i * nu, nu, nu) = R;
-        }
-
-        // 转换为标准QP形式的 H 和 f
-        Eigen::MatrixXd H = 2 * (C.transpose() * Q_bar * C + R_bar);
-        Eigen::VectorXd f = 2 * C.transpose() * Q_bar * M * current_state;
-
-        // 构造控制约束边界
-        Eigen::VectorXd lb = u_min.replicate(N, 1);
-        Eigen::VectorXd ub = u_max.replicate(N, 1);
-
-        // 求解QP问题
-        Eigen::VectorXd U = solver.solve(H, f, lb, ub);
-
-        // 仅返回预测序列的第一个控制动作 (滚动优化)
-        return U.head(nu);
-    }
-};
+```text
+X = predict(x0, U)
+H, f, A_qp, lower, upper = assemble_problem(x0, reference)
+solution = qp_solve(H, f, A_qp, lower, upper, warm_start)
+if solution passes status, residual and deadline checks:
+    apply first input
+else:
+    apply the predefined feasible fallback
 ```
+
+可使用 OSQP 官方 MPC 示例作为完整求解器集成参考。验证预测矩阵、状态约束和终端权重后，再测试闭环扰动与不可行情形。
 
 ## 5. 分析与总结
 
-### 3.2 适用条件与性质
-
-* **使用条件**：需要已知系统的线形或非线性模型。需要较高的计算资源以满足实时在线求解优化问题的要求。
-* **性质**：
-
-  * 基于滚动时域机制，仅执行优化序列的第一个控制输入。
-  * 显式处理硬约束，保证系统在安全边界内运行。
-  * 具备前瞻性，能够针对未来设定值的变化提前做出响应。
+MPC 能在预测时域内协调约束与目标，代价是在线计算和模型依赖。预测时域、离散精度与求解预算应匹配系统动态和控制周期。
 
 ## 6. 关联与参考
 
-> 待补充。
+- [OSQP：MPC 示例](https://osqp.org/docs/examples/mpc.html)
+- [Rawlings、Mayne 与 Diehl：Model Predictive Control](https://sites.engineering.ucsb.edu/~jbraw/mpc/)
+- [线性二次调节器](02_lqr.md)

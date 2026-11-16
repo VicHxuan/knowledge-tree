@@ -20,7 +20,7 @@
 
 标题采用简洁的学术名词短语，如“网络结构”“优势估计”“策略优化”。具体步骤、结论和限制条件写在正文，不堆进小标题。章节及折叠标题不附重复英文译名或“重要”“详细说明”等无信息括注；正文保留必要的首次术语定义、数学表达式、单位、版本和消歧说明。
 
-按模板组织“结论先行、细节展开”。必要公式、假设和边界保持可见；证明、算例和长代码放在 `<details class="kt-derivation" id="稳定英文ID">` 中。主线与推导写作示范见 [PPO 原件](tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md)。
+按模板组织“结论先行、细节展开”。必要公式、假设和边界保持可见；证明、算例和长代码放在 `<details class="kt-derivation" id="稳定英文ID">` 中。主线与推导写作示范见 [PPO 原件](tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/03_ppo.md)。
 
 修改技术内容时查原始论文、官方文档或实现。保留来源、符号和复现条件；缺失材料写 `> 待补充。`，发布状态与内容完善程度分开处理。
 

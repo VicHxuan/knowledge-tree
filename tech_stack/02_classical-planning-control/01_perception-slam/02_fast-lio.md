@@ -1,209 +1,75 @@
-# FAST-LIO 系列
+# FAST-LIO 与激光惯性状态估计
 
 ## 1. 概述
 
-> 待补充。
+FAST-LIO 将 IMU 预测与激光点到地图的几何残差紧耦合。FAST-LIO2 采用直接点云配准和增量地图，使状态估计与局部建图构成连续流程。
 
 ## 2. 基础与定义
 
-> 待补充。
+### 2.1 状态与输入
+
+状态包含姿态、位置、速度、IMU 零偏、重力及所选外参。旋转在流形上表示，局部误差在切空间中求解。具体误差维度取决于重力与外参的参数化。
+
+### 2.2 点面残差
+
+将点 $p_L$ 转到世界系后，与地图局部平面比较：
+
+$$
+r_j=n_j^\top(R_{WI}(R_{IL}p_L+t_{IL})+p_{WI}-q_j).
+$$
+
+$n_j$ 是单位法向，$q_j$ 是平面上的点。
 
 ## 3. 核心原理
 
-### 1. FAST-LIO2 系统框架
+### 3.1 预测与运动补偿
 
-#### 1.1 系统模型
+IMU 在激光扫描期间传播状态。按各点采样时刻补偿相对运动，将整帧点云表达在共同参考时刻；时间误差会直接进入配准残差。
 
-FAST-LIO 系列的核心是一个基于流形（Manifold）的紧耦合迭代扩展卡尔曼滤波（iEKF）框架。FAST-LIO2 在此基础上引入了直接法（无需特征提取）与增量式空间数据结构。
+### 3.2 迭代状态更新
 
-系统状态定义在流形 $\mathcal{M} = SO(3) \times \mathbb{R}^{15} \times SO(3) \times \mathbb{R}^3$ 上，包含IMU位姿、速度、零偏以及LiDAR-IMU外参：
-$$ x \triangleq \begin{bmatrix} ^G R_I^T & ^G p_I^T & ^G v_I^T & b_\omega^T & b_a^T & ^G g^T & ^I R_L^T & ^I p_L^T \end{bmatrix}^T $$
+在当前状态附近线性化，固定本轮预测先验。欧氏局部形式的增量问题为
 
-系统运行包含以下核心步骤：
+$$
+\min_{\delta x}\frac12\|e+\delta x\|_{P^{-1}}^2+
+\frac12\|r+H\delta x\|_{R^{-1}}^2.
+$$
 
-1. **前向传播 (Forward Propagation)**：利用高频 IMU 离散运动学模型，计算先验状态估计 $\hat{x}_k$ 和协方差 $\hat{P}_k$。
-2. **反向传播 (Backward Propagation)**：根据一帧 Scan 中每个点的时间戳，利用 IMU 积分推算局部相对位姿，将所有点投影到 Scan 结束时刻，消除运动畸变。
-3. **直接法残差构建 (Measurement Model)**：将去畸变后的点 $^L p_j$ 投影至全局坐标系，并在地图中搜索最近邻点拟合局部平面，构建点到面的距离残差：
-   $$ z_j = u_j^T \left( ^G\hat{T}_{I_k} ^I\hat{T}_L ^L p_j - ^G q_j \right) $$
-   其中 $u_j$ 为局部平面法向量， $q_j$ 为平面上一点。
-4. **状态更新 (Iterated Update)**：利用一阶泰勒展开线性化残差方程，结合状态维度的卡尔曼增益公式迭代求解最大后验估计（MAP）。
+重线性化并更新状态直到增量收敛；流形实现还包含误差坐标与协方差的变换。
 
-#### 1.2 算法性质
+<details class="kt-derivation" id="lio-information-update">
+<summary>状态维度线性系统</summary>
 
-1. **状态维度的卡尔曼增益**
-   传统 EKF 的卡尔曼增益计算需对观测维度矩阵求逆 $\mathcal{O}(m^3)$。由于 LiDAR 点数 $m$ 极大，传统方法必须降采样。FAST-LIO 利用矩阵求逆引理，将公式等价转换为对状态维度求逆 $\mathcal{O}(n^3)$：
-   $$ K = (H^T R^{-1} H + P^{-1})^{-1} H^T R^{-1} $$
-   彻底解除了计算量对测量点数的依赖。
-2. **无特征提取的直接映射**
-   FAST-LIO2 直接将原始密集点云配准至地图，保留了环境中的微小特征，显著提升了在缺乏几何特征（如狭长走廊）或小视场角（固态雷达）环境中的鲁棒性。
+局部目标的一阶条件为
 
----
+$$
+(P^{-1}+H^\top R^{-1}H)\delta x=-P^{-1}e-H^\top R^{-1}r.
+$$
 
-### 3. 算法伪代码
+解的维度为状态维数 $n$。在独立点噪声下，累计观测项约需 $O(mn^2)$，稠密状态求解约需 $O(n^3)$；点数 $m$ 仍影响残差、邻域搜索与矩阵构造。
 
-```text
-Algorithm FAST_LIO2_Process(x_prev, P_prev, IMU_data, LiDAR_scan):
-    // 1. IMU 前向传播
-    x_pred, P_pred = IMU_Integrate(x_prev, P_prev, IMU_data)
-    
-    // 2. 运动畸变补偿
-    For each point p_j in LiDAR_scan:
-        p_j_undistorted = Backward_Propagation(p_j, IMU_data)
-        
-    // 3. 迭代卡尔曼滤波更新
-    x_curr = x_pred
-    For iteration = 1 to max_iter:
-        H_matrix = [], z_vector = []
-        
-        For each point p_j in LiDAR_scan:
-            p_global = Transform(p_j_undistorted, x_curr)
-            
-            // k-NN 搜索 (ikd-Tree 或 iVox)
-            neighbors = Spatial_Structure.Search_kNN(p_global, k=5)
-            plane_normal, plane_point = Fit_Plane(neighbors)
-            
-            // 计算残差与雅可比
-            z_j = plane_normal^T * (p_global - plane_point)
-            H_j = Compute_Jacobian(plane_normal, p_j_undistorted, x_curr)
-            
-            H_matrix.append(H_j)
-            z_vector.append(z_j)
-            
-        // FAST-LIO 专属低维卡尔曼增益
-        P_inv = Inverse(P_pred)
-        R_inv = Inverse(Measurement_Noise_Covariance)
-        K = Inverse(H_matrix^T * R_inv * H_matrix + P_inv) * H_matrix^T * R_inv
-        
-        // 状态更新 (流形加法)
-        delta_x = -K * z_vector - (I - K * H_matrix) * (x_curr (-) x_pred)
-        x_curr = x_curr (+) delta_x
-        
-        If norm(delta_x) < threshold: 
-            Break
-            
-    // 4. 更新协方差与地图
-    P_curr = (I - K * H_matrix) * P_pred
-    Registered_Points = Transform(LiDAR_scan, x_curr)
-    Spatial_Structure.Insert(Registered_Points) // ikd-Tree 或 iVox 更新
-    Spatial_Structure.Delete_Out_of_FOV()       // LRU 缓存或包围盒删除
-    
-    Return x_curr, P_curr
-```
+</details>
 
----
+### 3.3 增量地图
+
+FAST-LIO2 用 ikd-Tree 管理邻域查询、点插入和地图裁剪。更新后的位姿将点云融合进地图，地图再为下一帧提供几何约束。Faster-LIO 在 FAST-LIO2 基础上采用 iVox 体素结构，改变邻域索引与增量维护方式。
 
 ## 4. 实现与应用
 
-### 4. C++ 实现
+### 4.1 系统流程
 
-以下代码提炼了 FAST-LIO 框架中最核心的 iEKF 状态更新逻辑，展示了维度降低后的卡尔曼增益求解过程。为保持清晰，省略了流形库的依赖定义。
+同步激光与 IMU → 积分预测 → 点云去畸变 → 邻域平面拟合 → 迭代更新 → 地图维护。
 
-```cpp
-#include <Eigen/Dense>
-#include <vector>
+### 4.2 验证条件
 
-// 状态维度的极简抽象 (实际系统中为24维流形)
-const int STATE_DIM = 18; 
-
-struct Point3D { Eigen::Vector3d pt; };
-
-class FastLioIEKF {
-private:
-    Eigen::VectorXd x; // 系统状态
-    Eigen::MatrixXd P; // 状态协方差
-    Eigen::MatrixXd Q; // 过程噪声
-    double R_noise;    // 测量噪声标量
-
-public:
-    FastLioIEKF(const Eigen::VectorXd& x0, const Eigen::MatrixXd& P0, double R) 
-        : x(x0), P(P0), R_noise(R) {}
-
-    // IMU 前向传播抽象
-    void predict(const Eigen::MatrixXd& F, const Eigen::MatrixXd& W) {
-        // x = f(x, u) 流形上的离散积分 (省略具体物理公式)
-        P = F * P * F.transpose() + W * Q * W.transpose();
-    }
-
-    // iEKF 核心更新逻辑
-    void update(const std::vector<Point3D>& lidar_points, 
-                const std::vector<Eigen::Vector3d>& plane_normals, 
-                const std::vector<Eigen::Matrix<double, 1, STATE_DIM>>& jacobians,
-                const std::vector<double>& residuals) {
-        
-        int m = lidar_points.size();
-        if (m == 0) return;
-
-        Eigen::VectorXd x_pred = x;
-        Eigen::VectorXd delta_x = Eigen::VectorXd::Zero(STATE_DIM);
-
-        // 迭代求解 MAP
-        for (int iter = 0; iter < 5; ++iter) {
-            Eigen::MatrixXd H = Eigen::MatrixXd::Zero(m, STATE_DIM);
-            Eigen::VectorXd Z = Eigen::VectorXd::Zero(m);
-
-            // 聚合当前迭代下的观测矩阵
-            for (int i = 0; i < m; ++i) {
-                H.row(i) = jacobians[i];
-                Z(i) = residuals[i];
-            }
-
-            // FAST-LIO 核心：计算维度降低的卡尔曼增益
-            // K = (H^T * R^{-1} * H + P^{-1})^{-1} * H^T * R^{-1}
-            Eigen::MatrixXd P_inv = P.inverse();
-            Eigen::MatrixXd H_T_R_inv = H.transpose() / R_noise;
-            Eigen::MatrixXd S_state_dim = H_T_R_inv * H + P_inv; 
-            
-            Eigen::MatrixXd K = S_state_dim.inverse() * H_T_R_inv;
-
-            // 计算状态更新量 (此处的减法在实际中应为流形 BoxMinus)
-            Eigen::VectorXd x_diff = x - x_pred; 
-            Eigen::MatrixXd I = Eigen::MatrixXd::Identity(STATE_DIM, STATE_DIM);
-            
-            delta_x = -K * Z - (I - K * H) * x_diff;
-            
-            // 状态流形更新 (此处的加法在实际中应为流形 BoxPlus)
-            x = x + delta_x;
-
-            if (delta_x.norm() < 1e-4) {
-                break;
-            }
-        }
-
-        // 迭代收敛后更新后验协方差
-        // 需重新计算最终状态下的 H 矩阵，此处简化表示
-        Eigen::MatrixXd H_final = Eigen::MatrixXd::Zero(m, STATE_DIM);
-        for (int i = 0; i < m; ++i) H_final.row(i) = jacobians[i];
-        
-        Eigen::MatrixXd H_T_R_inv = H_final.transpose() / R_noise;
-        Eigen::MatrixXd K = (H_T_R_inv * H_final + P.inverse()).inverse() * H_T_R_inv;
-        
-        Eigen::MatrixXd I = Eigen::MatrixXd::Identity(STATE_DIM, STATE_DIM);
-        P = (I - K * H_final) * P;
-    }
-};
-```
+分别检查静态漂移、时间偏移、外参、重力方向、平面残差及退化方向。记录残差构造与线性求解耗时，区分地图搜索成本和状态更新成本。
 
 ## 5. 分析与总结
 
-### 2. 算法演进与改进
-
-#### 2.1 FAST-LIO：紧耦合状态估计
-
-* **核心贡献**：确立了紧耦合 iEKF 架构；提出了反向传播运动补偿机制；从数学上推导并证明了状态维度卡尔曼增益公式。
-* **局限性**：仍依赖传统的边缘点/平面点特征提取，环境适应性受限；且在每次更新地图时计算开销较大。
-
-#### 2.2 FAST-LIO2：增量建图与直接配准
-
-* **核心贡献**：移除特征提取模块，直接使用原始点云。
-* **关键改进 (ikd-Tree)**：提出了增量式 k-d 树 `ikd-Tree`。支持点级别插入、树内降采样和基于惰性标签（Lazy Label）的包围盒删除。通过双线程并行重建（Parallel Re-build）维持树的平衡性，将建图时间压缩至极致，支持 100Hz 的里程计输出。
-
-#### 2.3 Faster-LIO：体素索引
-
-* **核心贡献**：用增量稀疏体素（iVox）替代了复杂的树状结构，追求极致的运行速度。
-* **关键改进 (iVox / iVox-PHC)**：抛弃了严格的 k-NN 搜索，采用稀疏哈希体素管理点云。体素内部提供两种存储方式：线性数组（Linear iVox）和伪希尔伯特曲线（iVox-PHC）。利用 LRU 缓存策略维护局部地图。由于体素查询的时间复杂度接近 $\mathcal{O}(1)$ 且极易并行化，算法在主流 CPU 上达到了 1000-2000Hz 的惊人处理速度。
-
----
+直接配准保留原始几何信息，其精度仍受环境几何可观测性限制。状态维度求解降低大型观测矩阵的求逆成本，增量地图管理降低地图维护成本。
 
 ## 6. 关联与参考
 
-> 待补充。
+[FAST-LIO2 论文](https://arxiv.org/abs/2107.06829)、[官方实现](https://github.com/hku-mars/FAST_LIO)、[Faster-LIO](https://github.com/gaoxiang12/faster-lio)。
+
+关联：[卡尔曼滤波](./01_kalman-filters.md)、[SO(3) 与 SE(3)](../../01_math-physic-base/01_linear-algebra-geometry/03_so3-se3-quaternion.md)。

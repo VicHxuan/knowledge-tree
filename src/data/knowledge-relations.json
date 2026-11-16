@@ -134,7 +134,7 @@
     {
       "from": "classical-planning-control/trajectory-optimization/safe-flight-corridor",
       "to": "classical-planning-control/trajectory-optimization/fast-planner",
-      "type": "prerequisite"
+      "type": "related"
     },
     {
       "from": "classical-planning-control/trajectory-optimization/fast-planner",
@@ -213,11 +213,6 @@
     },
     {
       "from": "learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations",
-      "to": "learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae",
-      "type": "prerequisite"
-    },
-    {
-      "from": "learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae",
       "to": "learning-based-planning/rl-algorithms/model-free-rl/trpo",
       "type": "prerequisite"
     },
@@ -378,7 +373,7 @@
     },
     {
       "type": "prerequisite",
-      "from": "learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae",
+      "from": "learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations",
       "to": "learning-based-planning/rl-algorithms/model-free-rl/ppo"
     },
     {
@@ -409,22 +404,12 @@
     {
       "type": "related",
       "from": "learning-based-planning/rl-algorithms/model-free-rl/dqn",
-      "to": "learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae"
-    },
-    {
-      "type": "related",
-      "from": "learning-based-planning/rl-algorithms/model-free-rl/dqn",
       "to": "learning-based-planning/rl-algorithms/model-based-rl/dyna"
     },
     {
       "type": "related",
       "from": "learning-based-planning/rl-algorithms/model-free-rl/ppo",
       "to": "learning-based-planning/rl-algorithms/model-free-rl/sac"
-    },
-    {
-      "type": "related",
-      "from": "learning-based-planning/rl-algorithms/model-free-rl/ddpg",
-      "to": "learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae"
     },
     {
       "type": "related",
@@ -469,7 +454,137 @@
     {
       "type": "related",
       "from": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization",
-      "to": "learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae"
+      "to": "learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations",
+      "to": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/model-free-rl/ppo",
+      "to": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "to": "learning-based-planning/rl-algorithms/model-free-rl/td3",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "to": "learning-based-planning/rl-algorithms/model-free-rl/sac",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "to": "learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies",
+      "type": "related"
+    },
+    {
+      "from": "mathematics/linear-algebra-geometry/matrix-decomposition",
+      "to": "mathematics/calculus-optimization/gradient-jacobian-hessian",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/calculus-optimization/optimization-theory",
+      "to": "mathematics/calculus-optimization/numerical-optimization",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/optimal-control-foundations/optimal-control-formulation",
+      "to": "mathematics/optimal-control-foundations/hamiltonian-pontryagin",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/calculus-optimization/gradient-jacobian-hessian",
+      "to": "learning-based-planning/neural-network-architectures/mlp",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/perception-slam/kalman-filters",
+      "to": "classical-planning-control/perception-slam/visual-inertial-odometry",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/perception-slam/kalman-filters",
+      "to": "classical-planning-control/perception-slam/dynamic-obstacle-tracking",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/path-search/heuristic-search",
+      "to": "classical-planning-control/path-search/kinodynamic-search",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/bezier-bspline",
+      "to": "classical-planning-control/trajectory-optimization/fast-planner",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/path-search/kinodynamic-search",
+      "to": "classical-planning-control/trajectory-optimization/fast-planner",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/bezier-bspline",
+      "to": "classical-planning-control/trajectory-optimization/ego-planner",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "to": "classical-planning-control/trajectory-optimization/minco-parameterization",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/trajectory-optimization-formulation",
+      "to": "classical-planning-control/trajectory-optimization/minco-parameterization",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/safe-flight-corridor",
+      "to": "classical-planning-control/trajectory-optimization/gcopter-minco",
+      "type": "prerequisite"
+    },
+    {
+      "from": "mathematics/dynamics/quadrotor-dynamics",
+      "to": "classical-planning-control/tracking-control/geometric-control-se3",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/cnn",
+      "to": "learning-based-planning/neural-network-architectures/feature-pyramid-multiscale",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "to": "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/neural-network-architectures/attention-transformer",
+      "to": "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion",
+      "type": "prerequisite"
+    },
+    {
+      "from": "classical-planning-control/trajectory-optimization/replanning-and-trajectory-continuity",
+      "to": "classical-planning-control/tracking-control/tracking-latency-and-actuator-dynamics",
+      "type": "related"
+    },
+    {
+      "from": "classical-planning-control/tracking-control/px4-controller-attitude-rate",
+      "to": "classical-planning-control/tracking-control/geometric-control-se3",
+      "type": "related"
+    },
+    {
+      "from": "mathematics/dynamics/rigid-body-dynamics",
+      "to": "classical-planning-control/tracking-control/tracking-latency-and-actuator-dynamics",
+      "type": "related"
+    },
+    {
+      "from": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "to": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "type": "related"
     }
   ]
 }

@@ -108,7 +108,7 @@ def short_horizon_policy_grad(f_model, policy, critic, s0, k=4):
 
 - **先修知识**：[强化学习核心公式手册](../01_rl-foundations/01_reinforcement-learning-foundations.md)——策略梯度定理与重参数化
 - **本分支地基**：🚧 基于模型的强化学习基础（撰写中）——模型使用的三种流派
-- **进阶阅读**：🚧 Dreamer（撰写中）——同样反传经过模型、但作用于潜在世界模型；🚧 策略梯度、Actor-Critic 与 GAE（撰写中）——pathwise 与 score-function 梯度的对照
+- **进阶阅读**：🚧 Dreamer（撰写中）——同样反传经过模型、但作用于潜在世界模型；[强化学习核心公式手册](../01_rl-foundations/01_reinforcement-learning-foundations.md)——策略梯度与 Actor-Critic 基础
 
 ### 6.2 参考资料
 

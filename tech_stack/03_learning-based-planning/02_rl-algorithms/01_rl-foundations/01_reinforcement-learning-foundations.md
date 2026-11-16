@@ -2,158 +2,81 @@
 
 ## 1. 概述
 
-### 强化学习框架
-
-$$
-\text{MDP 建模}
-\longrightarrow
-\text{贝尔曼方程}
-\longrightarrow
-\text{动态规划}
-\longrightarrow
-\text{MC/TD}
-\longrightarrow
-\text{值函数近似}
-\longrightarrow
-\text{策略梯度}
-\longrightarrow
-\text{Actor-Critic}
-$$
-
-### 目录
-
-* [第一部分：基本概念与 MDP](#第一部分基本概念与-mdp)
-* [第二部分：贝尔曼方程与动态规划](#第二部分贝尔曼方程与动态规划)
-* [第三部分：无模型表格型方法](#第三部分无模型表格型方法)
-* [第四部分：值函数近似与 DQN](#第四部分值函数近似与-dqn)
-* [第五部分：策略梯度与 REINFORCE](#第五部分策略梯度与-reinforce)
-* [第六部分：Actor-Critic](#第六部分actor-critic)
-* [附录：符号与算法速查](#附录符号与算法速查)
-
----
+强化学习通过交互数据学习长期决策。环境模型描述状态与奖励的生成，价值函数评价长期回报，策略决定动作。动态规划、价值学习与策略梯度分别给出利用模型、拟合价值和直接优化策略的计算方法。
 
 ## 2. 基础与定义
 
-### 第一部分：马尔可夫决策过程
+### 2.1 马尔可夫决策过程
 
-#### 1.1 状态、动作、奖励与概率模型
+状态、动作和奖励分别记为 $S_t,A_t,R_{t+1}$。环境由状态空间 $\mathcal S$、动作空间 $\mathcal A$、奖励空间 $\mathcal R$、联合转移分布 $p(s',r\mid s,a)$ 和折扣因子 $\gamma$ 描述；初始状态分布为 $p_0$。
 
-* 状态空间：$\mathcal S=\{s_1,s_2,\dots\}$。
-* 动作空间：状态 $s$ 下的合法动作集合记为 $\mathcal A(s)$。
-* 奖励空间：所有可能即时奖励的集合记为 $\mathcal R$。
-* 策略：智能体在状态 $s$ 选择动作 $a$ 的概率分布：
-  $$
-  \pi(a\mid s)=\Pr(A_t=a\mid S_t=s),
-  \qquad
-  \sum_{a\in\mathcal A(s)}\pi(a\mid s)=1.
-  $$
-* 状态转移概率：
-  $$
-  p(s'\mid s,a)
-  =\Pr(S_{t+1}=s'\mid S_t=s,A_t=a).
-  $$
-* 奖励概率：
-  $$
-  p(r\mid s,a)
-  =\Pr(R_{t+1}=r\mid S_t=s,A_t=a).
-  $$
-
-状态—动作对的期望即时奖励为：
+马尔可夫性质表示：给定当前状态与动作，下一步状态及奖励的分布由当前信息决定。策略为 $\pi(a\mid s)$。一条轨迹写为：
 
 $$
-r(s,a)
-=\mathbb E[R_{t+1}\mid S_t=s,A_t=a]
-=\sum_{r\in\mathcal R}r\,p(r\mid s,a).
+\tau=(S_0,A_0,R_1,S_1,A_1,R_2,\ldots).
 $$
 
-本文始终分别使用 $p(r\mid s,a)$ 和 $p(s'\mid s,a)$。在贝尔曼方程中：
+联合分布的边缘分布记为 $p(s'\mid s,a)$ 与 $p(r\mid s,a)$，期望即时奖励为 $r(s,a)=\mathbb E[R_{t+1}\mid s,a]$。奖励与后继状态的相关性由联合分布描述。
+
+### 2.2 回报与优化目标
+
+折扣回报与策略目标为：
 
 $$
-\begin{aligned}
-&\mathbb E\!\left[
-R_{t+1}+\gamma V(S_{t+1})
-\mid S_t=s,A_t=a
-\right]\\
-&=
-\sum_r p(r\mid s,a)r
-+\gamma\sum_{s'}p(s'\mid s,a)V(s').
-\end{aligned}
+G_t=\sum_{l=0}^{\infty}\gamma^lR_{t+l+1},\qquad
+G_t=R_{t+1}+\gamma G_{t+1},\qquad
+J(\theta)=\mathbb E_{\pi_\theta}[G_0].
 $$
 
-#### 1.2 轨迹、回合与马尔可夫性质
+持续任务采用 $\gamma<1$ 并假设奖励有界；有限回合的求和截至终止，回报可积时可取 $\gamma=1$。终止状态的后续价值为零。
 
-一条轨迹为：
+<details class="kt-derivation" id="rl-symbols">
+<summary>符号表</summary>
 
-$$
-\tau=(S_0,A_0,R_1,S_1,A_1,R_2,\dots).
-$$
+| 符号 | 含义 |
+| :--- | :--- |
+| $\mathcal S,\mathcal A,\mathcal R$ | 状态、动作、奖励空间 |
+| $S_t,A_t,R_{t+1}$ | 时刻 $t$ 的状态、动作以及随后获得的奖励 |
+| $p(s'\mid s,a)$ | 状态转移概率 |
+| $p(r\mid s,a)$ | 奖励概率 |
+| $r(s,a)$ | 状态—动作对的期望即时奖励 |
+| $\pi(a\mid s)$ | 策略 |
+| $\beta(a\mid s)$ | 行为策略 |
+| $\gamma$ | 折扣因子 |
+| $G_t$ | 时刻 $t$ 之后的折扣回报 |
+| $v_\pi,q_\pi$ | 策略 $\pi$ 的真实状态价值与动作价值 |
+| $v_*,q_*$ | 最优状态价值与最优动作价值 |
+| $V,Q$ | 表格型价值估计 |
+| $\hat v,\hat q$ | 参数化价值估计 |
+| $\theta$ | 策略参数 |
+| $\phi,w$ | 价值网络参数，$w$ 用于函数近似推导 |
+| $\delta_t$ | 时序差分误差 |
 
-从初始状态运行至终止状态构成一个回合。若当前状态已经包含预测未来所需的全部信息，则满足马尔可夫性质：
-
-$$
-\Pr(S_{t+1}\mid S_0,A_0,\dots,S_t,A_t)
-=\Pr(S_{t+1}\mid S_t,A_t).
-$$
-
-本文将环境表示为：
-
-$$
-(\mathcal S,\mathcal A,\mathcal R,p_s,p_r,\gamma),
-$$
-
-其中 $p_s$ 对应 $p(s'\mid s,a)$，$p_r$ 对应 $p(r\mid s,a)$，策略 $\pi$ 是智能体的决策规则，不属于环境动力学。
-
-#### 1.3 回报与优化目标
-
-时刻 $t$ 之后的折扣回报定义为：
-
-$$
-G_t
-=R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\cdots
-=\sum_{k=0}^{\infty}\gamma^kR_{t+k+1}.
-$$
-
-其递归形式为：
-
-$$
-\boxed{
-G_t=R_{t+1}+\gamma G_{t+1}
-}.
-$$
-
-折扣因子满足 $\gamma\in[0,1]$。回合任务可取 $\gamma=1$；持续任务通常取 $\gamma<1$。后文统一约定终止状态的价值为 $0$。
-
----
+</details>
 
 ## 3. 核心原理
 
-### 第二部分：贝尔曼方程与动态规划
+### 3.1 价值函数与贝尔曼方程
 
-#### 2.1 状态价值与动作价值
-
-给定策略 $\pi$，状态价值函数为：
+价值函数把长期目标分解为状态与动作的评价：
 
 $$
-v_\pi(s)
-=\mathbb E_\pi[G_t\mid S_t=s].
+v_\pi(s)=\mathbb E_\pi[G_t\mid S_t=s],\qquad
+q_\pi(s,a)=\mathbb E_\pi[G_t\mid S_t=s,A_t=a].
 $$
 
-动作价值函数为：
+由回报递推得到：
 
 $$
-q_\pi(s,a)
-=\mathbb E_\pi[G_t\mid S_t=s,A_t=a].
+q_\pi(s,a)=r(s,a)+\gamma\sum_{s'}p(s'\mid s,a)v_\pi(s'),
+\qquad
+v_\pi(s)=\sum_a\pi(a\mid s)q_\pi(s,a).
 $$
 
-二者的直接关系为：
+当前价值由即时奖励与后继价值组成。离散状态使用求和，连续状态使用对应积分。
 
-$$
-\boxed{
-v_\pi(s)=\sum_a\pi(a\mid s)q_\pi(s,a)
-}.
-$$
-
-#### 2.2 贝尔曼期望方程
+<details class="kt-derivation" id="rl-bellman-derivation">
+<summary>贝尔曼期望方程</summary>
 
 将 $G_t=R_{t+1}+\gamma G_{t+1}$ 代入状态价值定义：
 
@@ -168,14 +91,14 @@ $$
 分别展开策略、奖励概率和状态转移概率：
 
 $$
-\boxed{
+
 v_\pi(s)
 =\sum_a\pi(a\mid s)
 \left[
 \sum_r p(r\mid s,a)r
 +\gamma\sum_{s'}p(s'\mid s,a)v_\pi(s')
 \right]
-}.
+.
 $$
 
 动作价值的条件期望形式为：
@@ -192,27 +115,30 @@ $$
 展开后得到：
 
 $$
-\boxed{
+
 q_\pi(s,a)
 =\sum_r p(r\mid s,a)r
 +\gamma\sum_{s'}p(s'\mid s,a)
 \sum_{a'}\pi(a'\mid s')q_\pi(s',a')
-}.
+.
 $$
 
 也可以先通过状态价值表示动作价值：
 
 $$
-\boxed{
+
 q_\pi(s,a)
 =r(s,a)
 +\gamma\sum_{s'}p(s'\mid s,a)v_\pi(s')
-}.
+.
 $$
 
 贝尔曼方程体现自举：使用后继价值推算当前价值。
 
-#### 2.3 矩阵形式与策略评估
+</details>
+
+<details class="kt-derivation" id="rl-policy-evaluation">
+<summary>矩阵形式与策略评估</summary>
 
 定义策略 $\pi$ 下的期望奖励向量和状态转移矩阵：
 
@@ -228,9 +154,9 @@ $$
 贝尔曼期望方程的矩阵形式为：
 
 $$
-\boxed{
+
 v_\pi=r_\pi+\gamma P_\pi v_\pi
-}.
+.
 $$
 
 当逆矩阵存在时，可闭式求解：
@@ -245,7 +171,20 @@ $$
 v_{k+1}=r_\pi+\gamma P_\pi v_k.
 $$
 
-#### 2.4 贝尔曼最优方程
+</details>
+
+### 3.2 动态规划
+
+模型已知时，可交替进行策略评估与策略改进。策略评估求解当前策略的贝尔曼方程，策略改进选择动作价值最大的动作。值迭代直接更新最优价值估计：
+
+$$
+V_{j+1}(s)=\max_a\left[r(s,a)+\gamma\sum_{s'}p(s'\mid s,a)V_j(s')\right].
+$$
+
+有限状态、有限动作、有界奖励与 $\gamma<1$ 下，贝尔曼最优算子为压缩映射，反复更新收敛到唯一最优价值。
+
+<details class="kt-derivation" id="rl-optimality">
+<summary>贝尔曼最优方程</summary>
 
 最优价值定义为：
 
@@ -269,25 +208,25 @@ $$
 展开后得到：
 
 $$
-\boxed{
+
 v_*(s)
 =\max_a
 \left[
 \sum_r p(r\mid s,a)r
 +\gamma\sum_{s'}p(s'\mid s,a)v_*(s')
 \right]
-}.
+.
 $$
 
 最优动作价值方程为：
 
 $$
-\boxed{
+
 q_*(s,a)
 =\sum_r p(r\mid s,a)r
 +\gamma\sum_{s'}p(s'\mid s,a)
 \max_{a'}q_*(s',a')
-}.
+.
 $$
 
 最优价值与最优策略满足：
@@ -307,9 +246,12 @@ $$
 
 因此它是压缩映射，存在唯一不动点 $v_*$，从任意初值反复应用该算子都可收敛至 $v_*$。
 
-#### 2.5 策略迭代、值迭代与截断策略迭代
+</details>
 
-##### 策略迭代
+<details class="kt-derivation" id="rl-dynamic-programming">
+<summary>策略迭代与值迭代</summary>
+
+**策略迭代**
 
 1. 任意初始化策略 $\pi$ 和价值函数 $V$。
 2. 固定策略，反复执行策略评估：
@@ -340,18 +282,18 @@ v_{\pi_k}
 \pi_{k+1}.
 $$
 
-##### 值迭代
+**值迭代**
 
 值迭代直接反复应用贝尔曼最优算子：
 
 $$
-\boxed{
+
 V_{k+1}(s)
 =\max_a
 \left[
 r(s,a)+\gamma\sum_{s'}p(s'\mid s,a)V_k(s')
 \right]
-}.
+.
 $$
 
 当
@@ -363,14 +305,14 @@ $$
 时停止，并提取：
 
 $$
-\pi_*(s)
+\pi_{\mathrm{greedy}}(s)
 \in\arg\max_a
 \left[
 r(s,a)+\gamma\sum_{s'}p(s'\mid s,a)V(s')
 \right].
 $$
 
-##### 截断策略迭代
+**截断策略迭代**
 
 截断策略迭代又称修正策略迭代。每次策略改进后只执行有限次策略评估：
 
@@ -384,13 +326,27 @@ $$
 * $m\to\infty$ 时趋近完整策略迭代；
 * 有限 $m$ 在二者之间平衡评估成本与迭代次数。
 
----
+</details>
 
-### 第三部分：无模型表格型方法
+### 3.3 蒙特卡洛与时序差分
 
-当 $p(r\mid s,a)$ 和 $p(s'\mid s,a)$ 未知时，无法直接展开贝尔曼期望，只能使用交互样本估计价值。
+交互样本可直接估计价值。两类目标为：
 
-#### 3.1 蒙特卡洛方法
+$$
+Y_t^{\rm MC}=G_t,\qquad
+Y_t^{\rm TD}=R_{t+1}+\gamma V(S_{t+1}).
+$$
+
+蒙特卡洛使用完整采样回报；时序差分使用后继价值自举。表格更新统一为：
+
+$$
+V(S_t)\leftarrow V(S_t)+\alpha[Y_t-V(S_t)].
+$$
+
+TD 残差为 $\delta_t=R_{t+1}+\gamma V(S_{t+1})-V(S_t)$。MC 的采样回报在固定策略、完整回合下提供无偏价值样本；TD 的目标依赖当前价值近似，常以自举偏差换取较短的采样范围。
+
+<details class="kt-derivation" id="rl-monte-carlo">
+<summary>蒙特卡洛评估与控制</summary>
 
 蒙特卡洛方法使用完整回合回报估计价值：
 
@@ -412,13 +368,13 @@ $$
 增量更新形式为：
 
 $$
-\boxed{
+
 Q(S_t,A_t)
 \leftarrow
 Q(S_t,A_t)
 +\alpha
 \left[G_t-Q(S_t,A_t)\right]
-}.
+.
 $$
 
 当 $\alpha=1/N(S_t,A_t)$ 时，该式等价于样本均值。
@@ -449,85 +405,37 @@ $$
 \varepsilon\text{-贪婪改进策略}.
 $$
 
-#### 3.2 随机近似与随机梯度
+</details>
 
-样本均值的递推形式为：
+### 3.4 动作价值与控制
 
-$$
-\bar X_{n+1}
-=\bar X_n+\frac{1}{n+1}(X_{n+1}-\bar X_n).
-$$
-
-强化学习中的增量更新通常具有 Robbins–Monro 形式：
+动作价值学习将更新对象改为 $Q(S_t,A_t)$：
 
 $$
-w_{k+1}
-=w_k+\alpha_k
-\left[\text{新目标}-\text{当前估计}\right].
+Q(S_t,A_t)\leftarrow Q(S_t,A_t)+\alpha[Y_t-Q(S_t,A_t)].
 $$
 
-常用收敛步长条件为：
+| 方法 | 目标 $Y_t$ | 下一动作来源 |
+| --- | --- | --- |
+| Sarsa | $R_{t+1}+\gamma Q(S_{t+1},A_{t+1})$ | 实际行为策略 |
+| Expected Sarsa | $R_{t+1}+\gamma\sum_{a'}\pi(a'\mid S_{t+1})Q(S_{t+1},a')$ | 目标策略的期望 |
+| Q-learning | $R_{t+1}+\gamma\max_{a'}Q(S_{t+1},a')$ | 贪婪目标 |
 
-$$
-\sum_{k=0}^{\infty}\alpha_k=\infty,
-\qquad
-\sum_{k=0}^{\infty}\alpha_k^2<\infty.
-$$
+行为策略生成样本，目标策略定义所学习的价值；二者相同时为同策略学习，允许二者不同时为离策略学习。表中终止转移的后继项取零。
 
-对于可微代价函数 $J(w)$，随机梯度下降为：
-
-$$
-w_{k+1}
-=w_k-\alpha_k\widehat{\nabla_wJ(w_k)}.
-$$
-
-GD 使用总体梯度，BGD 使用完整批量，SGD 使用单样本，Mini-batch SGD 使用小批量样本。
-
-#### 3.3 时序差分评估
-
-蒙特卡洛需要等待完整回合，而 TD(0) 使用一步自举目标：
-
-$$
-Y_t^{\mathrm{TD}}
-=R_{t+1}+\gamma V(S_{t+1}).
-$$
-
-时序差分误差为：
-
-$$
-\delta_t
-=R_{t+1}
-+\gamma V(S_{t+1})
--V(S_t).
-$$
-
-TD(0) 更新为：
-
-$$
-\boxed{
-V(S_t)
-\leftarrow
-V(S_t)+\alpha\delta_t
-}.
-$$
-
-| 方法 | 更新时机 | 目标 | 自举 | 典型特点 |
-| :--- | :---: | :--- | :---: | :--- |
-| 蒙特卡洛 | 回合结束 | $G_t$ | 否 | 无偏、方差较大 |
-| TD(0) | 每一步 | $R_{t+1}+\gamma V(S_{t+1})$ | 是 | 可在线更新、方差较小 |
-
-#### 3.4 Sarsa 系列与 Q-Learning
+<details class="kt-derivation" id="rl-multistep-sarsa">
+<summary>多步动作价值估计</summary>
 
 动作价值算法统一写为：
 
 $$
-\boxed{
+
 Q(S_t,A_t)
 \leftarrow
 Q(S_t,A_t)
 +\alpha
 \left[Y_t-Q(S_t,A_t)\right]
-}.
+.
 $$
 
 不同算法只是在目标 $Y_t$ 上不同：
@@ -562,13 +470,54 @@ $$
 * on-policy：行为策略与目标策略相同，例如 Sarsa。
 * off-policy：行为策略负责探索，目标策略负责学习，例如 Q-Learning。
 
----
+</details>
 
-### 第四部分：值函数近似与 DQN
+### 3.5 价值函数近似
 
-表格型方法为每个状态或状态—动作对单独保存数值。状态空间巨大或连续时，改用参数化函数进行泛化。
+连续或大规模状态空间使用参数化价值 $V_\phi(s)$。给定停止梯度的样本目标 $Y_t$，回归损失与梯度为：
 
-#### 4.1 状态价值函数近似
+$$
+L_V(\phi)=\frac12\hat{\mathbb E}_t[(V_\phi(S_t)-Y_t)^2],
+\qquad
+\nabla_\phi L_V=\hat{\mathbb E}_t[(V_\phi(S_t)-Y_t)\nabla_\phi V_\phi(S_t)].
+$$
+
+TD 目标由当前或目标网络预测构造，求导时固定目标，形成半梯度更新。动作价值近似采用相同原则；DQN 结合经验回放与目标网络组织训练。
+
+<details class="kt-derivation" id="rl-stochastic-approximation">
+<summary>随机近似与半梯度</summary>
+
+样本均值的递推形式为：
+
+$$
+\bar X_{n+1}
+=\bar X_n+\frac{1}{n+1}(X_{n+1}-\bar X_n).
+$$
+
+强化学习中的增量更新通常具有 Robbins–Monro 形式：
+
+$$
+w_{k+1}
+=w_k+\alpha_k
+\left[\text{新目标}-\text{当前估计}\right].
+$$
+
+在满足采样覆盖、噪声与更新稳定性等条件的随机近似分析中，常用步长条件为：
+
+$$
+\sum_{k=0}^{\infty}\alpha_k=\infty,
+\qquad
+\sum_{k=0}^{\infty}\alpha_k^2<\infty.
+$$
+
+对于可微代价函数 $J(w)$，随机梯度下降为：
+
+$$
+w_{k+1}
+=w_k-\alpha_k\widehat{\nabla_wJ(w_k)}.
+$$
+
+
 
 使用 $\hat v(s,w)$ 近似 $v_\pi(s)$。给定状态采样分布 $\mu$，均方误差目标为：
 
@@ -595,12 +544,12 @@ $$
 真实价值未知时，以样本目标 $U_t$ 替换，得到通用半梯度更新：
 
 $$
-\boxed{
+
 w_{t+1}
 =w_t+\alpha
 \left[U_t-\hat v(S_t,w_t)\right]
 \nabla_w\hat v(S_t,w_t)
-}.
+.
 $$
 
 常用目标为：
@@ -612,17 +561,20 @@ $$
 
 TD 目标也含参数，但求导时将目标视为常数，只对当前预测 $\hat v(S_t,w_t)$ 求导，因此称为半梯度。
 
-#### 4.2 动作价值函数近似
+</details>
+
+<details class="kt-derivation" id="rl-q-approximation">
+<summary>动作价值近似与 DQN</summary>
 
 使用 $\hat q(s,a,w)$ 近似动作价值。通用更新为：
 
 $$
-\boxed{
+
 w_{t+1}
 =w_t+\alpha
 \left[U_t-\hat q(S_t,A_t,w_t)\right]
 \nabla_w\hat q(S_t,A_t,w_t)
-}.
+.
 $$
 
 | 方法 | $U_t$ | 估计目标 |
@@ -631,8 +583,6 @@ $$
 | Q-Learning + 函数近似 | $R_{t+1}+\gamma\max_{a'}\hat q(S_{t+1},a',w_t)$ | $q_*$ |
 
 非线性函数近似、自举和离轨学习同时出现时容易导致训练不稳定，DQN 使用额外机制缓解这一问题。
-
-#### 4.3 深度 Q 网络
 
 DQN 使用在线网络 $Q(s,a;w)$ 近似 $q_*(s,a)$，使用目标网络 $Q(s,a;w^-)$ 构造相对稳定的拟合目标。
 
@@ -681,28 +631,28 @@ DQN 的两个关键稳定机制：
 1. 经验回放：随机采样历史转移，降低连续数据相关性并提高数据复用率。
 2. 目标网络：在若干步内固定 $w^-$，周期性执行 $w^-\leftarrow w$。
 
----
+</details>
 
-### 第五部分：策略梯度与 REINFORCE
+### 3.6 策略梯度
 
-值函数方法先估计价值再提取策略；策略梯度直接参数化 $\pi_\theta(a\mid s)$ 并最大化性能指标。
+直接参数化策略 $\pi_\theta$，梯度将动作价值转化为动作概率的调整。对于有限回合目标 $J=\mathbb E[G_0]$：
 
-#### 5.1 策略梯度推导
+$$
+\nabla_\theta J
+=\mathbb E_\tau\left[\sum_{t=0}^{T-1}\gamma^t
+\nabla_\theta\log\pi_\theta(A_t\mid S_t)q_{\pi_\theta}(S_t,A_t)\right].
+$$
+
+REINFORCE 用采样回报 $G_t$ 估计动作价值。减去动作无关的状态基线 $b(S_t)$，得到信号 $G_t-b(S_t)$；合适的基线可降低梯度方差。
+
+<details class="kt-derivation" id="rl-policy-gradient">
+<summary>策略梯度推导</summary>
 
 采用初始状态期望回报：
 
 $$
 J(\theta)
 =\mathbb E_{\tau\sim p_\theta(\tau)}[G_0].
-$$
-
-西湖笔记中常见的其他等价或相关指标包括平均状态价值与平均奖励：
-
-$$
-J_V(\theta)=\sum_s d(s)v_{\pi_\theta}(s),
-\qquad
-J_R(\theta)=\sum_s d_{\pi_\theta}(s)
-\sum_a\pi_\theta(a\mid s)r(s,a).
 $$
 
 对轨迹概率，只需写出与策略参数有关的部分：
@@ -742,10 +692,12 @@ G_0\nabla_\theta\log p_\theta(\tau)
 \end{aligned}
 $$
 
+第二个等号使用因果关系：动作 $A_t$ 之前的奖励在给定历史后与当前动作采样无关，其与策略得分的乘积期望为零。$G_0$ 中从时刻 $t$ 开始的部分为 $\gamma^tG_t$。
+
 根据 $q_{\pi_\theta}(s,a)=\mathbb E[G_t\mid s,a]$：
 
 $$
-\boxed{
+
 \nabla_\theta J(\theta)
 =\mathbb E_\tau
 \left[
@@ -755,7 +707,7 @@ $$
 \pi_\theta(A_t\mid S_t)
 q_{\pi_\theta}(S_t,A_t)
 \right]
-}.
+.
 $$
 
 在 $\gamma<1$ 时定义归一化折扣状态分布：
@@ -770,7 +722,7 @@ $$
 标准策略梯度公式为：
 
 $$
-\boxed{
+
 \nabla_\theta J(\theta)
 =\frac{1}{1-\gamma}
 \mathbb E_{\substack{
@@ -781,12 +733,15 @@ A\sim\pi_\theta(\cdot\mid S)
 \nabla_\theta\log\pi_\theta(A\mid S)
 q_{\pi_\theta}(S,A)
 \right]
-}.
+.
 $$
 
 正常数 $1/(1-\gamma)$ 不改变优化方向，算法中通常将其吸收到学习率。
 
-#### 5.2 REINFORCE
+</details>
+
+<details class="kt-derivation" id="rl-reinforce">
+<summary>蒙特卡洛策略梯度</summary>
 
 REINFORCE 使用蒙特卡洛回报替换未知动作价值。令：
 
@@ -822,11 +777,11 @@ $$
 REINFORCE 执行梯度上升：
 
 $$
-\boxed{
+
 \theta
 \leftarrow
 \theta+\alpha\widehat g(\tau)
-}.
+.
 $$
 
 逐时间步写为：
@@ -840,62 +795,45 @@ $$
 \pi_\theta(A_t\mid S_t).
 $$
 
-#### 5.3 基线与方差降低
+</details>
 
-对于任何与动作无关的基线 $b(s)$：
+<details class="kt-derivation" id="rl-baseline">
+<summary>状态基线与梯度期望</summary>
 
-$$
-\mathbb E_{A\sim\pi_\theta}
-\left[
-\nabla_\theta\log\pi_\theta(A\mid s)b(s)
-\right]=0.
-$$
-
-因此可用 $G_t-b(S_t)$ 替换 $G_t$：
+固定状态 $s$，动作无关的基线满足：
 
 $$
-\widehat g_b(\tau)
-=\sum_{t=0}^{T-1}
-\gamma^t
-\left[G_t-b(S_t)\right]
-\nabla_\theta\log
-\pi_\theta(A_t\mid S_t).
+\begin{aligned}
+\mathbb E_{a\sim\pi_\theta}[b(s)\nabla_\theta\log\pi_\theta(a\mid s)]
+&=b(s)\sum_a\nabla_\theta\pi_\theta(a\mid s)\\
+&=b(s)\nabla_\theta 1=0.
+\end{aligned}
 $$
 
-常用选择为 $b(s)\approx v_{\pi_\theta}(s)$。基线不改变梯度期望，但可以显著降低方差。
+因此 $q_\pi(s,a)-b(s)$ 与 $q_\pi(s,a)$ 给出相同的精确策略梯度期望。使用 $b(s)=v_\pi(s)$ 时得到优势函数；其样本估计的误差仍需单独分析。
 
----
+</details>
 
-### 第六部分：Actor-Critic
+### 3.7 Actor-Critic
 
-Actor 负责更新策略，Critic 负责评估策略并为 Actor 提供低方差的学习信号。
-
-#### 6.1 优势函数与优势策略梯度
-
-优势函数定义为：
+Actor 参数化策略，Critic 估计价值。优势定义为 $A^\pi(s,a)=q_\pi(s,a)-v_\pi(s)$。状态价值准确时，一步 TD 残差满足：
 
 $$
-A_{\pi_\theta}(s,a)
-=q_{\pi_\theta}(s,a)
--v_{\pi_\theta}(s).
+\mathbb E[\delta_t\mid S_t=s,A_t=a]=A^\pi(s,a).
 $$
 
-取基线 $b(s)=v_{\pi_\theta}(s)$，得到优势策略梯度：
+因此可以用 TD 或多步优势估计 $\hat A_t$ 构造 Actor 损失，并用回报目标训练 Critic：
 
 $$
-\boxed{
-\nabla_\theta J(\theta)
-\propto
-\mathbb E_{\pi_\theta}
-\left[
-\nabla_\theta\log
-\pi_\theta(A_t\mid S_t)
-A_{\pi_\theta}(S_t,A_t)
-\right]
-}.
+L_\pi=-\hat{\mathbb E}_t[\log\pi_\theta(A_t\mid S_t)\operatorname{sg}(\hat A_t)],
+\qquad
+L_V=\frac12\hat{\mathbb E}_t[(V_\phi(S_t)-\operatorname{sg}(\hat R_t))^2].
 $$
 
-#### 6.2 Actor-Critic 更新
+$\operatorname{sg}$ 表示停止梯度。此处经验平均表示所选训练样本的局部损失；严格估计初始状态折扣目标时，需使用对应的 $\gamma^t$ 权重或折扣访问分布。PPO 在此基础上使用概率比率和截断目标。
+
+<details class="kt-derivation" id="rl-actor-critic-gradient">
+<summary>Actor-Critic 的梯度</summary>
 
 由动作价值的贝尔曼期望关系：
 
@@ -912,7 +850,7 @@ $$
 代入优势函数：
 
 $$
-\boxed{
+
 A_{\pi_\theta}(s,a)
 =\mathbb E_{\pi_\theta}
 \left[
@@ -921,7 +859,7 @@ R_{t+1}
 -v_{\pi_\theta}(S_t)
 \mid S_t=s,A_t=a
 \right]
-}.
+.
 $$
 
 使用 Critic $\hat v(S,w)$ 替代真实价值，定义：
@@ -932,13 +870,13 @@ y_t^v
 $$
 
 $$
-\boxed{
+
 \delta_t
 =y_t^v-\hat v(S_t,w_t)
 =R_{t+1}
 +\gamma\hat v(S_{t+1},w_t)
 -\hat v(S_t,w_t)
-}.
+.
 $$
 
 当 Critic 精确时，$\delta_t$ 是优势函数的条件无偏样本；Critic 尚未收敛时，它是优势函数的近似。
@@ -976,7 +914,7 @@ $$
 最终同步更新公式为：
 
 $$
-\boxed{
+
 \begin{aligned}
 \text{Actor:}\quad
 \theta_{t+1}
@@ -990,12 +928,15 @@ w_{t+1}
 +\alpha_w\delta_t
 \nabla_w\hat v(S_t,w_t).
 \end{aligned}
-}
+
 $$
 
 若严格按有限回合目标 $J(\theta)=\mathbb E[G_0]$ 构造逐时间步梯度，Actor 项还应乘以 $\gamma^t$；采用折扣状态访问分布记号时通常省略这一显式权重。
 
-#### 6.3 离轨策略与确定性策略梯度
+</details>
+
+<details class="kt-derivation" id="rl-deterministic-gradient">
+<summary>确定性策略梯度</summary>
 
 若行为策略为 $\beta$、目标策略为 $\pi_\theta$，重要性采样比率为：
 
@@ -1019,89 +960,72 @@ $$
 要求 $\pi_\theta(a\mid s)>0$ 的动作在行为策略下也满足 $\beta(a\mid s)>0$。
 严格修正一般离轨目标时还需考虑行为策略与目标策略的状态访问分布差异；上式是最基础的逐动作重要性采样形式。
 
-连续动作空间可使用确定性策略 $a=\mu_\theta(s)$。确定性策略梯度为：
+连续动作空间可使用确定性策略 $a=\mu_\theta(s)$。对初始状态折扣目标，满足可微条件时：
 
 $$
-\boxed{
 \nabla_\theta J(\theta)
-\propto
-\mathbb E_s
-\left[
-\left.
-\nabla_\theta\mu_\theta(s)
-\nabla_aQ^\mu(s,a)
-\right|_{a=\mu_\theta(s)}
-\right]
-}.
+=\frac{1}{1-\gamma}\mathbb E_{s\sim d_\gamma^\mu}
+\left[(\nabla_\theta\mu_\theta(s))^\top
+\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\right].
 $$
 
----
+$d_\gamma^\mu$ 是确定性策略的归一化折扣状态访问分布。DDPG 用经验池状态与近似 Critic 构造实际训练损失，其具体梯度见 [DDPG](../02_model-free-rl/04_ddpg.md)。
+
+</details>
 
 ## 4. 实现与应用
 
-> 待补充。
+### 4.1 数据与更新流程
+
+1. 指定状态、动作、奖励和回合边界，确定策略的可用信息。
+2. 用模型求期望或用交互收集样本，构造价值目标。
+3. 通过表格更新或函数回归估计价值。
+4. 从动作价值提取策略，或用优势加权的策略梯度更新 Actor。
+5. 在更新后的策略下继续采样，检查回报与估计误差。
+
+### 4.2 数值算例
+
+<details class="kt-derivation" id="rl-td-example">
+<summary>TD 目标与价值更新</summary>
+
+给定普通转移 $R_{t+1}=2,\gamma=0.9,V(S_t)=3,V(S_{t+1})=4$，有：
+
+$$
+Y_t=2+0.9\times4=5.6,\qquad\delta_t=5.6-3=2.6.
+$$
+
+学习率 $\alpha=0.1$ 时，表格价值更新为 $3+0.1\times2.6=3.26$。若该转移真正终止，则 $Y_t=2$，更新为 $2.9$。外部时间限制截断仍从实际末状态自举。
+
+</details>
 
 ## 5. 分析与总结
 
-> 待补充。
+### 5.1 方法关系
+
+| 方法族 | 更新依据 | 主要误差来源 |
+| --- | --- | --- |
+| 动态规划 | 模型期望与价值递推 | 模型与数值近似 |
+| 蒙特卡洛 | 完整采样回报 | 采样方差 |
+| 时序差分 | 奖励与后继估计 | 采样噪声和自举误差 |
+| 函数近似 | 样本回归目标 | 表示能力、优化与目标误差 |
+| 策略梯度 | 回报或优势加权的概率梯度 | 信号方差与估计偏差 |
+
+### 5.2 核心结论
+
+回报定义优化目标，贝尔曼方程分解长期评价，价值估计与策略改进形成学习循环。深度算法通过网络、数据复用方式和目标构造，将这些关系转化为具体的训练损失。
 
 ## 6. 关联与参考
 
 ### 6.1 相关知识
 
-* **先修知识**：[多层感知机](../../01_neural-network-architectures/01_mlp.md)——价值与策略参数化的网络载体；🚧 概率论与贝叶斯推断（撰写中）——期望、方差与条件分布
-* **进阶阅读**：[强化学习算法演进与梳理](./02_rl-algorithm-evolution.md)——算法族谱时间线；🚧 有模型与无模型强化学习（撰写中）——两条范式的导航；🚧 POMDP 与循环策略（撰写中）——部分可观测扩展
-* **工程实践**：[PPO 全流程走读与调参](../../03_engineering-practice/01_ppo-walkthrough.md)——本文公式在训练循环中的落点
+- [算法演进](./02_rl-algorithm-evolution.md)：价值学习与策略优化的方法关系。
+- [有模型与无模型强化学习](./03_model-free-vs-model-based.md)：环境模型在算法中的作用。
+- [POMDP 与循环策略](./04_pomdp-recurrent-policies.md)：历史信息与部分可观测决策。
+- [PPO](../02_model-free-rl/03_ppo.md) 与 [多价值网络](./05_multi-critic.md)：优势估计、损失和梯度的具体组织。
 
-### 6.2 参考资料
+### 6.2 参考文献
 
-1. Sutton & Barto，《Reinforcement Learning: An Introduction》（第 2 版，2018）——本手册的主线参考。正式链接待补充。
-2. Bellman，《Dynamic Programming》（Princeton University Press，1957）——动态规划与最优性原理。正式链接待补充。
-3. Williams, "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning"（Machine Learning，1992，REINFORCE）。正式链接待补充。
-
-### 附录：符号与算法
-
-#### 符号表
-
-| 符号 | 含义 |
-| :--- | :--- |
-| $\mathcal S,\mathcal A,\mathcal R$ | 状态、动作、奖励空间 |
-| $S_t,A_t,R_{t+1}$ | 时刻 $t$ 的状态、动作以及随后获得的奖励 |
-| $p(s'\mid s,a)$ | 状态转移概率 |
-| $p(r\mid s,a)$ | 奖励概率 |
-| $r(s,a)$ | 状态—动作对的期望即时奖励 |
-| $\pi(a\mid s)$ | 策略 |
-| $\beta(a\mid s)$ | 行为策略 |
-| $\gamma$ | 折扣因子 |
-| $G_t$ | 时刻 $t$ 之后的折扣回报 |
-| $v_\pi,q_\pi$ | 策略 $\pi$ 的真实状态价值与动作价值 |
-| $v_*,q_*$ | 最优状态价值与最优动作价值 |
-| $V,Q$ | 表格型价值估计 |
-| $\hat v,\hat q$ | 参数化价值估计 |
-| $\theta,w$ | 策略参数与价值参数 |
-| $\delta_t$ | 时序差分误差 |
-
-#### 核心更新目标
-
-| 方法 | 模型依赖 | 策略属性 | 核心目标 |
-| :--- | :---: | :---: | :--- |
-| 策略评估 | 是 | on-policy | $\sum_a\pi(a\mid s)[r(s,a)+\gamma\sum_{s'}p(s'\mid s,a)V(s')]$ |
-| 值迭代 | 是 | 最优控制 | $\max_a[r+\gamma\sum_{s'}p(s'\mid s,a)V(s')]$ |
-| MC | 否 | on-policy | $G_t$ |
-| TD(0) | 否 | on-policy | $R_{t+1}+\gamma V(S_{t+1})$ |
-| Sarsa | 否 | on-policy | $R_{t+1}+\gamma Q(S_{t+1},A_{t+1})$ |
-| Expected Sarsa | 否 | on-policy | $R_{t+1}+\gamma\sum_{a'}\pi(a'\mid S_{t+1})Q(S_{t+1},a')$ |
-| Q-Learning | 否 | off-policy | $R_{t+1}+\gamma\max_{a'}Q(S_{t+1},a')$ |
-| DQN | 否 | off-policy | 固定目标网络给出的贝尔曼最优目标 |
-| REINFORCE | 否 | on-policy | $G_t\nabla_\theta\log\pi_\theta(A_t\mid S_t)$ |
-| Actor-Critic | 否 | 通常 on-policy | $\delta_t\nabla_\theta\log\pi_\theta(A_t\mid S_t)$ |
-
-#### 复习提纲
-
-1. 用 MDP 描述状态、动作、奖励及两个条件概率分布。
-2. 用回报 $G_t$ 定义长期目标。
-3. 用贝尔曼方程连接当前价值和后继价值。
-4. 模型已知时使用动态规划；模型未知时使用 MC 或 TD。
-5. 状态空间过大时用参数化函数近似价值。
-6. 直接优化策略时使用策略梯度。
-7. Actor-Critic 用 Critic 的 TD 误差指导 Actor 更新。
+1. Sutton & Barto, [Reinforcement Learning: An Introduction](http://incompleteideas.net/book/the-book-2nd.html), 第二版，2018。
+2. Williams, [Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning](https://doi.org/10.1007/BF00992696), 1992。
+3. Silver et al., [Deterministic Policy Gradient Algorithms](https://proceedings.mlr.press/v32/silver14.html), 2014。
+4. Mnih et al., [Human-level Control through Deep Reinforcement Learning](https://www.nature.com/articles/nature14236), 2015。

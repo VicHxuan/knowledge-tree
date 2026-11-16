@@ -13,7 +13,7 @@ import { validateSite } from '../scripts/validate-site.mjs';
 import { readArticleModules } from '../scripts/lib/article-structure.mjs';
 
 const domains = [{ tsDir: '03_learning-based-planning', id: 'learning-based-planning' }];
-const source = 'tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md';
+const source = 'tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/03_ppo.md';
 const slug = 'learning-based-planning/rl-algorithms/model-free-rl/ppo';
 
 function fixture(t) {
@@ -38,7 +38,7 @@ test('nested paths preserve every section and source links preserve query, fragm
   assert.equal(deriveSlug(source, domains), slug);
   const map = new Map([[source.slice('tech_stack/'.length), { slug }]]);
   const dir = '03_learning-based-planning/02_rl-algorithms/02_model-free-rl';
-  assert.equal(rewriteSourceTarget('04_ppo.md?view=full#推导', dir, map), `/knowledge-tree/${slug}/?view=full#推导`);
+  assert.equal(rewriteSourceTarget('03_ppo.md?view=full#推导', dir, map), `/knowledge-tree/${slug}/?view=full#推导`);
   assert.equal(rewriteSourceTarget('https://example.org/a.md#x', dir, map), 'https://example.org/a.md#x');
   assert.equal(rewriteSourceTarget('#local', dir, map), '#local');
 });
@@ -46,7 +46,7 @@ test('nested paths preserve every section and source links preserve query, fragm
 test('source moves preserve URLs; explicit rename flattens historical aliases and updates graph edges', () => {
   const map = { entries: [{ source, slug, status: 'published' }] };
   const relations = { version: 3, edges: [{ from: slug, to: 'target', type: 'related' }] };
-  const moved = source.replace('04_ppo.md', '08_ppo.md');
+  const moved = source.replace('03_ppo.md', '08_ppo.md');
   const stable = renameRegistration(map, relations, { '/ancient': `/${slug}` }, { from: slug, source: moved }, domains);
   assert.equal(stable.entry.slug, slug);
   assert.equal(stable.entry.source, moved);
@@ -87,7 +87,7 @@ test('sync CLI checks statistics, ignores and public downloads without changing 
     put(root, name, readFileSync(new URL(`../${name}`, import.meta.url), 'utf8'));
   }
   put(root, 'src/data/domains.mjs', `export const DOMAINS = ${JSON.stringify(domains)};`);
-  put(root, source, '# PPO\n\n[Proof](04_ppo.md?view=full#proof)\n');
+  put(root, source, '# PPO\n\n[Proof](03_ppo.md?view=full#proof)\n');
   put(root, 'examples/ppo_core.py', '# public teaching example\n');
   put(root, 'src/data/content-map.json', JSON.stringify({ version: 2, entries: [{ source, slug, output: `src/content/docs/${slug}.md`, title: 'PPO', label: 'PPO', order: 1, status: 'published', description: 'PPO example' }] }));
   put(root, 'src/content/docs/rl-end-to-end/hand.md', '# Legacy hand-written page\n');

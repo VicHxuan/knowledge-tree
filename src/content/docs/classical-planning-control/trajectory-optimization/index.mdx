@@ -9,11 +9,11 @@ import TopicIndex from '../../../../components/TopicIndex.astro';
 
 ## 板块定位
 
-后端优化把路径变成时间参数化、动力学可行的可飞轨迹：从轨迹表示与微分平坦出发，经 Minimum Snap、贝塞尔 / B 样条、安全飞行走廊，到 Fast-Planner、EGO-Planner、GCOPTER 等主流框架。
+轨迹优化将路径与边界状态变为带时间的连续运动。参数化定义曲线，目标与约束决定优化问题，规划器将这些机制接入在线执行。
 
 ## 阅读主线
 
-轨迹表示 → 微分平坦与 Minimum Snap → 贝塞尔/B 样条与安全走廊 → 优化问题建模 → Fast-Planner、EGO-Planner、GCOPTER。比较框架时对齐变量、代价、约束与重规划接口。
+轨迹表示 → 微分平坦性与最小 Snap → Bézier 与 B 样条 → 安全走廊与优化建模 → MINCO 参数化 → Fast-Planner、EGO-Planner、GCOPTER → 重规划连续性。MINCO 的系数映射和梯度集中在参数化专文。
 
 ## 主题目录
 

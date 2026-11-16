@@ -52,7 +52,7 @@ npm run test:browser # 构建后验收折叠、深链接和学习路径
 
 ## 阅读与内容架构
 
-技术文章统一六模块，默认正文给出学习主线；推导、长算例和代码使用可展开细节。网页支持深链接自动展开、批量开合和完整打印。[PPO](tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md)是完整示范，可运行教学实现位于 [examples/ppo_core.py](examples/ppo_core.py)。
+技术文章统一六模块，默认正文给出学习主线；推导、长算例和代码使用可展开细节。网页支持深链接自动展开、批量开合和完整打印。[PPO](tech_stack/03_learning-based-planning/02_rl-algorithms/02_model-free-rl/03_ppo.md)是完整示范，可运行教学实现位于 [examples/ppo_core.py](examples/ppo_core.py)。
 
 分类页统一为板块定位、阅读主线、主题目录、下一步，目录和发布状态自动派生。学习路径保留教学顺序，以稳定步骤 ID 保存本地进度；项目页连接知识与实践证据。文章注册表负责展示元数据，关系文件只记录知识之间的边。
 

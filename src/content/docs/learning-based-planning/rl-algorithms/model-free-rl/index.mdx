@@ -1,6 +1,6 @@
 ---
 title: "Model-Free RL"
-description: "值方法与策略梯度两支：DQN、PG/GAE、TRPO、PPO、DDPG、TD3、SAC"
+description: "值方法与策略优化：DQN、TRPO、PPO、DDPG、TD3、SAC"
 sidebar:
   order: 2
 ---
@@ -9,11 +9,11 @@ import TopicIndex from '../../../../../components/TopicIndex.astro';
 
 ## 板块定位
 
-不依赖环境转移模型、直接从交互样本学习策略与值函数的算法主线，分值方法与策略梯度两支；每篇算法页标注其策略数据类型（On/Off-Policy）。
+直接从交互样本学习策略与价值函数，按网络结构、损失、训练信号与更新流程展开各算法。
 
 ## 阅读主线
 
-两条主线：**值方法：Q-learning → DQN**；**策略优化：PG/Actor-Critic/GAE → PPO**。TRPO 解释信赖域背景；连续控制的 off-policy 分支为 DDPG → TD3 与 SAC。阅读时对齐数据来源、价值目标和策略更新方式。
+以强化学习基础中的价值函数和策略梯度为起点：值方法进入 DQN，随机策略优化进入 TRPO 与 PPO，连续动作的离策略方法进入 DDPG、TD3 与 SAC。掌握 PPO 的单 Critic 闭环后，可继续阅读[多价值网络与价值估计](/knowledge-tree/learning-based-planning/rl-algorithms/rl-foundations/multi-critic/)。
 
 ## 主题目录
 

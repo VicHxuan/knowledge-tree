@@ -2,199 +2,163 @@
 
 ## 1. 概述
 
-这份总结基于提供的强化学习经典文献，按照时间线与算法演进逻辑进行梳理。全文去除了非必要的强调格式，并在每个算法的流程中统一了数学符号表达（如状态 $s_t$，动作 $a_t$，奖励 $r_t$，策略参数 $\theta$，价值参数 $\phi$，折扣因子 $\gamma$），以保证学术化与严谨性。以下第 1—9 节为 Model-Free 主线的核心节点；Model-Based RL 的并行演进脉络在第 10 节补充，两条范式的取舍见🚧《有模型与无模型强化学习》（撰写中）。
+现代强化学习沿价值估计、策略优化与模型利用三条路线发展。各方法通过改变学习对象、训练信号或数据使用方式，处理估计误差、策略更新稳定性与交互成本。
 
 ## 2. 基础与定义
 
-> 待补充。
+### 2.1 学习对象
+
+| 对象 | 参数化形式 | 主要训练信号 |
+| --- | --- | --- |
+| 状态或动作价值 | $V_\phi(s),Q_\phi(s,a)$ | 采样回报或自举目标 |
+| 策略 | $\pi_\theta(a\mid s),\mu_\theta(s)$ | 优势或动作价值梯度 |
+| 环境模型 | $\hat p_\omega(s',r\mid s,a)$ | 状态转移与奖励数据 |
+
+### 2.2 数据与目标
+
+同策略方法围绕当前采样策略构造更新；离策略方法允许复用其他行为策略的数据。模型方法还需说明数据如何训练预测模型，以及预测结果如何进入策略优化。
 
 ## 3. 核心原理
 
-### 1. REINFORCE（1992）
+### 3.1 蒙特卡洛策略梯度
 
-《Simple statistical gradient-following algorithms for connectionist reinforcement learning》
+REINFORCE 用采样回报加权动作对数概率的梯度。对有限回合的初始状态折扣目标：
 
-算法流程
+$$
+\hat g=\sum_{t=0}^{T-1}\gamma^tG_t\nabla_\theta\log\pi_\theta(a_t\mid s_t).
+$$
 
-1. 智能体使用参数化策略 $\pi_\theta$ 与环境交互，采样获得一条完整的轨迹 $\tau = (s_0, a_0, r_0, \dots, s_T, a_T, r_T)$。
-2. 对于轨迹中的每一个时间步 $t$，计算从当前时刻到回合结束的累积折扣回报 $R_t = \sum_{k=t}^T \gamma^{k-t} r_k$。
-3. 利用对数导数技巧（Log-derivative trick）计算目标函数 $J(\theta)$ 关于策略参数的梯度估计值：
-   $\nabla_\theta J(\theta) = \frac{1}{T} \sum_{t=0}^T R_t \nabla_\theta \ln \pi_\theta(a_t|s_t)$
-4. 沿着梯度上升的方向更新策略网络参数：$\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta)$。
+Williams 在 1992 年给出了这一类随机梯度算法。状态基线和价值估计随后为降低梯度方差提供了方法。
 
-独特工作
-首次将对数导数技巧（亦称分数函数估计器）引入神经网络模型，证明了在不依赖环境动态转移模型的前提下，可通过经验采样的累积回报实现对策略梯度的无偏估计。
+### 3.2 策略梯度与 Actor-Critic
 
-### 2. 策略梯度定理（2000）
+策略梯度定理将优化方向写成策略对数梯度与动作价值的期望。Sutton 等在 NIPS 1999 的工作分析了函数近似下的兼容性条件。Actor-Critic 将策略更新与价值评估结合，用 TD 或多步估计提供训练信号。
 
-《Policy Gradient Methods for Reinforcement Learning with Function Approximation》
+<details class="kt-derivation" id="evolution-compatible-critic">
+<summary>兼容函数近似</summary>
 
-算法流程
+兼容近似器采用与策略得分函数一致的特征，例如：
 
-1. 确立策略梯度定理，推导出策略目标函数梯度的一般形式：
-   $\nabla_\theta J(\theta) = \mathbb{E}_{s \sim \rho^\pi, a \sim \pi_\theta} [\nabla_\theta \ln \pi_\theta(a|s) Q^\pi(s, a)]$
-2. 引入参数化的价值函数逼近器 $Q_\phi(s, a) \approx Q^\pi(s, a)$ 替代未知的真实状态-动作价值。
-3. 利用时序差分（TD）误差更新价值网络参数 $\phi$，最小化评估误差。
-4. 在满足兼容性条件 $\nabla_\phi Q_\phi(s, a) = \nabla_\theta \ln \pi_\theta(a|s)$ 的前提下，使用近似价值函数更新策略参数：
-   $\theta \leftarrow \theta + \alpha \nabla_\theta \ln \pi_\theta(a|s) Q_\phi(s, a)$
+$$
+f_w(s,a)=w^\top\nabla_\theta\log\pi_\theta(a\mid s).
+$$
 
-独特工作
-奠定了现代 Actor-Critic 框架的数学基础。给出了严格的数学证明：当价值函数逼近器满足兼容性条件时，用其代替真实回报进行策略更新不会引入额外的偏差。
+在相应访问分布下满足加权平方误差最优条件时，正交残差使该近似器可代入策略梯度。该结论同时依赖特征形式和拟合条件；一般神经网络 Critic 的价值误差仍会影响梯度估计。
 
-### 3. DQN（2015）
+</details>
 
-《Human-level control through deep reinforcement learning》
+### 3.3 深度价值学习
 
-算法流程
+DQN 的 2013 年预印本与 2015 年 Nature 论文将深度动作价值网络用于像素控制。经验回放复用数据，目标网络降低自举目标的快速漂移。
 
-1. 智能体使用 $\epsilon$-贪婪策略基于当前动作价值网络 $Q_\phi(s, a)$ 与环境交互，将状态转移元组 $(s_t, a_t, r_t, s_{t+1}, d_t)$ 存入经验回放池 $\mathcal{D}$。
-2. 在训练阶段，从 $\mathcal{D}$ 中随机均匀采样小批量（Mini-batch）数据。
-3. 引入独立的目标网络 $Q_{\phi'}$ 计算时序差分目标：
-   $y_t = r_t + \gamma (1 - d_t) \max_{a'} Q_{\phi'}(s_{t+1}, a')$
-4. 最小化当前网络预测值与目标值的均方误差以更新参数 $\phi$：
-   $L(\phi) = \mathbb{E}_{(s_t, a_t, r_t, s_{t+1}) \sim \mathcal{D}} [(y_t - Q_\phi(s_t, a_t))^2]$
-5. 每隔固定的步数，将当前网络参数硬同步至目标网络：$\phi' \leftarrow \phi$。
+Rainbow 在 2017 年预印本中组合 Double DQN、优先回放、Dueling、多步目标、回报分布建模和参数化噪声，随后发表于 AAAI 2018。回报分布建模的对象是回报随机变量的分布。
 
-独特工作
-首次成功将深度神经网络与 Q-learning 结合。通过引入经验回放机制打破了序列数据的时序相关性，并利用目标网络截断了时序差分自举（Bootstrapping）过程中的误差传播，显著提升了训练稳定性。
+<details class="kt-derivation" id="evolution-rainbow">
+<summary>价值学习的改进机制</summary>
 
-### 4. TRPO（2015）
+| 机制 | 改变的位置 |
+| --- | --- |
+| Double DQN | 下一动作选择与价值评估的网络 |
+| 优先回放 | 样本抽取概率及重要性权重 |
+| Dueling | 状态价值与动作优势的表示 |
+| 多步目标 | 实际奖励与自举的时间范围 |
+| 回报分布建模 | 从期望标量扩展到回报分布 |
+| Noisy Networks | 参数化探索噪声 |
 
-《Trust Region Policy Optimization》
+Rainbow 用消融实验分析组合效果；各组件的收益取决于任务、数据与其他组件的配合。
 
-算法流程
+</details>
 
-1. 收集状态转移轨迹，并基于旧策略 $\pi_{\theta_{old}}$ 计算广义优势估计 $A_{\theta_{old}}(s, a)$。
-2. 构造基于重要性采样的局部替代目标函数，并引入平均 KL 散度作为硬约束：
-   $\max_\theta L(\theta) = \mathbb{E} \left[ \frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} A_{\theta_{old}}(s, a) \right]$
-   $\text{s.t.} \quad \mathbb{E} \left[ D_{KL}(\pi_{\theta_{old}}(\cdot|s) | \pi_\theta(\cdot|s)) \right] \le \delta$
-3. 对目标函数进行一阶泰勒展开，对 KL 约束进行二阶泰勒近似。令 $g$ 为目标梯度，$H$ 为 KL 散度的海森矩阵（费雪信息矩阵）。
-4. 由于直接求逆 $H$ 计算开销过大，使用共轭梯度法（Conjugate Gradient）近似求解自然梯度搜索方向 $x \approx H^{-1}g$。
-5. 计算满足 KL 约束的最大理论步长 $\beta = \sqrt{2\delta / (x^T H x)}$。
-6. 使用回溯线搜索（Backtracking Line Search）在此方向上寻找实际更新步长，确保目标函数提升且满足 KL 约束，最终更新 $\theta$。
+### 3.4 信赖域与策略截断
 
-独特工作
-提出了信任区域优化框架，从理论上推导并保证了策略更新的单调递增性，解决了传统策略梯度算法中步长选择对收敛性极其敏感的难题。
+TRPO 在 2015 年将局部策略改进与 KL 约束结合，通过自然梯度方向和线搜索选择更新。理论改进界在其假设下成立，实用算法使用平均 KL 与有限样本近似。
 
-### 5. A3C（2016）
+PPO 在 2017 年给出便于一阶优化的替代目标，其中 PPO-Clip 为：
 
-《Asynchronous Methods for Deep Reinforcement Learning》
+$$
+L^{\rm CLIP}=\hat{\mathbb E}_t\left[\min\left(\rho_t\hat A_t,
+\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)\hat A_t\right)\right].
+$$
 
-算法流程
+$\rho_t$ 为新旧策略对同一动作的概率比率。截断使部分样本的有利更新进入平坦区，实际策略变化仍需由 KL 等量诊断。
 
-1. 初始化全局策略网络参数 $\theta$ 和全局价值网络参数 $\phi$。开启多个并行的计算线程（Worker），每个 Worker 持有独立的网络副本 $\theta', \phi'$。
-2. Worker 在各自独立的环境实例中执行 $n$ 步交互，计算 $n$ 步截断累积回报：
-   $R_t = \sum_{i=0}^{n-1} \gamma^i r_{t+i} + \gamma^n V_{\phi'}(s_{t+n})$
-3. 计算策略梯度（含熵正则化项）和价值函数梯度的累积量：
-   $d\theta = \sum \left[ \nabla_{\theta'} \ln \pi_{\theta'}(a_t|s_t) (R_t - V_{\phi'}(s_t)) + \beta \nabla_{\theta'} H(\pi_{\theta'}) \right]$
-   $d\phi = \sum \nabla_{\phi'} (R_t - V_{\phi'}(s_t))^2$
-4. Worker 异步地将本地梯度 $d\theta, d\phi$ 应用于全局网络参数 $\theta, \phi$ 的更新中。
-5. Worker 将全局最新参数同步至本地副本，进入下一轮采样。
+### 3.5 并行采样与优势估计
 
-独特工作
-通过多线程异步并发与环境交互，自然地打破了训练数据的时序相关性，在舍弃经验回放池（降低内存开销）的前提下实现了同策略（On-policy）算法的稳定训练，并显著提升了训练效率。
+A3C 在 2016 年使用多个环境工作线程异步更新 Actor 与 Critic，结合多步回报和熵奖励。各工作线程的梯度基于其本地策略版本，异步更新可能产生参数滞后。
 
-### 6. PPO（2017）
+GAE 通过加权 TD 残差调节优势估计的采样范围。并行采样决定数据吞吐，优势估计决定策略梯度信号，两种机制可分别选择。
 
-《Proximal Policy Optimization Algorithms》
+### 3.6 连续动作与最大熵学习
 
-算法流程
+确定性策略梯度在 2014 年给出沿动作价值对动作求导的策略更新。DDPG 将其与深度网络、回放及目标网络结合；TD3 在 2018 年通过双 Q、目标动作平滑和延迟更新控制近似误差。
 
-1. 智能体在环境中收集交互轨迹，计算广义优势估计（GAE）$\hat{A}_t$。
-2. 计算新旧策略的概率比率 $r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$。
-3. 构造截断的替代目标函数，限制策略更新幅度：
-   $L^{CLIP}(\theta) = \mathbb{E} \left[ \min \left( r_t(\theta)\hat{A}_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon)\hat{A}_t \right) \right]$
-4. 结合价值函数的均方误差损失 $L^{VF}(\phi)$ 和策略熵奖励 $S[\pi_\theta]$，构成总目标函数。
-5. 舍弃复杂的二阶共轭梯度运算，直接使用 Adam 等一阶优化器，在同一批数据上进行多个周期的随机梯度下降更新 $\theta$ 和 $\phi$。
+SAC 在 2018 年发展最大熵离策略 Actor-Critic。常用现代实现采用随机 Actor、双 Q 和自动温度调节，Actor 同时优化动作价值与熵。
 
-独特工作
-提出了截断替代目标函数，用极为简化的截断（Clip）操作代替了 TRPO 中的 KL 散度二阶约束运算。在保持信任区域优化稳定性的同时，实现了计算效率的量级提升。
+### 3.7 策略扰动
 
-### 7. Rainbow（2017）
+RPO 的 2022 年预印本研究在 PPO 中引入策略分布扰动。其参考实现于更新阶段评估已有动作时扰动高斯均值，再计算策略概率和损失。扰动位置直接影响概率比率的含义。[参考实现说明](https://cleanrl.vercel.app/rl-algorithms/rpo/)
 
-《Rainbow: Combining Improvements in Deep Reinforcement Learning》
+<details class="kt-derivation" id="evolution-rpo">
+<summary>更新阶段的均值扰动</summary>
 
-算法流程
+对当前均值 $\mu_\theta(s)$ 加入均匀扰动：
 
-1. 结合分布式强化学习（Distributional RL），将价值网络输出从标量期望改为回报的概率分布预测 $Z_\phi(s, a)$。
-2. 结合 Dueling 架构，将网络特征提取分为状态价值流和优势函数流，随后聚合。
-3. 结合 Noisy Nets，将线性层权重加上参数化噪声 $y = (b + Wx) + (b_{noise} \odot \epsilon_b + W_{noise} \odot \epsilon_W x)$，取代启发式的 $\epsilon$-贪婪探索。
-4. 在采样阶段，基于优先经验回放（PER）机制，根据当前预测分布与目标分布的 KL 散度设定采样权重。
-5. 计算基于多步（Multi-step）和双网络（Double DQN）交叉验证的目标分布。
-6. 计算预测分布与目标分布的交叉熵损失以更新参数 $\phi$。
+$$
+z\sim\mathcal U(-\alpha,\alpha),\qquad
+\widetilde\mu_\theta(s)=\mu_\theta(s)+z.
+$$
 
-独特工作
-提供了严谨的消融实验证明，证实了 DQN 提出以来的六种主流改进（Double, Prioritized, Dueling, Multi-step, Distributional, Noisy）在数学机制与作用面上的正交性与互补性。其融合版本代表了离散动作空间中基于价值方法的性能巅峰。
+更新时用扰动后的分布评估采样动作，旧动作概率仍来自采样策略。这改变了策略替代目标的估计过程，扰动范围是新增超参数。其经验效果需结合任务和预算评价。
 
-### 8. SAC（2018）
+</details>
 
-《Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning》
+### 3.8 模型学习与规划
 
-算法流程
+| 方法 | 发表节点 | 模型用途 |
+| --- | --- | --- |
+| Dyna | 1990—1991 | 真实经验与模型生成经验共同更新价值 |
+| PILCO | ICML 2011 | 高斯过程动力学与不确定性传播 |
+| PETS | NeurIPS 2018 | 概率模型集成与轨迹采样规划 |
+| PlaNet | ICML 2019 | 潜在动力学与在线规划 |
+| MBPO | NeurIPS 2019 | 短模型轨迹训练离策略学习器 |
+| MuZero | 预印本 2019，Nature 2020 | 价值相关的潜在模型与树搜索 |
+| Dreamer | ICLR 2020 起 | 潜在想象轨迹上的行为学习 |
 
-1. 确立最大熵强化学习目标，最大化期望回报与策略熵的加权和：
-   $J(\pi) = \mathbb{E}_{\tau \sim \pi} \left[ \sum_{t=0}^T \gamma^t (r_t + \alpha \mathcal{H}(\pi(\cdot|s_t))) \right]$
-2. 策略网络采用重参数化技巧（Reparameterization Trick）输出动作 $a_t = f_\theta(\epsilon_t; s_t)$ 以保证梯度可微。将交互数据存入回放池。
-3. 从回放池采样，计算带有熵正则化项的软时序差分目标：
-   $y_t = r_t + \gamma (1 - d_t) \left( \min_{i=1,2} Q_{\phi'_i}(s_{t+1}, a_{t+1}) - \alpha \ln \pi_\theta(a_{t+1}|s_{t+1}) \right)$
-4. 最小化均方误差以更新两个独立的 Critic 网络参数 $\phi_1, \phi_2$（缓解高估偏差）。
-5. 最小化以下目标以更新 Actor 网络参数 $\theta$（最大化软价值）：
-   $J_\pi(\theta) = \mathbb{E}_{s_t, \epsilon_t} \left[ \alpha \ln \pi_\theta(f_\theta(\epsilon_t; s_t)|s_t) - \min_{i=1,2} Q_{\phi_i}(s_t, f_\theta(\epsilon_t; s_t)) \right]$
-6. 通过最小化 $J(\alpha) = \mathbb{E} [-\alpha \ln \pi_\theta(a|s) - \alpha \bar{\mathcal{H}}]$ 自动调整温度系数 $\alpha$。
-
-独特工作
-提出了离策略（Off-policy）最大熵 Actor-Critic 框架，将重参数化与自动熵调节机制结合。在连续控制任务中，既达到了极高的样本利用效率，又有效避免了确定性策略梯度容易陷入局部最优的问题，展现出对超参数的强鲁棒性。
-
-### 9. RPO（2022）
-
-《Robust Policy Optimization in Deep Reinforcement Learning》
-
-算法流程
-
-1. 继承 PPO 算法的整体架构，使用策略网络输出连续分布的均值 $\mu_\theta(s_t)$ 和标准差 $\sigma_\theta(s_t)$。
-2. 在动作采样阶段，从预设的均匀分布 $U(-\alpha, \alpha)$ 中采样一个扰动向量 $z_t$。
-3. 将策略网络输出的均值进行扰动：$\mu' = \mu_\theta(s_t) + z_t$。
-4. 基于扰动后的新高斯分布 $\mathcal{N}(\mu', \sigma_\theta(s_t)^2)$ 进行实际的动作采样 $a_t$ 并与环境交互。
-5. 利用收集到的轨迹计算广义优势估计（GAE），并严格按照 PPO 的截断替代目标函数 $L^{CLIP}(\theta)$ 进行参数的随机梯度下降更新。
-
-独特工作
-指出了 PPO 算法在连续控制中容易发生方差衰减（Variance Decay）与策略过早收敛的问题。引入了一种与状态无关的均匀扰动机制（Uniform Perturbation），在不增加数学复杂度的情况下，强制维持了探索过程中的策略随机性，提升了算法的渐进性能与鲁棒性。
-
-### 10. 基于模型的强化学习（1990—2023）
-
-以上节点以 Model-Free 为主。与它并行的 Model-Based 路线围绕「样本效率」展开，关键节点如下（区分首次公开与正式发表年份）：
-
-1. **Dyna（ICML 1990；SIGART Bulletin 1991）**——Sutton 提出学习、规划一体的 Dyna 架构：模型生成的虚拟经验与真实经验共同更新值函数，是「数据生成式」MBRL 的原型。
-2. **PILCO（ICML 2011）**——Deisenroth & Rasmussen 用高斯过程动力学模型做解析的不确定性传播，把连续控制的样本需求压到数十条轨迹量级。
-3. **PETS（NeurIPS 2018）**——Chua et al. 以「概率神经网络 + 系综」替代高斯过程，配合轨迹采样（TS）与 CEM 滚动时域规划，确立现代规划式 MBRL 的形态。
-4. **PlaNet（ICML 2019）**——Hafner et al. 提出循环状态空间模型（RSSM），世界模型进入潜在空间，直接从像素做 CEM 规划。
-5. **MBPO（NeurIPS 2019）**——Janner et al. 用短时域模型 rollout 生成合成经验训练 SAC，「模型造数据」路线在深度函数逼近下的实用化。
-6. **MuZero（arXiv 2019 年 11 月首次公开；ICLR 2020 正式发表）**——Schrittwieser et al. 学习不重建观测的潜在动力学并以 MCTS 规划，在不知环境规则的前提下达到 AlphaZero 级表现。
-7. **Dreamer 系列（ICLR 2020；V2 ICLR 2021；V3 arXiv 2023、Nature 2025）**——Hafner 等把「潜在世界模型 + 想象中训练 Actor-Critic」发展为持续演进的产品线；V3 以一套固定超参数跨任务取得 Minecraft 采钻石级成果。
-
-两条主线自 2019 年前后开始互相借力（系综不确定性、短 rollout、终端价值截断等设计通用化），但「模型造数据 / 模型内搜索 / 模型传梯度」的用法分野保持至今，详见 Model-Based RL 分支各专项文章。
+模型预测、价值自举和策略优化可共同组成一个系统，具体训练路径见[有模型与无模型强化学习](./03_model-free-vs-model-based.md)。
 
 ## 4. 实现与应用
 
-> 待补充。
+### 4.1 阅读路径
+
+先用[基础手册](./01_reinforcement-learning-foundations.md)统一回报和梯度，再按学习对象进入：
+
+- 离散动作价值学习：[DQN](../02_model-free-rl/01_dqn.md)。
+- 采样策略优化：[TRPO](../02_model-free-rl/02_trpo.md) → [PPO](../02_model-free-rl/03_ppo.md)。
+- 连续动作价值梯度：[DDPG](../02_model-free-rl/04_ddpg.md) → [TD3](../02_model-free-rl/05_td3.md)，再对照 [SAC](../02_model-free-rl/06_sac.md)。
+- 估计与结构扩展：[多价值网络](./05_multi-critic.md)、[循环策略](./04_pomdp-recurrent-policies.md)。
+
+### 4.2 方法对照
+
+比较两个算法时，分别记录网络输出、采样策略、训练数据、目标构造、梯度路径和参数更新时间。这样可以定位差异来自目标、估计器还是优化流程。
 
 ## 5. 分析与总结
 
-从 REINFORCE 到 RPO 的主线是「策略梯度的稳定化」：对数导数技巧确立无偏梯度估计（1992），策略梯度定理给出 Actor-Critic 的相容性基础（1999/2000），DQN 一支在离散动作上深耕值方法（2015—2017），TRPO/PPO 把步长控制从二阶约束简化为截断目标（2015/2017），SAC 用最大熵驯服探索与局部最优（2018），RPO 回头修补 PPO 的方差衰减问题（2022）。与之并行，Model-Based 主线（Dyna → PETS/MBPO → MuZero/Dreamer，见第 10 节）围绕样本效率独立演进。建议以本篇定位各算法的历史坐标与动机链条，再进入对应专项文章阅读。
+价值学习围绕目标估计与数据复用展开，策略优化围绕梯度信号与更新幅度展开，模型方法围绕预测计算与真实交互的配合展开。算法的历史关系提供理解入口，具体适用性由任务与实现条件决定。
 
 ## 6. 关联与参考
 
 ### 6.1 相关知识
 
-- **先修知识**：[强化学习核心公式手册](./01_reinforcement-learning-foundations.md)——时间线中各算法的数学基础
-- **范式导航**：🚧 有模型与无模型强化学习（撰写中）——两条主线的对比与选型
-- **进阶阅读**：🚧 值函数方法与 DQN（撰写中）、[PPO 算法完整解析与代码实现](../02_model-free-rl/04_ppo.md)、[SAC 算法完整解析与代码实现](../02_model-free-rl/07_sac.md)、🚧 Dyna（撰写中）、🚧 Dreamer（撰写中）——时间线节点对应的专项文章
+[基础手册](./01_reinforcement-learning-foundations.md)、[模型方法分类](./03_model-free-vs-model-based.md)与各算法专项文章共同构成理论阅读路径。
 
-### 6.2 参考资料
+### 6.2 参考文献
 
-1. Williams, "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning"（Machine Learning，1992）。正式链接待补充。
-2. Sutton et al., "Policy Gradient Methods for Reinforcement Learning with Function Approximation"（NeurIPS 1999 年 12 月会议公开；论文集 2000 年出版）。正式链接待补充。
-3. Mnih et al., "Human-level Control through Deep Reinforcement Learning"（Nature 2015）。正式链接待补充。
-4. Schulman et al., "Trust Region Policy Optimization"（ICML 2015）。正式链接待补充。
-5. Schulman et al., "Proximal Policy Optimization Algorithms"（arXiv 2017）：[arxiv.org/abs/1707.06347](https://arxiv.org/abs/1707.06347)
-6. Haarnoja et al., "Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor"（ICML 2018）。正式链接待补充。
+1. Williams, [REINFORCE](https://doi.org/10.1007/BF00992696), 1992。
+2. Sutton et al., [Policy Gradient Methods with Function Approximation](https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html), 1999。
+3. Mnih et al., [DQN](https://www.nature.com/articles/nature14236), 2015；[A3C](https://proceedings.mlr.press/v48/mniha16.html), 2016。
+4. Schulman et al., [TRPO](https://proceedings.mlr.press/v37/schulman15.html), 2015；[PPO](https://arxiv.org/abs/1707.06347), 2017。
+5. Hessel et al., [Rainbow](https://arxiv.org/abs/1710.02298), 2017。
+6. Haarnoja et al., [SAC](https://proceedings.mlr.press/v80/haarnoja18b.html), 2018。
+7. Rahman & Xue, [Robust Policy Optimization](https://arxiv.org/abs/2212.07536), 2022。
+8. Schrittwieser et al., [MuZero](https://www.nature.com/articles/s41586-020-03051-4), 2020。
+9. Hafner et al., [Dreamer](https://arxiv.org/abs/1912.01603), 2019。

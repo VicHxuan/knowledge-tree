@@ -1,52 +1,65 @@
-# 1. 多层感知机
+# 多层感知机
 
 ## 1. 概述
 
-> 待补充。
+多层感知机通过仿射变换与非线性激活的复合学习向量之间的映射。网络输出由任务损失监督，损失梯度逐层回传，使隐藏表示和输出映射共同适应目标。
 
 ## 2. 基础与定义
 
-### 1.1 数学定义
+### 2.1 网络结构
 
-多层感知机（MLP）是最基础的前馈人工神经网络。给定输入特征向量 $x \in \mathbb{R}^{d_{in}}$，MLP 通过多个全连接层与非线性激活函数的交替组合，构造出从输入空间到输出空间 $\mathbb{R}^{d_{out}}$ 的复杂非线性映射 $F(x)$。
+输入 $h^{(0)}=x$，第 $l$ 层为
 
-对于一个包含 $L$ 层的 MLP，其数学定义由层级递推公式构造：
+$$
+z^{(l)}=W^{(l)}h^{(l-1)}+b^{(l)},\qquad
+h^{(l)}=\sigma_l(z^{(l)}).
+$$
 
-$$h^{(0)} = x$$
-$$z^{(l)} = W^{(l)} h^{(l-1)} + b^{(l)}, \quad l \in [1, L]$$
-$$h^{(l)} = \sigma^{(l)}(z^{(l)})$$
+$W^{(l)}\in\mathbb R^{d_l\times d_{l-1}}$，$b^{(l)}\in\mathbb R^{d_l}$。输出层形式由任务决定。
 
-其中：
+### 2.2 学习目标
 
-* $h^{(l-1)} \in \mathbb{R}^{d_{l-1}}$ 为第 $l-1$ 层的输出（即第 $l$ 层的输入）。
-* $W^{(l)} \in \mathbb{R}^{d_l \times d_{l-1}}$ 为第 $l$ 层的权重矩阵。
-* $b^{(l)} \in \mathbb{R}^{d_l}$ 为第 $l$ 层的偏置向量。
-* $\sigma^{(l)}(\cdot)$ 为逐元素作用的非线性激活函数。
-* $h^{(L)}$ 即为网络最终的输出预测值 $y$。
+回归可取 $\ell=\tfrac12\|\hat y-y\|^2$；分类以输出 logits $z$ 构造交叉熵 $\ell=-\log\operatorname{softmax}(z)_y$。训练目标为样本损失的平均值与可选正则项。
 
 ## 3. 核心原理
 
-### 1.2 网络结构
+### 3.1 非线性表示
 
-1. **全连接特性**
-   第 $l$ 层的任意神经元均与第 $l-1$ 层的全体神经元相连。矩阵乘法 $W^{(l)} h^{(l-1)}$ 在几何上等价于对特征空间进行仿射变换。
+隐藏层激活使网络能够表示非线性关系。ReLU 为 $\max(0,z)$，其梯度在正半轴为 1、负半轴为 0；Sigmoid 常用于二分类概率输出。层宽、深度和激活共同决定表示能力。
 
-2. **非线性激活**
-   若无激活函数 $\sigma$，多层矩阵乘法 $W^{(L)} \dots W^{(1)} x$ 可坍缩为单层线性变换 $W_{eq} x$，网络将丧失非线性表达能力。常用的激活函数包括：
+### 3.2 反向传播
 
-   * **ReLU**：$\sigma(z) = \max(0, z)$，计算高效，缓解梯度消失。
-   * **Sigmoid**：$\sigma(z) = \frac{1}{1 + e^{-z}}$，常用于输出层二分类概率映射。
+令 $\delta^{(l)}=\partial\ell/\partial z^{(l)}$，则
 
-3. **万能逼近定理**
-   只要隐藏层神经元数量足够多，包含至少一个带有非线性激活函数隐藏层的 MLP，能够以任意精度逼近闭区间上的任意连续函数。
+$$
+\nabla_{W^{(l)}}\ell=\delta^{(l)}(h^{(l-1)})^\top,
+\quad \nabla_{b^{(l)}}\ell=\delta^{(l)},
+$$
+
+$$
+\delta^{(l-1)}=((W^{(l)})^\top\delta^{(l)})\odot\sigma'_{l-1}(z^{(l-1)}).
+$$
+
+梯度由后续损失、层权重与激活导数共同决定。
+<details class="kt-derivation" id="mlp-chain-rule">
+<summary>仿射层梯度推导</summary>
+
+对 $z=Wh+b$ 微分，$dz=(dW)h+Wdh+db$。由 $d\ell=\delta^\top dz$，比较各项得到 $\nabla_W\ell=\delta h^\top$、$\nabla_h\ell=W^\top\delta$ 和 $\nabla_b\ell=\delta$。批量损失对各样本的这些贡献求平均。
+
+</details>
+
+### 3.3 初始化与尺度
+
+输入归一化和与层宽匹配的权重初始化有助于控制前向激活与反向梯度尺度。适当激活与足够宽度下，MLP 可逼近紧集上的连续函数；训练能否得到有效近似还取决于数据、优化和模型规模。
 
 ## 4. 实现与应用
 
-### 1.3 代码实现
+训练依次执行批量输入、前向预测、损失计算、反向传播和参数更新。检查输入输出维数、损失下降与梯度有限性。
 
-以下以标准三层架构（1个输入层、1个隐藏层、1个输出层）为例，实现完整的前向传播与参数初始化。隐藏层使用 ReLU 激活函数，输出层无激活函数。
+以下示例均为一个隐藏层。PyTorch 模块支持自动求导；C++ 示例展示初始化与前向计算，使用正维数和匹配长度的输入。
 
-#### 1.3.1 PyTorch 实现
+<details class="kt-derivation" id="implementation-0">
+<summary>PyTorch 前向网络</summary>
 
 ```python
 import torch
@@ -70,7 +83,10 @@ class MLP(nn.Module):
 # out = model(torch.randn(32, 10)) # 32为Batch Size
 ```
 
-#### 1.3.2 C++ 标准库实现
+</details>
+
+<details class="kt-derivation" id="implementation-1">
+<summary>C++ 前向计算</summary>
 
 ```cpp
 #include <vector>
@@ -125,9 +141,10 @@ public:
 };
 ```
 
-#### 1.3.3 C++ Eigen 实现
+</details>
 
-利用 Eigen 矩阵运算库，可大幅优化线性代数计算效率并精简代码。
+<details class="kt-derivation" id="implementation-2">
+<summary>Eigen 前向计算</summary>
 
 ```cpp
 #include <Eigen/Dense>
@@ -143,7 +160,7 @@ public:
         // 使用均匀分布随机初始化矩阵，并置零偏置
         W1 = Eigen::MatrixXf::Random(hidden_dim, in_dim);
         b1 = Eigen::VectorXf::Zero(hidden_dim);
-        
+
         W2 = Eigen::MatrixXf::Random(out_dim, hidden_dim);
         b2 = Eigen::VectorXf::Zero(out_dim);
     }
@@ -151,18 +168,22 @@ public:
     Eigen::VectorXf forward(const Eigen::VectorXf& x) const {
         // 第一层：线性变换 + 逐元素 ReLU 激活
         Eigen::VectorXf h = W1 * x + b1;
-        h = h.cwiseMax(0.0f); 
-        
+        h = h.cwiseMax(0.0f);
+
         // 第二层：线性变换输出
         return W2 * h + b2;
     }
 };
 ```
 
+</details>
+
 ## 5. 分析与总结
 
-> 待补充。
+MLP 适合结构化向量、策略头和价值头。空间与时间结构可分别由卷积、循环网络或注意力表达，再由 MLP 完成任务映射。
 
 ## 6. 关联与参考
 
-> 待补充。
+- [Goodfellow 等：Deep Learning](https://www.deeplearningbook.org/)
+- [梯度、雅可比与 Hessian](../../01_math-physic-base/02_calculus-optimization/01_gradient-jacobian-hessian.md)
+- [编码器与解码器](04_encoder-decoder.md)

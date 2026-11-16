@@ -1,6 +1,6 @@
 # 技术文章写作规范与模板
 
-本规范用于 `tech_stack/` 六大领域下的全部技术文章，包含已发布文章和草稿。规范本身不注册为教程。以 [PPO](03_learning-based-planning/02_rl-algorithms/02_model-free-rl/04_ppo.md) 为主线与折叠细节的示范。
+本规范用于 `tech_stack/` 六大领域下的全部技术文章，包含已发布文章和草稿。规范本身不注册为教程。以 [PPO](03_learning-based-planning/02_rl-algorithms/02_model-free-rl/03_ppo.md) 为主线与折叠细节的示范。
 
 ## 写作目标
 

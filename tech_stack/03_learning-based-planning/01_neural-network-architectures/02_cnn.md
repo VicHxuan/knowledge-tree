@@ -1,48 +1,71 @@
-# 1. 卷积神经网络
+# 卷积神经网络
 
 ## 1. 概述
 
-> 待补充。
+卷积神经网络通过局部连接与空间共享权重提取视觉特征。任务损失将不同位置的梯度汇总到同一卷积核，使模型学习可在多个位置复用的局部模式。
 
 ## 2. 基础与定义
 
-### 1.1 数学定义
+### 2.1 张量与卷积核
 
-给定三维输入特征张量 $X \in \mathbb{R}^{H_{in} \times W_{in} \times C_{in}}$，卷积层通过滑动由 $C_{out}$ 个滤波器组成的卷积核组 $W \in \mathbb{R}^{K \times K \times C_{in} \times C_{out}}$，并加上偏置 $b \in \mathbb{R}^{C_{out}}$，生成输出特征张量 $Y \in \mathbb{R}^{H_{out} \times W_{out} \times C_{out}}$。
+单样本输入为 $X\in\mathbb R^{C_{\rm in}\times H\times W}$，卷积核为 $W\in\mathbb R^{C_{\rm out}\times C_{\rm in}\times K\times K}$。常见深度学习卷积层计算互相关：
 
-二维离散卷积的数学推导公式为：
+$$
+Y_{o,i,j}=b_o+\sum_{c,m,n}W_{o,c,m,n}X_{c,is+m-P,js+n-P},
+$$
 
-$$Y_{i,j,c_{out}} = \sum_{c=0}^{C_{in}-1} \sum_{m=0}^{K-1} \sum_{n=0}^{K-1} X_{i \cdot S + m, j \cdot S + n, c} \cdot W_{m, n, c, c_{out}} + b_{c_{out}}$$
+其中 $s$ 为步长、$P$ 为填充，越界输入按填充规则处理。
 
-其中 $S$ 为步长，特征图空间尺寸计算如下（无填充情况）：
-$$H_{out} = \lfloor \frac{H_{in} - K}{S} \rfloor + 1, \quad W_{out} = \lfloor \frac{W_{in} - K}{S} \rfloor + 1$$
+### 2.2 输出目标
 
-池化层通常紧随其后进行空间降采样。以最大池化为例，其操作定义为：
-$$P_{i,j,c} = \max_{m,n} Y_{i \cdot S + m, j \cdot S + n, c}$$
+分类网络将特征池化为向量后输出类别 logits；分割与回归网络保留空间布局，用逐位置损失监督输出。
 
 ## 3. 核心原理
 
-### 1.2 网络结构
+### 3.1 空间结构
 
-1. **局部感受野**
-   图像空间存在强烈的局部相关性。卷积层节点仅与输入特征图的一个局部窗口相连，负责提取边缘、角点等底层视觉模式，降低了全连接带来的冗余参数。
+步长为 1 的卷积在一致边界处理下具有平移等变性：输入平移对应特征平移。下采样与边界会改变这一关系；池化提供局部聚合，其效果取决于窗口与采样方式。
 
-2. **权值共享**
-   同一个通道内的卷积核在整张特征图上滑动且参数固定不变。该性质使得模型参数量脱离了输入图像尺寸的限制，仅受卷积核大小和通道数决定。
+有膨胀率 $d$ 时，单轴输出尺寸为
 
-3. **平移不变性**
-   由于权值共享机制，图像中相同特征无论出现在何处，都会被相同的卷积核激活。结合池化层的降采样，使网络对目标的平移、微小缩放具有内在的鲁棒性。
+$$
+H_{\rm out}=\left\lfloor\frac{H+2P-d(K-1)-1}{s}\right\rfloor+1.
+$$
 
-4. **层次化表征**
-   随着网络层级加深与感受野扩大，浅层提取的局部几何纹理会逐层组合，在高维通道映射为具有全局语义信息的抽象特征向量。
+### 3.2 权重梯度
+
+令 $G_{o,i,j}=\partial L/\partial Y_{o,i,j}$，共享卷积核的梯度为
+
+$$
+\frac{\partial L}{\partial W_{o,c,m,n}}
+=\sum_{i,j}G_{o,i,j}X_{c,is+m-P,js+n-P}.
+$$
+
+相同参数接收所有空间位置及批次样本的贡献。
+<details class="kt-derivation" id="cnn-receptive-field">
+<summary>感受野递推</summary>
+
+令第 $l$ 层相对原图的采样间距为 $j_l$、感受野大小为 $r_l$，则
+
+$$
+j_l=j_{l-1}s_l,\qquad
+r_l=r_{l-1}+(K_l-1)d_lj_{l-1},
+$$
+
+从 $j_0=r_0=1$ 开始。该式给出理论覆盖范围；实际梯度对不同像素的影响还由权重与激活决定。
+
+</details>
+
+### 3.3 池化与层次特征
+
+全局平均池化为 $z_c=(HW)^{-1}\sum_{i,j}X_{c,i,j}$，输出梯度均匀分配到该通道空间位置。深层网络组合局部特征并扩大感受野，多尺度融合进一步连接不同分辨率。
 
 ## 4. 实现与应用
 
-### 1.3 代码实现
+示例网络为卷积、ReLU、全局平均池化和分类头。输入采用通道优先布局，空间尺寸至少达到卷积核大小。训练时将 logits 直接送入交叉熵；C++ 示例展示前向计算。
 
-为保持核心逻辑凝练与代码完整性，以下构建一个极简端到端架构：包含一层二维卷积、ReLU激活、全局平均池化以及一层线性分类器。
-
-#### 1.3.1 PyTorch 实现
+<details class="kt-derivation" id="implementation-0">
+<summary>PyTorch 卷积网络</summary>
 
 ```python
 import torch
@@ -65,7 +88,10 @@ class CNN(nn.Module):
         return x
 ```
 
-#### 1.3.2 C++ 标准库实现
+</details>
+
+<details class="kt-derivation" id="implementation-1">
+<summary>C++ 卷积求值</summary>
 
 ```cpp
 #include <vector>
@@ -90,7 +116,7 @@ private:
 
 public:
     SimpleCNN(int ic, int oc, int ks, int nc) : in_c(ic), out_c(oc), kernel_size(ks), num_classes(nc) {
-        conv_W.assign(out_c, std::vector<std::vector<std::vector<double>>>(in_c, 
+        conv_W.assign(out_c, std::vector<std::vector<std::vector<double>>>(in_c,
                std::vector<std::vector<double>>(kernel_size, std::vector<double>(kernel_size))));
         conv_b.assign(out_c, 0.0);
         fc_W.assign(num_classes, std::vector<double>(out_c));
@@ -150,9 +176,10 @@ public:
 };
 ```
 
-#### 1.3.3 C++ Eigen 实现
+</details>
 
-使用 `std::vector<Eigen::MatrixXf>` 表达多通道张量，利用矩阵块提取计算卷积以精简循环。
+<details class="kt-derivation" id="implementation-2">
+<summary>Eigen 卷积求值</summary>
 
 ```cpp
 #include <vector>
@@ -165,14 +192,18 @@ class SimpleCNNEigen {
 private:
     int in_c, out_c, kernel_size, num_classes;
     // 卷积核以一维数组嵌套矩阵存放，方便与特征图做矩阵点乘
-    std::vector<std::vector<Eigen::MatrixXf>> conv_W; 
+    std::vector<std::vector<Eigen::MatrixXf>> conv_W;
     Eigen::VectorXf conv_b;
     Eigen::MatrixXf fc_W;
     Eigen::VectorXf fc_b;
 
 public:
     SimpleCNNEigen(int ic, int oc, int ks, int nc) : in_c(ic), out_c(oc), kernel_size(ks), num_classes(nc) {
-        conv_W.assign(out_c, std::vector<Eigen::MatrixXf>(in_c, Eigen::MatrixXf::Random(ks, ks)));
+        conv_W.resize(out_c);
+        for (auto& kernels : conv_W) {
+            kernels.resize(in_c);
+            for (auto& kernel : kernels) kernel = Eigen::MatrixXf::Random(ks, ks);
+        }
         conv_b = Eigen::VectorXf::Zero(out_c);
         fc_W = Eigen::MatrixXf::Random(nc, oc);
         fc_b = Eigen::VectorXf::Zero(nc);
@@ -196,7 +227,7 @@ public:
                     }
                 }
             }
-            conv_out[oc] = conv_out[oc].cwiseMax(0.0f); 
+            conv_out[oc] = conv_out[oc].cwiseMax(0.0f);
         }
 
         // 2. 全局平均池化
@@ -211,10 +242,14 @@ public:
 };
 ```
 
+</details>
+
 ## 5. 分析与总结
 
-> 待补充。
+卷积的归纳偏置适合局部空间模式，参数量主要由通道与核尺寸决定。分辨率、步长和感受野共同影响精度、细节保留和计算成本。
 
 ## 6. 关联与参考
 
-> 待补充。
+- [Goodfellow 等：Deep Learning](https://www.deeplearningbook.org/)
+- [PyTorch：Conv2d](https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv2d.html)
+- [特征金字塔与多尺度融合](06_feature-pyramid-multiscale.md)

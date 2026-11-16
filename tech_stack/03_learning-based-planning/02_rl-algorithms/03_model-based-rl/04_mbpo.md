@@ -112,7 +112,7 @@ def rollout_length(step, ramp_start, ramp_end, k_max):
 
 ### 6.1 相关知识
 
-- **先修知识**：[强化学习核心公式手册](../01_rl-foundations/01_reinforcement-learning-foundations.md)；[SAC 算法完整解析与代码实现](../02_model-free-rl/07_sac.md)——作为学习器被嵌入
+- **先修知识**：[强化学习核心公式手册](../01_rl-foundations/01_reinforcement-learning-foundations.md)；[SAC 算法完整解析与代码实现](../02_model-free-rl/06_sac.md)——作为学习器被嵌入
 - **本分支地基**：🚧 基于模型的强化学习基础（撰写中）
 - **思想渊源**：🚧 Dyna（撰写中）——「模型生成经验」的原始架构
 - **相关方法**：🚧 PETS（撰写中）——同款系综模型的规划式用法

@@ -28,7 +28,7 @@ import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 		{ id: 'minimum-snap', slug: 'classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap', note: '微分平坦与 Minimum Snap：轨迹生成的基本范式' },
 		{ id: 'section-trajectory-optimization', title: '轨迹优化板块', href: '/knowledge-tree/classical-planning-control/trajectory-optimization/', note: '安全飞行走廊、贝塞尔 / B 样条 / MINCO、Fast-Planner、EGO-Planner、GCOPTER' },
 		{ id: 'section-tracking-control', title: '跟踪控制板块', href: '/knowledge-tree/classical-planning-control/tracking-control/', note: 'PID、LQR、MPC 与 PX4 控制器如何跟踪并执行期望轨迹' },
-		{ id: 'px4-controller', slug: 'classical-planning-control/tracking-control/px4-controller-attitude-rate', note: '从姿态与角速率控制理论落到飞控固件' },
+		{ id: 'px4-controller', slug: 'classical-planning-control/tracking-control/px4-controller-attitude-rate', note: '姿态误差、角速度反馈与控制分配的仿真实现' },
 		{ id: 'work-pipeline', slug: 'learning-based-planning/engineering-practice/work-pipeline', note: '应用视角：完整链路在实机上的组织方式' },
 	]}
 />
@@ -42,4 +42,4 @@ import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 ## 延伸方向
 
 - **感知侧**：[卡尔曼滤波](/knowledge-tree/classical-planning-control/perception-slam/kalman-filters/)——跟踪控制的状态估计基础。
-- **MINCO 专题**（撰写中）：轨迹优化板块中的 MINCO 章节将给出更完整的多项式轨迹库实现。
+- **MINCO 参数化**：[系数映射与隐式梯度](/knowledge-tree/classical-planning-control/trajectory-optimization/minco-parameterization/)，再进入 [GCOPTER](/knowledge-tree/classical-planning-control/trajectory-optimization/gcopter-minco/)。
