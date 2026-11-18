@@ -1,19 +1,19 @@
 ---
-title: "Sim-to-Real"
-description: "仿真到真机的差距与迁移"
+title: "仿真到真机"
+description: "参数辨识、域随机化与迁移验证"
 sidebar:
-  order: 4
+  order: 3
 ---
 
 import TopicIndex from '../../../../components/TopicIndex.astro';
 
 ## 板块定位
 
-从仿真到真机：差距来源、域随机化与系统辨识等迁移方法、真机验证流程。
+将模型和接口从仿真映射到真实飞行条件。
 
 ## 阅读主线
 
-先定位动力学、感知、时序和执行器差距，再选择系统辨识或随机化措施，用可复现的真机评估记录检验迁移效果。
+识别动力学、感知和时间差距 → 用测量确定参数范围 → 随机化训练与固定评估 → 分阶段验证实机链路。
 
 ## 主题目录
 
@@ -21,4 +21,4 @@ import TopicIndex from '../../../../components/TopicIndex.astro';
 
 ## 下一步
 
-[返回上级板块](/knowledge-tree/simulation-evaluation/) · [训练工程实践](/knowledge-tree/learning-based-planning/engineering-practice/) · [学习式无人机导航](/knowledge-tree/learning-paths/learning-based-uav-navigation/)
+[系统部署与验证](/knowledge-tree/real-flight/navigation-system-integration/) · [飞行软件栈](/knowledge-tree/engineering-tools/px4-ros/)

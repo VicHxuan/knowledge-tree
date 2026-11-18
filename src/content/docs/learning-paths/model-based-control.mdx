@@ -1,0 +1,44 @@
+---
+title: "模型式控制学习路径"
+description: "从模型用途与路径梯度到 SHAC、SuperMimic，并比较经验生成与在线规划"
+sidebar:
+  order: 4
+---
+
+import LearningPathStepper from '../../../components/LearningPathStepper.astro';
+
+## 学习目标
+
+沿“模型与数据 → 策略梯度 → 短时域 Actor-Critic → 学习动力学控制”理解无人机模型式控制的核心机制，能够标出每组参数的损失、数据来源和梯度路径。
+
+## 开始之前
+
+先掌握 [强化学习基础](/knowledge-tree/learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations/) 与 [梯度、雅可比和 Hessian](/knowledge-tree/mathematics/calculus-optimization/gradient-jacobian-hessian/)。熟悉 PPO 后，可重点比较模型导数与概率比值目标的区别。
+
+## 学习步骤
+
+<LearningPathStepper
+  pathId="model-based-control"
+  legacyStepIds={[]}
+  steps={[
+    { id: 'model-foundations', slug: 'learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations', note: '区分模型来源、状态表示和三种模型用途' },
+    { id: 'model-gradients', slug: 'learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization', note: '从目标函数推导状态敏感度、随机价值梯度与 PILCO 的分布传播' },
+    { id: 'short-horizon', slug: 'learning-based-planning/rl-algorithms/model-based-rl/shac', note: '理解奖励梯度、末端价值梯度与固定 Critic 目标' },
+    { id: 'learned-dynamics-control', slug: 'learning-based-planning/rl-algorithms/model-based-rl/supermimic', note: '把模型学习、Actor 优化和 Critic 拟合连接为训练闭环' },
+    { id: 'latent-behavior', slug: 'learning-based-planning/rl-algorithms/model-based-rl/dreamer', note: '扩展到观测历史与潜在模型，辨别不同版本的 Actor 梯度' },
+  ]}
+/>
+
+## 完成标准
+
+- 能画出世界模型、Actor 与 Critic 的更新关系，标明固定参数和停止梯度的位置。
+- 能从短时域目标推出末端价值对策略的梯度，并解释真正终止与计算截断的区别。
+- 能区分模型预测准确性与模型导数准确性，提出无人机闭环验证方案。
+- 能比较 MBPO、TD-MPC、SHAC 与 Dreamer 的模型用途和部署计算需求。
+
+## 延伸方向
+
+- 数据复用：[Dyna](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/dyna/) → [MBPO](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/mbpo/)。
+- 在线规划：[PETS](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/pets/) → [TD-MPC](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/td-mpc/)。
+- 潜在搜索：[MuZero](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/muzero/)。
+- 工程衔接：[学习式无人机导航](/knowledge-tree/learning-paths/learning-based-uav-navigation/)。

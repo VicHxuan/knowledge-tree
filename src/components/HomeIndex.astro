@@ -1,0 +1,68 @@
+---
+import { DOMAINS, DOMAIN_BY_ID } from '../data/domains.mjs';
+import stats from '../data/content-stats.json';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const descriptions = {
+  mathematics: '几何、优化、概率与动力学，构建规划控制的数学基础。',
+  'classical-planning-control': '从状态估计与路径搜索，到轨迹优化和跟踪控制。',
+  'learning-based-planning': '神经网络、强化学习与无人机导航中的策略学习。',
+  'engineering-tools': '飞行软件栈、训练基础设施与版本管理。',
+  'simulation-evaluation': '仿真环境、导航场景、评估协议与真机迁移。',
+  'real-flight': '遥控链路、机载导航接口与分阶段飞行验证。',
+};
+const ppo = `${base}/learning-based-planning/rl-algorithms/model-free-rl/ppo/`;
+---
+<div class="kt-home">
+  <div class="kt-home-columns">
+    <section aria-labelledby="knowledge-index">
+      <div class="kt-section-heading"><h2 id="knowledge-index">知识体系</h2><p>{stats.published} 篇可阅读 · {stats.draft} 篇撰写中</p></div>
+      <ul class="kt-domain-index">
+        {DOMAINS.map(d => <li>
+          <div class="kt-domain-main"><h3><a href={`${base}/${d.id}/`}>{d.label}</a></h3><p>{descriptions[d.id]}</p></div>
+          <span class="kt-domain-meta">{stats.domains[d.id].published} 篇可阅读{stats.domains[d.id].draft > 0 && <small>{stats.domains[d.id].draft} 篇撰写中</small>}</span>
+        </li>)}
+      </ul>
+    </section>
+    <aside class="kt-reading-desk" aria-label="学习入口">
+      <h2>学习入口</h2>
+      <section class="kt-reading-feature">
+        <h3><a href={ppo}>PPO</a></h3>
+        <p>从 Actor–Critic 架构出发，串联优化目标、优势估计与参数更新。</p>
+        <a class="kt-read-link" href={ppo}>阅读算法解析 <span aria-hidden="true">→</span></a>
+      </section>
+      <section>
+        <h3><a href={`${base}/learning-paths/classical-trajectory-planning/`}>经典轨迹规划</a></h3>
+        <p>按前置关系串联搜索、轨迹优化与控制。</p>
+      </section>
+      <section>
+        <h3><a href={`${base}/learning-paths/learning-based-uav-navigation/`}>学习式无人机导航</a></h3>
+        <p>从观测与策略到训练、评估和部署。</p>
+      </section>
+      <section class="kt-desk-reference">
+        <h3><a href={`${base}/papers/`}>论文目录 <span aria-hidden="true">→</span></a></h3>
+        <p>按知识主题查找原文与关联文章。</p>
+      </section>
+    </aside>
+  </div>
+  <section class="kt-pipelines" aria-labelledby="technical-routes">
+    <h2 id="technical-routes">两条技术主线</h2>
+    <div class="kt-route"><h3>传统规划控制</h3><ol>
+      <li>传感观测</li><li><a href={`${base}/classical-planning-control/perception-slam/kalman-filters/`}>状态估计</a></li><li><a href={`${base}/classical-planning-control/path-search/heuristic-search/`}>路径搜索</a></li><li><a href={`${base}/classical-planning-control/trajectory-optimization/gcopter-minco/`}>轨迹优化</a></li><li><a href={`${base}/classical-planning-control/tracking-control/mpc/`}>跟踪控制</a></li>
+    </ol></div>
+    <div class="kt-route"><h3>学习式规划</h3><ol>
+      <li>传感观测</li><li><a href={`${base}/learning-based-planning/neural-network-architectures/cnn/`}>特征提取</a></li><li><a href={ppo}>策略学习</a></li><li><a href={`${base}/classical-planning-control/tracking-control/`}>控制执行</a></li>
+    </ol></div>
+  </section>
+  <div class="kt-home-columns kt-home-bottom">
+    <section aria-labelledby="recent-updates">
+      <h2 id="recent-updates">最近更新</h2>
+      <ul class="kt-update-index">{stats.recent.map(r => <li><a href={`${base}/${r.slug}/`}>{r.title}</a><span>{DOMAIN_BY_ID[r.domain]?.label ?? r.domain} · <time datetime={r.date}>{r.date}</time></span></li>)}</ul>
+    </section>
+    <section class="kt-project-index" aria-labelledby="research-projects">
+      <h2 id="research-projects">研究项目</h2>
+      <p>连接知识体系与研究实践。</p>
+      <ul><li><a href={`${base}/projects/minco-planning-pipeline/`}>MINCO 规划管线</a></li><li><a href={`${base}/projects/rl-trajectory-selector/`}>RL 轨迹选择器</a></li><li><a href={`${base}/projects/yopo/`}>YOPO</a></li></ul>
+    </section>
+  </div>
+  <footer class="kt-home-note"><p>持续整理无人机规划控制的概念、推导与实现。内容修订见 <a href="https://github.com/VicHxuan/knowledge-tree">GitHub 仓库</a>。</p><p>文档 CC BY 4.0 · 代码 MIT</p></footer>
+</div>

@@ -35,7 +35,7 @@ export const DOMAINS = [
 		label: '学习式规划',
 		icon: 'analytics',
 		color: '#34d399',
-		blurb: 'sensor → 特征提取 → RL 推理 → control 的学习式管线：从网络骨干、PPO/SAC 到学习式轨迹规划。',
+		blurb: '观测 → 策略或规划网络 → 动作与轨迹 → 控制执行：连接网络、强化学习与无人机导航。',
 	},
 	{
 		id: 'engineering-tools',
@@ -43,7 +43,7 @@ export const DOMAINS = [
 		label: '工程工具链',
 		icon: 'desktop',
 		color: '#fbbf24',
-		blurb: 'Git 与 Docker、PX4 与 ROS、多 GPU 训练部署与分布式强化学习训练架构。',
+		blurb: '飞行软件栈、训练基础设施与版本管理：连接算法训练和机载执行。',
 	},
 	{
 		id: 'simulation-evaluation',
@@ -51,7 +51,7 @@ export const DOMAINS = [
 		label: '仿真与评估',
 		icon: 'document',
 		color: '#a78bfa',
-		blurb: '仿真平台、场景设计、评估方法与 sim-to-real。',
+		blurb: '仿真环境与时序、导航场景、固定协议评估与真机迁移。',
 	},
 	{
 		id: 'real-flight',
@@ -59,7 +59,7 @@ export const DOMAINS = [
 		label: '真机飞行',
 		icon: 'rocket',
 		color: '#f87171',
-		blurb: '从仿真走向实机：遥控器与机载设备配置、外场飞行实践。',
+		blurb: '遥控链路、机载导航接口与分阶段验证。',
 	},
 ];
 

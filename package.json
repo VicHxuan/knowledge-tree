@@ -6,18 +6,23 @@
     "predev": "node scripts/sync-docs.mjs",
     "dev": "astro dev",
     "start": "astro dev",
-    "prebuild": "node scripts/sync-docs.mjs",
+    "prebuild": "node scripts/validate-papers.mjs && node scripts/sync-docs.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
     "docs:sync": "node scripts/sync-docs.mjs",
-    "docs:check": "node scripts/sync-docs.mjs --check && node scripts/validate-docs.mjs",
+    "docs:check": "node scripts/sync-docs.mjs --check && node scripts/validate-docs.mjs && node scripts/validate-papers.mjs",
     "docs:add": "node scripts/docs-add.mjs",
     "docs:rename": "node scripts/docs-rename.mjs",
     "site:check": "node scripts/validate-site.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test",
-    "privacy:check": "node scripts/privacy-check.mjs"
+    "privacy:check": "node scripts/privacy-check.mjs",
+    "papers:refresh": "python3 scripts/papers/zotero.py refresh && python3 scripts/papers/official.py checklist && python3 scripts/papers/export.py && node scripts/validate-papers.mjs",
+    "papers:official": "python3 scripts/papers/official.py import",
+    "papers:check": "node scripts/validate-papers.mjs",
+    "papers:authorize": "python3 scripts/papers/zotero.py authorize",
+    "papers:apply": "python3 scripts/papers/zotero.py apply"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.2",
@@ -34,6 +39,7 @@
     "sharp": "^0.35.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.65.0",
     "parse5": "^7.3.0"
   }

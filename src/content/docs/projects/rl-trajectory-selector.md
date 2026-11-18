@@ -25,24 +25,26 @@ sidebar:
 - [PPO 算法](/knowledge-tree/learning-based-planning/rl-algorithms/model-free-rl/ppo/)：一次迭代的数据流；
 - [PPO 全流程走读与调参](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)：从训练脚本到 checkpoint；
 - [多服务器多 GPU 训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide/)：跨机环境的搭建与排障；
-- [TensorBoard 指标模板](/knowledge-tree/learning-based-planning/engineering-practice/tensorboard-metrics/)：判断训练是否在正确轨道上的速查表。
+- [训练指标与诊断](/knowledge-tree/learning-based-planning/engineering-practice/tensorboard-metrics/)：判断训练是否在正确轨道上的速查表。
 
 ### 工程要点
 
 这一类项目的重心常常不在算法而在训练工程，实践中反复被验证的几条：
 
 1. **先跑通最小闭环再上规模**：单进程单环境验证 reward 收敛趋势，再扩展到并行采样；
-2. **reward 曲线比单点指标可靠**：用 TensorBoard 的滑动平均看趋势，警惕只看最终成功率；
+2. **训练与评估分别记录**：联合观察奖励分量、优化诊断和固定场景中的成功率、安全性与效率；
 3. **配置即代码**：训练配置（网络结构、超参、环境参数）与训练脚本一起进版本管理，保证可复现。
 
-详细展开见[强化学习工程避坑指南](/knowledge-tree/learning-based-planning/engineering-practice/rl-engineering-pitfalls/)。
+详细展开见[无人机强化学习任务设计](/knowledge-tree/learning-based-planning/engineering-practice/rl-engineering-pitfalls/)。
 
 ## 实践入口
+
+[轨迹候选生成与选择](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection/)说明候选观测、概率比、梯度和生成质量与选择质量的区别。
 
 从 [PPO 算法主线](/knowledge-tree/learning-based-planning/rl-algorithms/model-free-rl/ppo/)进入，按[训练工程走读](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)检查环境接口、采样、更新和记录。复现实验时固定源码版本、任务配置、checkpoint 与评估协议。
 
 ## 进展与证据
 
-项目持续迭代中。任务设计（state / action / reward 抽象）的方法论整理在[小脑 Work Pipeline](/knowledge-tree/learning-based-planning/engineering-practice/work-pipeline/)。
+项目持续迭代中。任务设计（state / action / reward 抽象）的方法论整理在[学习式无人机规划](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview/)。
 
 本页整理知识与复现入口；具体实验结论需附配置、评估协议及结果记录后补充。

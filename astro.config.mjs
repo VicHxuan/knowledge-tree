@@ -11,6 +11,8 @@ import { DOMAINS } from './src/data/domains.mjs';
 import rehypeMermaid from './scripts/rehype-mermaid.mjs';
 import rehypeArticleTools from './scripts/rehype-article-tools.mjs';
 import rehypeHeadingAliases from './scripts/rehype-heading-aliases.mjs';
+import rehypePaperLinks from './scripts/rehype-paper-links.mjs';
+import preserveRedirectFragments from './scripts/preserve-redirect-fragments.mjs';
 
 const repository = 'https://github.com/VicHxuan/knowledge-tree';
 const homepage = 'https://vichxuan.github.io/';
@@ -40,6 +42,7 @@ export default defineConfig({
 
 	integrations: [
 		react(),
+		preserveRedirectFragments(rawRedirects, SITE_BASE),
 		starlight({
 			title: 'VicHxuan Knowledge Tree',
 			routeMiddleware: './src/routeData.ts',
@@ -53,14 +56,22 @@ export default defineConfig({
 
 			customCss: [
 				'katex/dist/katex.min.css',
+				'./src/styles/fonts.css',
+				'./src/styles/tokens.css',
 				'./src/styles/custom.css',
 			],
 
 			favicon: 'favicon.svg',
+			head: ['noto-serif-sc-headings.woff2', 'source-serif-4-latin.woff2'].map((file) => ({
+				tag: 'link',
+				attrs: { rel: 'preload', as: 'font', type: 'font/woff2', crossorigin: 'anonymous', href: `${SITE_BASE}/fonts/${file}` },
+			})),
 
-			// V2：目录栏覆盖 —— 右侧目录上方叠加「前置知识 / 相关主题」知识关联区
+			// 右侧先展示页内目录，再提供前置知识与相关主题。
 			// V2：页脚覆盖 —— 保留默认页脚，追加 Mermaid 懒渲染 / 书签 / 反馈 / 最近阅读脚本
 			components: {
+				SiteTitle: './src/components/SiteTitle.astro',
+				Hero: './src/components/HomeHero.astro',
 				TableOfContents: './src/components/TableOfContents.astro',
 				Footer: './src/components/Footer.astro',
 			},
@@ -80,6 +91,7 @@ export default defineConfig({
 						{ slug: '' },
 						{ slug: 'learning-paths' },
 						{ slug: 'knowledge-map' },
+						{ slug: 'papers' },
 						{ slug: 'bookmarks' },
 						{ label: '个人主页', link: homepage },
 						{ label: 'GitHub 仓库', link: repository },
@@ -94,7 +106,7 @@ export default defineConfig({
 
 	markdown: {
 		remarkPlugins: [remarkMath],
-		rehypePlugins: [rehypeKatex, rehypeMermaid, rehypeArticleTools, rehypeHeadingAliases],
+		rehypePlugins: [rehypeKatex, rehypeMermaid, rehypeArticleTools, rehypeHeadingAliases, rehypePaperLinks],
 		syntaxHighlight: { type: 'shiki', excludeLangs: ['mermaid'] },
 	},
 });

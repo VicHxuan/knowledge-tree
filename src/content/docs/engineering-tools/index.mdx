@@ -1,6 +1,6 @@
 ---
-title: "工程工具链"
-description: "Git、Docker、PX4 与 ROS、多 GPU 训练"
+title: "无人机工程工具"
+description: "飞行软件栈、训练基础设施与版本管理"
 sidebar:
   order: 1
 ---
@@ -9,11 +9,11 @@ import TopicIndex from '../../../components/TopicIndex.astro';
 
 ## 板块定位
 
-从飞控到训练集群的工程工具箱：版本控制、容器环境、PX4 与 ROS 中间件，以及多 GPU 训练基础设施。
+围绕无人机算法的运行环境与执行接口组织工具。
 
 ## 阅读主线
 
-先用 Git 管理可复现源码与配置，按需求进入容器和多 GPU 训练；飞行接口沿 ROS → MAVROS/PX4 → 控制器接入阅读。遥控器与外场记录放在真机飞行领域。
+训练侧固定源码和环境，验证单卡、多卡及恢复；机载侧沿 ROS 数据接口 → PX4 控制接口 → 系统部署验证推进。Git 手册作为版本管理参考。
 
 ## 主题目录
 
@@ -21,4 +21,4 @@ import TopicIndex from '../../../components/TopicIndex.astro';
 
 ## 下一步
 
-[PPO 算法](/knowledge-tree/learning-based-planning/rl-algorithms/model-free-rl/ppo/) · [PX4 控制器](/knowledge-tree/classical-planning-control/tracking-control/px4-controller-attitude-rate/) · [真机飞行](/knowledge-tree/real-flight/)
+[训练工程](/knowledge-tree/learning-based-planning/engineering-practice/) · [真机飞行](/knowledge-tree/real-flight/)

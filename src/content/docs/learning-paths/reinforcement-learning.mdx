@@ -32,7 +32,7 @@ import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 		{ id: 'engineering-pitfalls', slug: 'learning-based-planning/engineering-practice/rl-engineering-pitfalls', note: '动手训练前核对观测、奖励与训练稳定性的常见问题' },
 		{ id: 'ppo-walkthrough', slug: 'learning-based-planning/engineering-practice/ppo-walkthrough', note: '从训练脚本到 checkpoint 的完整链路' },
 		{ id: 'tensorboard-metrics', slug: 'learning-based-planning/engineering-practice/tensorboard-metrics', note: '训练监控与调参速查' },
-		{ id: 'work-pipeline', slug: 'learning-based-planning/engineering-practice/work-pipeline', note: '应用视角：这些方法如何用于无人机轨迹输出' },
+		{ id: 'work-pipeline', slug: 'learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview', note: '应用视角：这些方法如何用于无人机轨迹输出' },
 	]}
 />
 
@@ -49,3 +49,5 @@ import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 - **值方法分支**：DQN 家族与 POMDP（见[算法演进](/knowledge-tree/learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution/)）。
 - **连续控制分支**：DDPG → TD3 → [SAC](/knowledge-tree/learning-based-planning/rl-algorithms/model-free-rl/sac/)。
 - **网络骨干**：[CNN](/knowledge-tree/learning-based-planning/neural-network-architectures/cnn/)、[RNN/LSTM](/knowledge-tree/learning-based-planning/neural-network-architectures/rnn-lstm/)、[Attention/Transformer](/knowledge-tree/learning-based-planning/neural-network-architectures/attention-transformer/)——用于设计观测编码器。
+
+- **模型式控制分支**：[模型式控制学习路径](/knowledge-tree/learning-paths/model-based-control/)，从模型梯度到 SHAC 与 SuperMimic。

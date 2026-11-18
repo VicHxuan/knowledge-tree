@@ -33,7 +33,7 @@ src/content/docs/                  # → 生成产物（untracked）+ 少量手�
 └── projects/                      #    研究项目页（手写）
 ```
 
-领域注册表在 `src/data/domains.mjs`（侧栏分组、首页卡片、图谱域色共用的单一事实源）；`astro.config.mjs` 的 sidebar 用 `autogenerate` 按目录结构生成分组，`src/routeData.ts` 从各分类首页读取中文名称和顺序，并使上下篇导航保持一致。
+领域注册表在 `src/data/domains.mjs`（侧栏分组、首页目录、图谱域色共用的单一事实源）；`astro.config.mjs` 的 sidebar 用 `autogenerate` 按目录结构生成分组，`src/routeData.ts` 从各分类首页读取中文名称和顺序，并使上下篇导航保持一致。
 
 ## 本地开发
 
@@ -58,6 +58,8 @@ npm run test:browser # 构建后验收折叠、深链接和学习路径
 
 ## 贡献指南
 
+网站采用「飞行研究手册」视觉系统。定位见 [PRODUCT.md](PRODUCT.md)，配色、字体、间距与组件规范见 [DESIGN.md](DESIGN.md)。视觉变量集中在 `src/styles/tokens.css`；标题字体在本地托管。浏览器回归包含明暗主题、窄屏、键盘交互与自动可访问性检查。已有开发服务占用默认端口时，可使用 `KT_PREVIEW_PORT=4367 npm run test:browser` 指定生产预览端口。
+
 见 [CONTRIBUTING.md](CONTRIBUTING.md)。最简单的方式：在任一页面底部点击「编辑此页」——它会直接指向 `tech_stack/` 里的原始笔记，GitHub 会自动引导你创建 Pull Request。
 
 本地维护可使用 `knowledge-tree-editor` 编辑文档，使用 `knowledge-tree-maintainer` 同步 GitHub 与网站。标题采用简洁的学术名称，不附重复中英文括注。
@@ -66,3 +68,7 @@ npm run test:browser # 构建后验收折叠、深链接和学习路径
 
 - **网站代码**：[MIT License](LICENSE)
 - **文档内容**：[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)，转载请注明来源并链接本仓库
+
+## 论文清单
+
+[论文目录](https://vichxuan.github.io/knowledge-tree/papers/)按知识主题组织原文、开放全文和相关文章。书目信息在 Zotero 维护，选定文献通过本地工具导出。详见 [文献维护](PAPERS.md)。

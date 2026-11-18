@@ -1,0 +1,18 @@
+---
+import DefaultHero from '@astrojs/starlight/components/Hero.astro';
+const isHome = ['', 'index'].includes(Astro.locals.starlightRoute.id);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+{isHome ? (
+  <div class="kt-home-intro">
+    <div>
+      <h1 id="_top" data-page-title>无人机规划与控制<span>知识树</span></h1>
+      <p>从数学基础、轨迹规划到强化学习与真机飞行，<br class="kt-intro-break" />沿方法的依赖关系，建立完整的知识体系。</p>
+    </div>
+    <nav class="kt-home-guide" aria-label="阅读导航">
+      <a href={`${base}/learning-paths/`}>按学习路径阅读 <span aria-hidden="true">→</span></a>
+      <a href={`${base}/knowledge-map/`}>在知识图谱中探索 <span aria-hidden="true">→</span></a>
+      <a href={`${base}/bookmarks/`}>书签与最近阅读 <span aria-hidden="true">→</span></a>
+    </nav>
+  </div>
+) : <DefaultHero />}

@@ -1,0 +1,111 @@
+---
+import bibliography from '../data/papers.json';
+import relationships from '../data/paper-relations.json';
+import contentMap from '../data/content-map.json';
+import { DOMAINS } from '../data/domains.mjs';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const articles = new Map(contentMap.entries.map(e => [e.slug, e]));
+const referenced = new Set(relationships.edges.map(e => e.article));
+const years = [...new Set(bibliography.papers.map(p => p.year).filter(Boolean))].sort((a, b) => b - a);
+const papers = [...bibliography.papers].sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || a.title.localeCompare(b.title));
+---
+<section class="kt-papers" aria-label="论文目录">
+  <form class="paper-filters" hidden role="search">
+    <label>搜索论文<input name="query" type="search" placeholder="标题、作者或 DOI…" autocomplete="off" /></label>
+    <label>知识领域<select name="topic"><option value="">全部领域</option>{DOMAINS.map(d => <option value={d.id}>{d.label}</option>)}</select></label>
+    <label>年份<select name="year"><option value="">全部年份</option>{years.map(y => <option value={y}>{y}</option>)}</select></label>
+    <label>知识文章<select name="article"><option value="">全部文章</option>{contentMap.entries.filter(e => referenced.has(e.slug)).map(e => <option value={e.slug}>{e.title}{e.status === 'draft' ? ' · 撰写中' : ''}</option>)}</select></label>
+    <button type="reset">重置筛选</button>
+  </form>
+  <p class="paper-count" role="status" aria-live="polite">共 {papers.length} 篇论文</p>
+  <p class="paper-empty" hidden>没有符合条件的论文。</p>
+  <ol class="paper-list">
+    {papers.map(p => {
+      const edges = relationships.edges.filter(e => e.paper === p.id);
+      return <li id={p.id} class="paper-card" data-topics={p.topics.join(' ')} data-year={p.year ?? ''}
+        data-articles={edges.map(e => e.article).join(' ')} data-search={[p.title, ...p.authors, p.doi].join(' ')}>
+        <h2><a href={p.url}>{p.title}</a></h2>
+        <p class="paper-meta">{p.authors.join(', ')}</p>
+        <p class="paper-meta">{[p.year, p.venue].filter(Boolean).join(' · ')}</p>
+        <nav class="paper-resources" aria-label={`${p.title} 资源`}>
+          <a href={p.url}>原文</a>
+          {p.openAccessUrl && <a href={p.openAccessUrl}>开放全文</a>}
+          {p.codeUrl && <a href={p.codeUrl}>官方代码</a>}
+          <a href={`#${p.id}`} aria-label={`${p.title} 固定链接`}>固定链接</a>
+        </nav>
+        <ul class="paper-articles">{edges.map(e => {
+          const article = articles.get(e.article);
+          return <li>{article?.status === 'published'
+            ? <a href={`${base}/${e.article}/`}>{article.title}</a>
+            : <span>{article?.title} · 撰写中</span>}{e.note !== '参考文献' && <span class="paper-note"> — {e.note}</span>}</li>;
+        })}</ul>
+      </li>;
+    })}
+  </ol>
+</section>
+<style>
+  .paper-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; padding: 1rem; border: 1px solid var(--sl-color-gray-5); border-radius: .5rem; }
+  .paper-filters[hidden], .paper-card[hidden], .paper-empty[hidden] { display: none; }
+  .paper-filters label { display: grid; gap: .25rem; font-size: .9rem; }
+  .paper-filters input, .paper-filters select, .paper-filters button { width: 100%; min-width: 0; padding: .5rem; font: inherit; color: var(--sl-color-text); background: var(--sl-color-bg); border: 1px solid var(--sl-color-gray-4); border-radius: .3rem; }
+  .paper-filters button { width: fit-content; cursor: pointer; }
+  .paper-list { list-style: none; padding: 0; }
+  .paper-card { padding: 1.2rem 0; border-bottom: 1px solid var(--sl-color-gray-5); scroll-margin-top: 6rem; overflow-wrap: anywhere; }
+  .paper-card:target { outline: 2px solid var(--sl-color-accent); outline-offset: .4rem; border-radius: .2rem; }
+  .paper-card h2 { font-size: 1.05rem; margin: 0 0 .5rem; }
+  .paper-meta, .paper-note { color: var(--sl-color-gray-2); font-size: .85rem; }
+  .paper-meta { margin: .25rem 0; }
+  .paper-resources { display: flex; flex-wrap: wrap; gap: 1rem; margin: .6rem 0; font-size: .9rem; }
+  .paper-articles { font-size: .9rem; padding-left: 1.2rem; }
+  @media (max-width: 600px) { .paper-filters { grid-template-columns: 1fr; } }
+  @media print { .paper-filters { display: none; } }
+</style>
+<script>
+  const root = document.querySelector<HTMLElement>('.kt-papers');
+  if (root) {
+    const form = root.querySelector<HTMLFormElement>('form')!;
+    const cards = [...root.querySelectorAll<HTMLElement>('.paper-card')];
+    const status = root.querySelector<HTMLElement>('.paper-count')!;
+    const empty = root.querySelector<HTMLElement>('.paper-empty')!;
+    const fields = Object.fromEntries(['query', 'topic', 'year', 'article'].map(name => [name, form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement]));
+    const clean = (text: string) => text.normalize('NFKC').toLocaleLowerCase().trim();
+    const hydrate = () => {
+      const params = new URLSearchParams(location.search);
+      for (const [key, input] of Object.entries(fields)) input.value = params.get(key) ?? '';
+    };
+    function filter(updateURL = true) {
+      const words = clean(fields.query.value).split(/\s+/).filter(Boolean);
+      let count = 0;
+      for (const card of cards) {
+        const found = words.every(word => clean(card.dataset.search ?? '').includes(word))
+          && (!fields.topic.value || card.dataset.topics?.split(' ').includes(fields.topic.value))
+          && (!fields.year.value || card.dataset.year === fields.year.value)
+          && (!fields.article.value || card.dataset.articles?.split(' ').includes(fields.article.value));
+        card.hidden = !found;
+        if (found) count++;
+      }
+      status.textContent = `显示 ${count} / ${cards.length} 篇论文`;
+      empty.hidden = count !== 0;
+      if (updateURL) {
+        const url = new URL(location.href);
+        for (const [key, input] of Object.entries(fields)) {
+          if (input.value) url.searchParams.set(key, input.value); else url.searchParams.delete(key);
+        }
+        history.replaceState(null, '', url);
+      }
+    }
+    function revealHash() {
+      const card = cards.find(c => '#' + c.id === location.hash);
+      if (card?.hidden) { form.reset(); filter(); }
+      card?.scrollIntoView();
+    }
+    form.hidden = false;
+    hydrate(); filter(false); revealHash();
+    form.addEventListener('submit', e => e.preventDefault());
+    form.addEventListener('input', () => filter());
+    form.addEventListener('change', () => filter());
+    form.addEventListener('reset', () => setTimeout(() => filter(), 0));
+    window.addEventListener('popstate', () => { hydrate(); filter(false); revealHash(); });
+    window.addEventListener('hashchange', revealHash);
+  }
+</script>

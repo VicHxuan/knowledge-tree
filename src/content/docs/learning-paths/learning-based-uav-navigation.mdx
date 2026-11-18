@@ -13,7 +13,7 @@ import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 
 ## 开始之前
 
-需要基本神经网络和 Python 阅读能力，并对无人机的状态、动作、目标与障碍物有直观认识。前半段补齐视觉骨干与 RL 基础，后半段进入规划及评估；撰写中的步骤先用备注明确要解决的问题。
+需要基本神经网络和 Python 阅读能力，并对无人机的状态、动作、目标与障碍物有直观认识。前半段补齐视觉骨干与 RL 基础，后半段进入规划、评估和系统部署。
 
 ## 学习步骤
 
@@ -29,8 +29,10 @@ import LearningPathStepper from '../../../components/LearningPathStepper.astro';
 		{ id: 'engineering-pitfalls', slug: 'learning-based-planning/engineering-practice/rl-engineering-pitfalls', note: '观测、奖励与训练稳定性的实践要点' },
 		{ id: 'planning-overview', slug: 'learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview', note: '观测、动作、奖励设计与网络输出如何映射到轨迹' },
 		{ id: 'yopo', slug: 'learning-based-planning/learning-based-trajectory-planning/yopo', note: '感知到规划的端到端架构拆解' },
-		{ id: 'section-simulation-evaluation', title: '仿真与评估板块', href: '/knowledge-tree/simulation-evaluation/', note: '仿真平台选型、场景设计与评估方法；部分章节正在撰写' },
+		{ id: 'candidate-selection', slug: 'learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection', note: '候选集合、PPO 选择概率与执行接口' },
+		{ id: 'section-simulation-evaluation', title: '仿真与评估板块', href: '/knowledge-tree/simulation-evaluation/', note: '平台与时序、场景设计、独立导航评估' },
 		{ id: 'sim-to-real', slug: 'simulation-evaluation/sim-to-real/sim-to-real-gap', note: '迁移到实机的差距来源与缓解手段' },
+		{ id: 'system-integration', slug: 'real-flight/navigation-system-integration', note: '机载输入、轨迹安装与分阶段验证' },
 	]}
 />
 

@@ -1,5 +1,27 @@
 import { test, expect } from '@playwright/test';
 
+test('合并文章的静态跳转保留查询参数和旧章节片段', async ({ page }) => {
+	const fragment = '1-任务设计';
+	await page.goto(`learning-based-planning/engineering-practice/work-pipeline/?source=bookmark#${encodeURIComponent(fragment)}`);
+	await expect(page).toHaveURL(/learning-based-trajectory-planning\/learning-based-planning-overview\//);
+	const url = new URL(page.url());
+	expect(url.search).toBe('?source=bookmark');
+	expect(decodeURIComponent(url.hash.slice(1))).toBe(fragment);
+	await expect(page.locator('h3[id="21-系统接口"] .kt-heading-alias[id="1-任务设计"]')).toHaveCount(1);
+});
+
+test('关闭 JavaScript 时合并文章仍可跳转', async ({ browser }) => {
+	const context = await browser.newContext({ javaScriptEnabled: false });
+	try {
+		const page = await context.newPage();
+		await page.goto('http://127.0.0.1:4321/knowledge-tree/learning-based-planning/engineering-practice/work-pipeline/');
+		await expect(page).toHaveURL(/learning-based-trajectory-planning\/learning-based-planning-overview\/?$/);
+		await expect(page.locator('h1')).toHaveText('学习式无人机规划');
+	} finally {
+		await context.close();
+	}
+});
+
 test('旧标题片段保持原章节语义，新目录使用稳定章节锚点', async ({ page }) => {
 	const ppo = 'learning-based-planning/rl-algorithms/model-free-rl/ppo/';
 	await page.goto(`${ppo}#${encodeURIComponent('1-概述overview')}`);

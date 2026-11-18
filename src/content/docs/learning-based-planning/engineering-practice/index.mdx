@@ -1,6 +1,6 @@
 ---
-title: "训练工程实践"
-description: "PPO 走读、避坑指南、TensorBoard 指标与训练调试"
+title: "无人机训练工程"
+description: "任务设计、PPO 实现与训练诊断"
 sidebar:
   order: 3
 ---
@@ -9,11 +9,11 @@ import TopicIndex from '../../../../components/TopicIndex.astro';
 
 ## 板块定位
 
-算法落地的工程面：一次 PPO 迭代的数据流走读、动手前必读的避坑指南、指标监控体系与训练调试实录。
+将无人机导航任务转换为环境接口，组织训练循环，并用指标定位结果变化。
 
 ## 阅读主线
 
-算法页理解数据与损失 → 工程走读核对训练循环 → 避坑指南检查环境契约 → TensorBoard 诊断结果 → 工作流连接任务。观测/动作/奖励设计与系统调试作为后续专题。
+任务设计明确观测、动作、奖励和回合边界 → PPO 走读核对数据流与更新 → 指标诊断分析导航结果和优化过程。
 
 ## 主题目录
 
@@ -21,4 +21,4 @@ import TopicIndex from '../../../../components/TopicIndex.astro';
 
 ## 下一步
 
-[返回上级板块](/knowledge-tree/learning-based-planning/) · [强化学习学习路径](/knowledge-tree/learning-paths/reinforcement-learning/) · [学习式无人机导航](/knowledge-tree/learning-paths/learning-based-uav-navigation/)
+[学习式规划](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/) · [导航评估](/knowledge-tree/simulation-evaluation/evaluation-methodology/)

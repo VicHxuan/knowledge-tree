@@ -1,0 +1,1597 @@
+{
+  "version": 1,
+  "papers": [
+    {
+      "id": "a3c",
+      "title": "Asynchronous Methods for Deep Reinforcement Learning",
+      "authors": [
+        "Volodymyr Mnih",
+        "Adrià Puigdomènech Badia",
+        "Mehdi Mirza",
+        "Alex Graves",
+        "Tim Harley",
+        "Timothy P Lillicrap",
+        "David Silver",
+        "Koray Kavukcuoglu"
+      ],
+      "year": 2016,
+      "venue": "International Conference on Machine Learning",
+      "doi": "",
+      "url": "https://proceedings.mlr.press/v48/mniha16.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://proceedings.mlr.press/v48/mniha16.html"
+      ],
+      "openAccessUrl": "https://proceedings.mlr.press/v48/mniha16.pdf"
+    },
+    {
+      "id": "arxiv-1003-2005",
+      "title": "Control of Complex Maneuvers for a Quadrotor UAV using Geometric Methods on SE(3)",
+      "authors": [
+        "Taeyoung Lee",
+        "Melvin Leok",
+        "N. Harris McClamroch"
+      ],
+      "year": 2010,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.1003.2005",
+      "url": "https://doi.org/10.48550/arXiv.1003.2005",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1003.2005",
+        "https://arxiv.org/pdf/1003.2005",
+        "https://doi.org/10.48550/arXiv.1003.2005"
+      ]
+    },
+    {
+      "id": "arxiv-1105-1186",
+      "title": "Sampling-based Algorithms for Optimal Motion Planning",
+      "authors": [
+        "Sertac Karaman",
+        "Emilio Frazzoli"
+      ],
+      "year": 2011,
+      "venue": "The International Journal of Robotics Research",
+      "doi": "10.1177/0278364911406761",
+      "url": "https://doi.org/10.1177/0278364911406761",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1105.1186",
+        "https://arxiv.org/pdf/1105.1186",
+        "https://doi.org/10.1177/0278364911406761",
+        "https://doi.org/10.48550/arXiv.1105.1186",
+        "https://journals.sagepub.com/doi/10.1177/0278364911406761"
+      ]
+    },
+    {
+      "id": "arxiv-1412-6980",
+      "title": "Adam: A Method for Stochastic Optimization",
+      "authors": [
+        "Diederik P. Kingma",
+        "Jimmy Ba"
+      ],
+      "year": 2014,
+      "venue": "arXiv",
+      "doi": "",
+      "url": "https://openreview.net/forum?id=8gmWwjFyLj",
+      "topics": [
+        "mathematics"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1412.6980",
+        "https://arxiv.org/pdf/1412.6980",
+        "https://doi.org/10.48550/arXiv.1412.6980",
+        "https://openreview.net/forum?id=8gmWwjFyLj"
+      ]
+    },
+    {
+      "id": "arxiv-1506-02438",
+      "title": "High-Dimensional Continuous Control Using Generalized Advantage Estimation",
+      "authors": [
+        "John Schulman",
+        "Philipp Moritz",
+        "Sergey Levine",
+        "Michael Jordan",
+        "Pieter Abbeel"
+      ],
+      "year": 2015,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.1506.02438",
+      "url": "https://doi.org/10.48550/arXiv.1506.02438",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1506.02438",
+        "https://arxiv.org/pdf/1506.02438",
+        "https://doi.org/10.48550/arXiv.1506.02438"
+      ]
+    },
+    {
+      "id": "arxiv-1507-06527",
+      "title": "Deep Recurrent Q-Learning for Partially Observable MDPs",
+      "authors": [
+        "Matthew Hausknecht",
+        "Peter Stone"
+      ],
+      "year": 2015,
+      "venue": "AAAI Fall Symposium Series",
+      "doi": "",
+      "url": "https://cdn.aaai.org/ocs/11673/11673-51288-1-PB.pdf",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1507.06527",
+        "https://arxiv.org/pdf/1507.06527",
+        "https://cdn.aaai.org/ocs/11673/11673-51288-1-PB.pdf",
+        "https://doi.org/10.48550/arXiv.1507.06527"
+      ]
+    },
+    {
+      "id": "arxiv-1509-02971",
+      "title": "Continuous control with deep reinforcement learning",
+      "authors": [
+        "Timothy P. Lillicrap",
+        "Jonathan J. Hunt",
+        "Alexander Pritzel",
+        "Nicolas Heess",
+        "Tom Erez",
+        "Yuval Tassa",
+        "David Silver",
+        "Daan Wierstra"
+      ],
+      "year": 2015,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.1509.02971",
+      "url": "https://doi.org/10.48550/arXiv.1509.02971",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1509.02971",
+        "https://arxiv.org/pdf/1509.02971",
+        "https://doi.org/10.48550/arXiv.1509.02971"
+      ]
+    },
+    {
+      "id": "arxiv-1509-06461",
+      "title": "Deep Reinforcement Learning with Double Q-learning",
+      "authors": [
+        "Hado van Hasselt",
+        "Arthur Guez",
+        "David Silver"
+      ],
+      "year": 2016,
+      "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+      "doi": "10.1609/aaai.v30i1.10295",
+      "url": "https://doi.org/10.1609/aaai.v30i1.10295",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1509.06461",
+        "https://arxiv.org/pdf/1509.06461",
+        "https://cdn.aaai.org/ojs/10295/10295-13-13823-1-2-20201228.pdf",
+        "https://doi.org/10.1609/aaai.v30i1.10295",
+        "https://doi.org/10.48550/arXiv.1509.06461"
+      ],
+      "openAccessUrl": "https://cdn.aaai.org/ojs/10295/10295-13-13823-1-2-20201228.pdf"
+    },
+    {
+      "id": "arxiv-1602-00763",
+      "title": "Simple online and realtime tracking",
+      "authors": [
+        "Alex Bewley",
+        "Zongyuan Ge",
+        "Lionel Ott",
+        "Fabio Ramos",
+        "Ben Upcroft"
+      ],
+      "year": 2016,
+      "venue": "2016 IEEE International Conference on Image Processing (ICIP)",
+      "doi": "10.1109/ICIP.2016.7533003",
+      "url": "https://doi.org/10.1109/ICIP.2016.7533003",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1602.00763",
+        "https://arxiv.org/pdf/1602.00763",
+        "https://doi.org/10.1109/ICIP.2016.7533003",
+        "https://doi.org/10.1109/icip.2016.7533003",
+        "https://doi.org/10.48550/arXiv.1602.00763",
+        "https://ieeexplore.ieee.org/document/7533003",
+        "https://ieeexplore.ieee.org/document/7533003/"
+      ]
+    },
+    {
+      "id": "arxiv-1602-07714",
+      "title": "Learning values across many orders of magnitude",
+      "authors": [
+        "Hado van Hasselt",
+        "Arthur Guez",
+        "Matteo Hessel",
+        "Volodymyr Mnih",
+        "David Silver"
+      ],
+      "year": 2016,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2016/hash/5227b6aaf294f5f027273aebf16015f2-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1602.07714",
+        "https://arxiv.org/pdf/1602.07714",
+        "https://doi.org/10.48550/arXiv.1602.07714",
+        "https://proceedings.neurips.cc/paper_files/paper/2016/hash/5227b6aaf294f5f027273aebf16015f2-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2016/file/5227b6aaf294f5f027273aebf16015f2-Paper.pdf"
+    },
+    {
+      "id": "arxiv-1612-03144",
+      "title": "Feature Pyramid Networks for Object Detection",
+      "authors": [
+        "Tsung-Yi Lin",
+        "Piotr Dollár",
+        "Ross Girshick",
+        "Kaiming He",
+        "Bharath Hariharan",
+        "Serge Belongie"
+      ],
+      "year": 2017,
+      "venue": "Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition",
+      "doi": "10.1109/cvpr.2017.106",
+      "url": "https://doi.org/10.1109/cvpr.2017.106",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1612.03144",
+        "https://arxiv.org/pdf/1612.03144",
+        "https://doi.org/10.1109/cvpr.2017.106",
+        "https://doi.org/10.48550/arXiv.1612.03144",
+        "https://openaccess.thecvf.com/content_cvpr_2017/html/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.html"
+      ],
+      "openAccessUrl": "https://openaccess.thecvf.com/content_cvpr_2017/papers/Lin_Feature_Pyramid_Networks_CVPR_2017_paper.pdf"
+    },
+    {
+      "id": "arxiv-1703-06114",
+      "title": "Deep Sets",
+      "authors": [
+        "Manzil Zaheer",
+        "Satwik Kottur",
+        "Siamak Ravanbakhsh",
+        "Barnabas Poczos",
+        "Ruslan Salakhutdinov",
+        "Alexander Smola"
+      ],
+      "year": 2017,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/f22e4747da1aa27e363d86d40ff442fe-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1703.06114",
+        "https://arxiv.org/pdf/1703.06114",
+        "https://doi.org/10.48550/arXiv.1703.06114",
+        "https://proceedings.neurips.cc/paper_files/paper/2017/hash/f22e4747da1aa27e363d86d40ff442fe-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2017/file/f22e4747da1aa27e363d86d40ff442fe-Paper.pdf"
+    },
+    {
+      "id": "arxiv-1703-06907",
+      "title": "Domain randomization for transferring deep neural networks from simulation to the real world",
+      "authors": [
+        "Josh Tobin",
+        "Rachel Fong",
+        "Alex Ray",
+        "Jonas Schneider",
+        "Wojciech Zaremba",
+        "Pieter Abbeel"
+      ],
+      "year": 2017,
+      "venue": "2017 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)",
+      "doi": "10.1109/IROS.2017.8202133",
+      "url": "https://doi.org/10.1109/IROS.2017.8202133",
+      "topics": [
+        "simulation-evaluation"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1703.06907",
+        "https://arxiv.org/pdf/1703.06907",
+        "https://doi.org/10.1109/IROS.2017.8202133",
+        "https://doi.org/10.1109/iros.2017.8202133",
+        "https://doi.org/10.48550/arXiv.1703.06907",
+        "https://ieeexplore.ieee.org/document/8202133"
+      ]
+    },
+    {
+      "id": "arxiv-1705-09406",
+      "title": "Multimodal Machine Learning: A Survey and Taxonomy",
+      "authors": [
+        "Tadas Baltrušaitis",
+        "Chaitanya Ahuja",
+        "Louis-Philippe Morency"
+      ],
+      "year": 2019,
+      "venue": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+      "doi": "10.1109/TPAMI.2018.2798607",
+      "url": "https://doi.org/10.1109/TPAMI.2018.2798607",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1705.09406",
+        "https://arxiv.org/pdf/1705.09406",
+        "https://doi.org/10.1109/TPAMI.2018.2798607",
+        "https://doi.org/10.1109/tpami.2018.2798607",
+        "https://doi.org/10.48550/arXiv.1705.09406",
+        "https://ieeexplore.ieee.org/document/8269806",
+        "https://ieeexplore.ieee.org/document/8269806/"
+      ]
+    },
+    {
+      "id": "arxiv-1706-03762",
+      "title": "Attention Is All You Need",
+      "authors": [
+        "Ashish Vaswani",
+        "Noam Shazeer",
+        "Niki Parmar",
+        "Jakob Uszkoreit",
+        "Llion Jones",
+        "Aidan N. Gomez",
+        "Lukasz Kaiser",
+        "Illia Polosukhin"
+      ],
+      "year": 2017,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/1706.03762",
+        "https://arxiv.org/abs/1706.03762",
+        "https://arxiv.org/pdf/1706.03762",
+        "https://doi.org/10.48550/arXiv.1706.03762",
+        "https://proceedings.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf"
+    },
+    {
+      "id": "arxiv-1708-03852",
+      "title": "VINS-Mono: A Robust and Versatile Monocular Visual-Inertial State Estimator",
+      "authors": [
+        "Tong Qin",
+        "Peiliang Li",
+        "Shaojie Shen"
+      ],
+      "year": 2018,
+      "venue": "IEEE Transactions on Robotics",
+      "doi": "10.1109/TRO.2018.2853729",
+      "url": "https://doi.org/10.1109/TRO.2018.2853729",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1708.03852",
+        "https://arxiv.org/pdf/1708.03852",
+        "https://doi.org/10.1109/TRO.2018.2853729",
+        "https://doi.org/10.48550/arXiv.1708.03852",
+        "https://ieeexplore.ieee.org/document/8421746"
+      ]
+    },
+    {
+      "id": "arxiv-1710-02298",
+      "title": "Rainbow: Combining Improvements in Deep Reinforcement Learning",
+      "authors": [
+        "Matteo Hessel",
+        "Joseph Modayil",
+        "Hado van Hasselt",
+        "Tom Schaul",
+        "Georg Ostrovski",
+        "Will Dabney",
+        "Dan Horgan",
+        "Bilal Piot",
+        "Mohammad Azar",
+        "David Silver"
+      ],
+      "year": 2018,
+      "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+      "doi": "",
+      "url": "https://cdn.aaai.org/ojs/11796/11796-13-15324-1-2-20201228.pdf",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/1710.02298",
+        "https://arxiv.org/abs/1710.02298",
+        "https://arxiv.org/pdf/1710.02298",
+        "https://cdn.aaai.org/ojs/11796/11796-13-15324-1-2-20201228.pdf",
+        "https://doi.org/10.48550/arXiv.1710.02298"
+      ],
+      "openAccessUrl": "https://cdn.aaai.org/ojs/11796/11796-13-15324-1-2-20201228.pdf"
+    },
+    {
+      "id": "arxiv-1710-06537",
+      "title": "Sim-to-Real Transfer of Robotic Control with Dynamics Randomization",
+      "authors": [
+        "Xue Bin Peng",
+        "Marcin Andrychowicz",
+        "Wojciech Zaremba",
+        "Pieter Abbeel"
+      ],
+      "year": 2018,
+      "venue": "2018 IEEE International Conference on Robotics and Automation (ICRA)",
+      "doi": "10.1109/ICRA.2018.8460528",
+      "url": "https://doi.org/10.1109/ICRA.2018.8460528",
+      "topics": [
+        "simulation-evaluation"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1710.06537",
+        "https://arxiv.org/pdf/1710.06537",
+        "https://doi.org/10.1109/ICRA.2018.8460528",
+        "https://doi.org/10.48550/arXiv.1710.06537",
+        "https://ieeexplore.ieee.org/document/8460528"
+      ]
+    },
+    {
+      "id": "arxiv-1711-05101",
+      "title": "Decoupled Weight Decay Regularization",
+      "authors": [
+        "Ilya Loshchilov",
+        "Frank Hutter"
+      ],
+      "year": 2017,
+      "venue": "arXiv",
+      "doi": "",
+      "url": "https://openreview.net/forum?id=Bkg6RiCqY7",
+      "topics": [
+        "mathematics"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1711.05101",
+        "https://arxiv.org/pdf/1711.05101",
+        "https://doi.org/10.48550/arXiv.1711.05101",
+        "https://openreview.net/forum?id=Bkg6RiCqY7"
+      ]
+    },
+    {
+      "id": "arxiv-1805-12114",
+      "title": "Deep Reinforcement Learning in a Handful of Trials using Probabilistic Dynamics Models",
+      "authors": [
+        "Kurtland Chua",
+        "Roberto Calandra",
+        "Rowan McAllister",
+        "Sergey Levine"
+      ],
+      "year": 2018,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2018/hash/3de568f8597b94bda53149c7d7f5958c-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1805.12114",
+        "https://arxiv.org/pdf/1805.12114",
+        "https://doi.org/10.48550/arXiv.1805.12114",
+        "https://proceedings.neurips.cc/paper_files/paper/2018/hash/3de568f8597b94bda53149c7d7f5958c-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2018/file/3de568f8597b94bda53149c7d7f5958c-Paper.pdf"
+    },
+    {
+      "id": "arxiv-1906-08253",
+      "title": "When to Trust Your Model: Model-Based Policy Optimization",
+      "authors": [
+        "Michael Janner",
+        "Justin Fu",
+        "Marvin Zhang",
+        "Sergey Levine"
+      ],
+      "year": 2019,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2019/hash/5faf461eff3099671ad63c6f3f094f7f-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1906.08253",
+        "https://arxiv.org/pdf/1906.08253",
+        "https://doi.org/10.48550/arXiv.1906.08253",
+        "https://proceedings.neurips.cc/paper_files/paper/2019/hash/5faf461eff3099671ad63c6f3f094f7f-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2019/file/5faf461eff3099671ad63c6f3f094f7f-Paper.pdf"
+    },
+    {
+      "id": "arxiv-1911-08265",
+      "title": "Mastering Atari, Go, chess and shogi by planning with a learned model",
+      "authors": [
+        "Julian Schrittwieser",
+        "Ioannis Antonoglou",
+        "Thomas Hubert",
+        "Karen Simonyan",
+        "Laurent Sifre",
+        "Simon Schmitt",
+        "Arthur Guez",
+        "Edward Lockhart",
+        "Demis Hassabis",
+        "Thore Graepel",
+        "Timothy Lillicrap",
+        "David Silver"
+      ],
+      "year": 2020,
+      "venue": "Nature",
+      "doi": "10.1038/s41586-020-03051-4",
+      "url": "https://doi.org/10.1038/s41586-020-03051-4",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1911.08265",
+        "https://arxiv.org/pdf/1911.08265",
+        "https://doi.org/10.1038/s41586-020-03051-4",
+        "https://doi.org/10.48550/arXiv.1911.08265",
+        "https://www.nature.com/articles/s41586-020-03051-4"
+      ]
+    },
+    {
+      "id": "arxiv-1912-01603",
+      "title": "Dream to Control: Learning Behaviors by Latent Imagination",
+      "authors": [
+        "Danijar Hafner",
+        "Timothy Lillicrap",
+        "Jimmy Ba",
+        "Mohammad Norouzi"
+      ],
+      "year": 2019,
+      "venue": "arXiv",
+      "doi": "",
+      "url": "https://openreview.net/forum?id=S1lOTC4tDS",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1912.01603",
+        "https://arxiv.org/pdf/1912.01603",
+        "https://doi.org/10.48550/arXiv.1912.01603",
+        "https://openreview.net/forum?id=S1lOTC4tDS"
+      ]
+    },
+    {
+      "id": "arxiv-2108-13264",
+      "title": "Deep Reinforcement Learning at the Edge of the Statistical Precipice",
+      "authors": [
+        "Rishabh Agarwal",
+        "Max Schwarzer",
+        "Pablo Samuel Castro",
+        "Aaron Courville",
+        "Marc G. Bellemare"
+      ],
+      "year": 2021,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2021/hash/f514cec81cb148559cf475e7426eed5e-Abstract.html",
+      "topics": [
+        "simulation-evaluation"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2108.13264",
+        "https://arxiv.org/pdf/2108.13264",
+        "https://doi.org/10.48550/arXiv.2108.13264",
+        "https://proceedings.neurips.cc/paper_files/paper/2021/hash/f514cec81cb148559cf475e7426eed5e-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2021/file/f514cec81cb148559cf475e7426eed5e-Paper.pdf"
+    },
+    {
+      "id": "arxiv-2210-05064",
+      "title": "VER: Scaling On-Policy RL Leads to the Emergence of Navigation in Embodied Rearrangement",
+      "authors": [
+        "Erik Wijmans",
+        "Irfan Essa",
+        "Dhruv Batra"
+      ],
+      "year": 2022,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://papers.nips.cc/paper_files/paper/2022/file/32d2cf79062126dc032ca4235068f52e-Paper-Conference.pdf",
+      "topics": [
+        "engineering-tools"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2210.05064",
+        "https://arxiv.org/pdf/2210.05064",
+        "https://doi.org/10.48550/arXiv.2210.05064",
+        "https://papers.nips.cc/paper_files/paper/2022/file/32d2cf79062126dc032ca4235068f52e-Paper-Conference.pdf"
+      ]
+    },
+    {
+      "id": "arxiv-2212-07536",
+      "title": "Robust Policy Optimization in Deep Reinforcement Learning",
+      "authors": [
+        "Md Masudur Rahman",
+        "Yexiang Xue"
+      ],
+      "year": 2022,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2212.07536",
+      "url": "https://doi.org/10.48550/arXiv.2212.07536",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/2212.07536",
+        "https://arxiv.org/abs/2212.07536",
+        "https://arxiv.org/pdf/2212.07536",
+        "https://doi.org/10.48550/arXiv.2212.07536"
+      ]
+    },
+    {
+      "id": "arxiv-2301-04104",
+      "title": "Mastering diverse control tasks through world models",
+      "authors": [
+        "Danijar Hafner",
+        "Jurgis Pasukonis",
+        "Jimmy Ba",
+        "Timothy Lillicrap"
+      ],
+      "year": 2025,
+      "venue": "Nature",
+      "doi": "10.1038/s41586-025-08744-2",
+      "url": "https://doi.org/10.1038/s41586-025-08744-2",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/2301.04104",
+        "https://arxiv.org/abs/2301.04104",
+        "https://arxiv.org/pdf/2301.04104",
+        "https://doi.org/10.1038/s41586-025-08744-2",
+        "https://doi.org/10.48550/arXiv.2301.04104",
+        "https://www.nature.com/articles/s41586-025-08744-2"
+      ],
+      "openAccessUrl": "https://www.nature.com/articles/s41586-025-08744-2.pdf"
+    },
+    {
+      "id": "autoencoder",
+      "title": "Reducing the Dimensionality of Data with Neural Networks",
+      "authors": [
+        "G. E. Hinton",
+        "R. R. Salakhutdinov"
+      ],
+      "year": 2006,
+      "venue": "Science",
+      "doi": "10.1126/science.1127647",
+      "url": "https://doi.org/10.1126/science.1127647",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://doi.org/10.1126/science.1127647",
+        "https://www.science.org/doi/10.1126/science.1127647"
+      ]
+    },
+    {
+      "id": "concurrent-estimator",
+      "title": "Concurrent Training of a Control Policy and a State Estimator for Dynamic and Robust Legged Locomotion",
+      "authors": [
+        "Gwanghyeon Ji",
+        "Juhyeok Mun",
+        "Hyeongjun Kim",
+        "Jemin Hwangbo"
+      ],
+      "year": 2022,
+      "venue": "IEEE Robotics and Automation Letters",
+      "doi": "10.1109/LRA.2022.3151396",
+      "url": "https://doi.org/10.1109/LRA.2022.3151396",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2202.05481",
+        "https://arxiv.org/pdf/2202.05481",
+        "https://doi.org/10.1109/LRA.2022.3151396",
+        "https://doi.org/10.48550/arXiv.2202.05481",
+        "https://ieeexplore.ieee.org/document/9714001"
+      ]
+    },
+    {
+      "id": "constrained-policy-optimization",
+      "title": "Constrained Policy Optimization",
+      "authors": [
+        "Joshua Achiam",
+        "David Held",
+        "Aviv Tamar",
+        "Pieter Abbeel"
+      ],
+      "year": 2017,
+      "venue": "International Conference on Machine Learning",
+      "doi": "",
+      "url": "https://proceedings.mlr.press/v70/achiam17a.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://proceedings.mlr.press/v70/achiam17a.html"
+      ],
+      "openAccessUrl": "https://proceedings.mlr.press/v70/achiam17a/achiam17a.pdf"
+    },
+    {
+      "id": "dd-ppo",
+      "title": "DD-PPO: Learning Near-Perfect PointGoal Navigators from 2.5 Billion Frames",
+      "authors": [
+        "Erik Wijmans",
+        "Abhishek Kadian",
+        "Ari Morcos",
+        "Stefan Lee",
+        "Irfan Essa",
+        "Devi Parikh",
+        "Manolis Savva",
+        "Dhruv Batra"
+      ],
+      "year": 2019,
+      "venue": "arXiv",
+      "doi": "",
+      "url": "https://openreview.net/forum?id=H1gX8C4YPr",
+      "topics": [
+        "engineering-tools"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1911.00357",
+        "https://arxiv.org/pdf/1911.00357",
+        "https://doi.org/10.48550/arXiv.1911.00357",
+        "https://openreview.net/forum?id=H1gX8C4YPr"
+      ]
+    },
+    {
+      "id": "deterministic-policy-gradient",
+      "title": "Deterministic Policy Gradient Algorithms",
+      "authors": [
+        "David Silver",
+        "Guy Lever",
+        "Nicolas Heess",
+        "Thomas Degris",
+        "Daan Wierstra",
+        "Martin Riedmiller"
+      ],
+      "year": 2014,
+      "venue": "International Conference on Machine Learning",
+      "doi": "",
+      "url": "https://proceedings.mlr.press/v32/silver14.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://proceedings.mlr.press/v32/silver14.html"
+      ],
+      "openAccessUrl": "https://proceedings.mlr.press/v32/silver14.pdf"
+    },
+    {
+      "id": "dqn",
+      "title": "Human-level control through deep reinforcement learning",
+      "authors": [
+        "Volodymyr Mnih",
+        "Koray Kavukcuoglu",
+        "David Silver",
+        "Andrei A. Rusu",
+        "Joel Veness",
+        "Marc G. Bellemare",
+        "Alex Graves",
+        "Martin Riedmiller",
+        "Andreas K. Fidjeland",
+        "Georg Ostrovski",
+        "Stig Petersen",
+        "Charles Beattie",
+        "Amir Sadik",
+        "Ioannis Antonoglou",
+        "Helen King",
+        "Dharshan Kumaran",
+        "Daan Wierstra",
+        "Shane Legg",
+        "Demis Hassabis"
+      ],
+      "year": 2015,
+      "venue": "Nature",
+      "doi": "10.1038/nature14236",
+      "url": "https://doi.org/10.1038/nature14236",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://doi.org/10.1038/nature14236",
+        "https://www.nature.com/articles/nature14236"
+      ]
+    },
+    {
+      "id": "dueling-network",
+      "title": "Dueling Network Architectures for Deep Reinforcement Learning",
+      "authors": [
+        "Ziyu Wang",
+        "Tom Schaul",
+        "Matteo Hessel",
+        "Hado Hasselt",
+        "Marc Lanctot",
+        "Nando Freitas"
+      ],
+      "year": 2016,
+      "venue": "International Conference on Machine Learning",
+      "doi": "",
+      "url": "https://proceedings.mlr.press/v48/wangf16.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://proceedings.mlr.press/v48/wangf16.html"
+      ],
+      "openAccessUrl": "https://proceedings.mlr.press/v48/wangf16.pdf"
+    },
+    {
+      "id": "dwl",
+      "title": "Advancing Humanoid Locomotion: Mastering Challenging Terrains with Denoising World Model Learning",
+      "authors": [
+        "Xinyang Gu",
+        "Yen-Jen Wang",
+        "Xiang Zhu",
+        "Chengming Shi",
+        "Yanjiang Guo",
+        "Yichen Liu",
+        "Jianyu Chen"
+      ],
+      "year": 2024,
+      "venue": "Robotics: Science and Systems XX",
+      "doi": "",
+      "url": "https://www.roboticsproceedings.org/rss20/p058.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2408.14472",
+        "https://arxiv.org/pdf/2408.14472",
+        "https://doi.org/10.48550/arXiv.2408.14472",
+        "https://www.roboticsproceedings.org/rss20/p058.html"
+      ],
+      "openAccessUrl": "https://www.roboticsproceedings.org/rss20/p058.pdf"
+    },
+    {
+      "id": "ego-planner",
+      "title": "EGO-Planner: An ESDF-Free Gradient-Based Local Planner for Quadrotors",
+      "authors": [
+        "Xin Zhou",
+        "Zhepei Wang",
+        "Hongkai Ye",
+        "Chao Xu",
+        "Fei Gao"
+      ],
+      "year": 2021,
+      "venue": "IEEE Robotics and Automation Letters",
+      "doi": "10.1109/LRA.2020.3047728",
+      "url": "https://doi.org/10.1109/LRA.2020.3047728",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2008.08835",
+        "https://arxiv.org/pdf/2008.08835",
+        "https://doi.org/10.1109/LRA.2020.3047728",
+        "https://ieeexplore.ieee.org/document/9309347/"
+      ],
+      "codeUrl": "https://github.com/ZJU-FAST-Lab/ego-planner"
+    },
+    {
+      "id": "fast-lio2",
+      "title": "FAST-LIO2: Fast Direct LiDAR-Inertial Odometry",
+      "authors": [
+        "Wei Xu",
+        "Yixi Cai",
+        "Dongjiao He",
+        "Jiarong Lin",
+        "Fu Zhang"
+      ],
+      "year": 2022,
+      "venue": "IEEE Transactions on Robotics",
+      "doi": "10.1109/TRO.2022.3141876",
+      "url": "https://doi.org/10.1109/TRO.2022.3141876",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2107.06829",
+        "https://arxiv.org/pdf/2107.06829",
+        "https://doi.org/10.1109/TRO.2022.3141876",
+        "https://ieeexplore.ieee.org/document/9697912"
+      ]
+    },
+    {
+      "id": "fast-planner",
+      "title": "Robust and Efficient Quadrotor Trajectory Generation for Fast Autonomous Flight",
+      "authors": [
+        "Boyu Zhou",
+        "Fei Gao",
+        "Luqi Wang",
+        "Chuhao Liu",
+        "Shaojie Shen"
+      ],
+      "year": 2019,
+      "venue": "IEEE Robotics and Automation Letters",
+      "doi": "10.1109/LRA.2019.2927938",
+      "url": "https://doi.org/10.1109/LRA.2019.2927938",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://doi.org/10.1109/LRA.2019.2927938",
+        "https://ieeexplore.ieee.org/document/8758904/"
+      ],
+      "codeUrl": "https://github.com/HKUST-Aerial-Robotics/Fast-Planner"
+    },
+    {
+      "id": "fiesta",
+      "title": "FIESTA: Fast Incremental Euclidean Distance Fields for Online Motion Planning of Aerial Robots",
+      "authors": [
+        "Luxin Han",
+        "Fei Gao",
+        "Boyu Zhou",
+        "Shaojie Shen"
+      ],
+      "year": 2019,
+      "venue": "",
+      "doi": "10.1109/IROS40897.2019.8968199",
+      "url": "https://doi.org/10.1109/IROS40897.2019.8968199",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1903.02144",
+        "https://arxiv.org/pdf/1903.02144",
+        "https://doi.org/10.1109/IROS40897.2019.8968199",
+        "https://ieeexplore.ieee.org/document/8968199"
+      ]
+    },
+    {
+      "id": "gcopter",
+      "title": "Geometrically Constrained Trajectory Optimization for Multicopters",
+      "authors": [
+        "Zhepei Wang",
+        "Xin Zhou",
+        "Chao Xu",
+        "Fei Gao"
+      ],
+      "year": 2022,
+      "venue": "IEEE Transactions on Robotics",
+      "doi": "10.1109/TRO.2022.3160022",
+      "url": "https://doi.org/10.1109/TRO.2022.3160022",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2103.00190",
+        "https://arxiv.org/pdf/2103.00190",
+        "https://doi.org/10.1109/TRO.2022.3160022",
+        "https://ieeexplore.ieee.org/document/9765821/"
+      ],
+      "codeUrl": "https://github.com/ZJU-FAST-Lab/GCOPTER"
+    },
+    {
+      "id": "humanoid-soccer",
+      "title": "Learning Vision-Driven Reactive Soccer Skills for Humanoid Robots",
+      "authors": [
+        "Yushi Wang",
+        "Changsheng Luo",
+        "Penghui Chen",
+        "Jianran Liu",
+        "Weijian Sun",
+        "Tong Guo",
+        "Kechang Yang",
+        "Biao Hu",
+        "Yangang Zhang",
+        "Mingguo Zhao"
+      ],
+      "year": 2026,
+      "venue": "Science Robotics",
+      "doi": "10.1126/scirobotics.aed1152",
+      "url": "https://doi.org/10.1126/scirobotics.aed1152",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2511.03996",
+        "https://arxiv.org/pdf/2511.03996",
+        "https://doi.org/10.1126/scirobotics.aed1152",
+        "https://doi.org/10.48550/arXiv.2511.03996",
+        "https://www.science.org/doi/10.1126/scirobotics.aed1152"
+      ]
+    },
+    {
+      "id": "hybrid-reward-architecture",
+      "title": "Hybrid Reward Architecture for Reinforcement Learning",
+      "authors": [
+        "Harm Van Seijen",
+        "Mehdi Fatemi",
+        "Joshua Romoff",
+        "Romain Laroche",
+        "Tavian Barnes",
+        "Jeffrey Tsang"
+      ],
+      "year": 2017,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2017/hash/1264a061d82a2edae1574b07249800d6-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://proceedings.neurips.cc/paper_files/paper/2017/hash/1264a061d82a2edae1574b07249800d6-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2017/file/1264a061d82a2edae1574b07249800d6-Paper.pdf"
+    },
+    {
+      "id": "mavrl",
+      "title": "MAVRL: Learn to Fly in Cluttered Environments With Varying Speed",
+      "authors": [
+        "Hang Yu",
+        "Christophe De Wagter",
+        "Guido C. H. E de Croon"
+      ],
+      "year": 2025,
+      "venue": "IEEE Robotics and Automation Letters",
+      "doi": "10.1109/LRA.2024.3522778",
+      "url": "https://doi.org/10.1109/LRA.2024.3522778",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2402.08381",
+        "https://arxiv.org/pdf/2402.08381",
+        "https://doi.org/10.1109/LRA.2024.3522778",
+        "https://doi.org/10.48550/arXiv.2402.08381",
+        "https://ieeexplore.ieee.org/document/10816139"
+      ]
+    },
+    {
+      "id": "minimum-snap",
+      "title": "Minimum snap trajectory generation and control for quadrotors",
+      "authors": [
+        "Daniel Mellinger",
+        "Vijay Kumar"
+      ],
+      "year": 2011,
+      "venue": "2011 IEEE International Conference on Robotics and Automation",
+      "doi": "10.1109/ICRA.2011.5980409",
+      "url": "https://doi.org/10.1109/ICRA.2011.5980409",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "http://ieeexplore.ieee.org/document/5980409/",
+        "https://doi.org/10.1109/ICRA.2011.5980409",
+        "https://ieeexplore.ieee.org/document/5980409/"
+      ]
+    },
+    {
+      "id": "motor-skills-policy-gradients",
+      "title": "Reinforcement learning of motor skills with policy gradients",
+      "authors": [
+        "Jan Peters",
+        "Stefan Schaal"
+      ],
+      "year": 2008,
+      "venue": "Neural Networks",
+      "doi": "10.1016/j.neunet.2008.02.003",
+      "url": "https://doi.org/10.1016/j.neunet.2008.02.003",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://doi.org/10.1016/j.neunet.2008.02.003",
+        "https://linkinghub.elsevier.com/retrieve/pii/S0893608008000701"
+      ]
+    },
+    {
+      "id": "multicritical",
+      "title": "Multi-Critic Actor Learning: Teaching RL Policies to Act with Style",
+      "authors": [
+        "Siddharth Mysore",
+        "George Cheng",
+        "Yunqi Zhao",
+        "Kate Saenko",
+        "Meng Wu"
+      ],
+      "year": 2022,
+      "venue": "International Conference on Learning Representations",
+      "doi": "",
+      "url": "https://openreview.net/forum?id=rJvY_5OzoI",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://openreview.net/forum?id=rJvY_5OzoI"
+      ]
+    },
+    {
+      "id": "natural-policy-gradient",
+      "title": "A Natural Policy Gradient",
+      "authors": [
+        "Sham M. Kakade"
+      ],
+      "year": 2001,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2001/hash/4b86abe48d358ecf194c56c69108433e-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://proceedings.neurips.cc/paper_files/paper/2001/hash/4b86abe48d358ecf194c56c69108433e-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2001/file/4b86abe48d358ecf194c56c69108433e-Paper.pdf"
+    },
+    {
+      "id": "navrl",
+      "title": "NavRL: Learning Safe Flight in Dynamic Environments",
+      "authors": [
+        "Zhefan Xu",
+        "Xinming Han",
+        "Haoyu Shen",
+        "Hanyu Jin",
+        "Kenji Shimada"
+      ],
+      "year": 2025,
+      "venue": "IEEE Robotics and Automation Letters",
+      "doi": "10.1109/LRA.2025.3546069",
+      "url": "https://doi.org/10.1109/LRA.2025.3546069",
+      "topics": [
+        "learning-based-planning",
+        "simulation-evaluation"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/2409.15634",
+        "https://arxiv.org/abs/2409.15634",
+        "https://arxiv.org/pdf/2409.15634",
+        "https://doi.org/10.1109/LRA.2025.3546069",
+        "https://doi.org/10.48550/arXiv.2409.15634",
+        "https://ieeexplore.ieee.org/document/10904341"
+      ],
+      "codeUrl": "https://github.com/Zhefan-Xu/NavRL"
+    },
+    {
+      "id": "pilco",
+      "title": "PILCO: A Model-Based and Data-Efficient Approach to Policy Search",
+      "authors": [
+        "Marc Peter Deisenroth",
+        "Carl Edward Rasmussen"
+      ],
+      "year": 2011,
+      "venue": "Proceedings of the 28th International Conference on Machine Learning",
+      "doi": "",
+      "url": "https://icml.cc/2011/papers/323_icmlpaper.pdf",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://icml.cc/2011/papers/323_icmlpaper.pdf",
+        "https://www.icml-2011.org/papers/323_icmlpaper.pdf"
+      ],
+      "openAccessUrl": "https://icml.cc/2011/papers/323_icmlpaper.pdf"
+    },
+    {
+      "id": "policy-gradient-theorem",
+      "title": "Policy Gradient Methods for Reinforcement Learning with Function Approximation",
+      "authors": [
+        "Richard S Sutton",
+        "David McAllester",
+        "Satinder Singh",
+        "Yishay Mansour"
+      ],
+      "year": 2000,
+      "venue": "Advances in Neural Information Processing Systems 12",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://proceedings.neurips.cc/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html",
+        "https://proceedings.neurips.cc/paper_files/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html"
+      ]
+    },
+    {
+      "id": "pomdp-planning",
+      "title": "Planning and acting in partially observable stochastic domains",
+      "authors": [
+        "Leslie Pack Kaelbling",
+        "Michael L. Littman",
+        "Anthony R. Cassandra"
+      ],
+      "year": 1998,
+      "venue": "Artificial Intelligence",
+      "doi": "10.1016/s0004-3702(98)00023-x",
+      "url": "https://doi.org/10.1016/s0004-3702(98)00023-x",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://doi.org/10.1016/s0004-3702(98)00023-x",
+        "https://linkinghub.elsevier.com/retrieve/pii/S000437029800023X"
+      ]
+    },
+    {
+      "id": "ppo",
+      "title": "Proximal Policy Optimization Algorithms",
+      "authors": [
+        "John Schulman",
+        "Filip Wolski",
+        "Prafulla Dhariwal",
+        "Alec Radford",
+        "Oleg Klimov"
+      ],
+      "year": 2017,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.1707.06347",
+      "url": "https://doi.org/10.48550/arXiv.1707.06347",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/1707.06347",
+        "https://arxiv.org/abs/1707.06347",
+        "https://arxiv.org/pdf/1707.06347",
+        "https://doi.org/10.48550/arXiv.1707.06347"
+      ]
+    },
+    {
+      "id": "reinforce",
+      "title": "Simple statistical gradient-following algorithms for connectionist reinforcement learning",
+      "authors": [
+        "Ronald J Williams"
+      ],
+      "year": 1992,
+      "venue": "Machine Learning",
+      "doi": "10.1007/BF00992696",
+      "url": "https://doi.org/10.1007/BF00992696",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://doi.org/10.1007/BF00992696",
+        "https://link.springer.com/10.1007/BF00992696"
+      ]
+    },
+    {
+      "id": "rma",
+      "title": "RMA: Rapid Motor Adaptation for Legged Robots",
+      "authors": [
+        "Ashish Kumar",
+        "Zipeng Fu",
+        "Deepak Pathak",
+        "Jitendra Malik"
+      ],
+      "year": 2021,
+      "venue": "Robotics: Science and Systems XVII",
+      "doi": "10.15607/rss.2021.xvii.011",
+      "url": "https://doi.org/10.15607/rss.2021.xvii.011",
+      "topics": [
+        "learning-based-planning",
+        "simulation-evaluation"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2107.04034",
+        "https://arxiv.org/pdf/2107.04034",
+        "https://doi.org/10.15607/rss.2021.xvii.011",
+        "https://doi.org/10.48550/arXiv.2107.04034",
+        "https://www.roboticsproceedings.org/rss17/p011.html"
+      ],
+      "openAccessUrl": "https://www.roboticsproceedings.org/rss17/p011.pdf"
+    },
+    {
+      "id": "robotkeyframing",
+      "title": "RobotKeyframing: Learning Locomotion with High-Level Objectives via Mixture of Dense and Sparse Rewards",
+      "authors": [
+        "Fatemeh Zargarbashi",
+        "Jin Cheng",
+        "Dongho Kang",
+        "Robert Sumner",
+        "Stelian Coros"
+      ],
+      "year": 2025,
+      "venue": "Proceedings of The 8th Conference on Robot Learning",
+      "doi": "",
+      "url": "https://proceedings.mlr.press/v270/zargarbashi25a.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2407.11562",
+        "https://arxiv.org/pdf/2407.11562",
+        "https://doi.org/10.48550/arXiv.2407.11562",
+        "https://proceedings.mlr.press/v270/zargarbashi25a.html"
+      ]
+    },
+    {
+      "id": "sac",
+      "title": "Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor",
+      "authors": [
+        "Tuomas Haarnoja",
+        "Aurick Zhou",
+        "Pieter Abbeel",
+        "Sergey Levine"
+      ],
+      "year": 2018,
+      "venue": "International Conference on Machine Learning",
+      "doi": "",
+      "url": "https://proceedings.mlr.press/v80/haarnoja18b.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/1801.01290",
+        "https://doi.org/10.48550/arXiv.1801.01290",
+        "https://proceedings.mlr.press/v80/haarnoja18b.html"
+      ],
+      "openAccessUrl": "https://proceedings.mlr.press/v80/haarnoja18b/haarnoja18b.pdf"
+    },
+    {
+      "id": "sac-applications",
+      "title": "Soft Actor-Critic Algorithms and Applications",
+      "authors": [
+        "Tuomas Haarnoja",
+        "Aurick Zhou",
+        "Kristian Hartikainen",
+        "George Tucker",
+        "Sehoon Ha",
+        "Jie Tan",
+        "Vikash Kumar",
+        "Henry Zhu",
+        "Abhishek Gupta",
+        "Pieter Abbeel",
+        "Sergey Levine"
+      ],
+      "year": 2018,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.1812.05905",
+      "url": "https://doi.org/10.48550/arXiv.1812.05905",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/1812.05905",
+        "https://arxiv.org/abs/1812.05905",
+        "https://arxiv.org/pdf/1812.05905",
+        "https://doi.org/10.48550/arXiv.1812.05905"
+      ]
+    },
+    {
+      "id": "supermimic",
+      "title": "SuperMimic: Scaling Humanoid Whole-Body Control with One Differentiable World Model",
+      "authors": [
+        "Qiayuan Liao",
+        "Yiyang Shao",
+        "Junfeng Long",
+        "Kevin Zakka",
+        "Roberto Horowitz",
+        "Pieter Abbeel",
+        "Koushil Sreenath"
+      ],
+      "year": 2026,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2610.28480",
+      "url": "https://doi.org/10.48550/arXiv.2610.28480",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2610.28480",
+        "https://arxiv.org/pdf/2610.28480",
+        "https://doi.org/10.48550/arXiv.2610.28480"
+      ]
+    },
+    {
+      "id": "svg",
+      "title": "Learning Continuous Control Policies by Stochastic Value Gradients",
+      "authors": [
+        "Nicolas Heess",
+        "Greg Wayne",
+        "David Silver",
+        "Timothy Lillicrap",
+        "Yuval Tassa",
+        "Tom Erez"
+      ],
+      "year": 2015,
+      "venue": "Advances in Neural Information Processing Systems",
+      "doi": "",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2015/hash/148510031349642de5ca0c544f31b2ef-Abstract.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1510.09142",
+        "https://arxiv.org/pdf/1510.09142",
+        "https://doi.org/10.48550/arXiv.1510.09142",
+        "https://proceedings.neurips.cc/paper_files/paper/2015/hash/148510031349642de5ca0c544f31b2ef-Abstract.html"
+      ],
+      "openAccessUrl": "https://proceedings.neurips.cc/paper_files/paper/2015/file/148510031349642de5ca0c544f31b2ef-Paper.pdf"
+    },
+    {
+      "id": "td3",
+      "title": "Addressing Function Approximation Error in Actor-Critic Methods",
+      "authors": [
+        "Scott Fujimoto",
+        "Herke van Hoof",
+        "David Meger"
+      ],
+      "year": 2018,
+      "venue": "International Conference on Machine Learning",
+      "doi": "",
+      "url": "https://proceedings.mlr.press/v80/fujimoto18a.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/1802.09477",
+        "https://doi.org/10.48550/arXiv.1802.09477",
+        "https://proceedings.mlr.press/v80/fujimoto18a.html"
+      ],
+      "openAccessUrl": "https://proceedings.mlr.press/v80/fujimoto18a/fujimoto18a.pdf"
+    },
+    {
+      "id": "trpo",
+      "title": "Trust Region Policy Optimization",
+      "authors": [
+        "John Schulman",
+        "Sergey Levine",
+        "Philipp Moritz",
+        "Michael I. Jordan",
+        "Pieter Abbeel"
+      ],
+      "year": 2015,
+      "venue": "International Conference on Machine Learning",
+      "doi": "",
+      "url": "https://proceedings.mlr.press/v37/schulman15.html",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "http://arxiv.org/abs/1502.05477",
+        "https://doi.org/10.48550/arXiv.1502.05477",
+        "https://proceedings.mlr.press/v37/schulman15.html"
+      ],
+      "openAccessUrl": "https://proceedings.mlr.press/v37/schulman15.pdf"
+    },
+    {
+      "id": "unreal",
+      "title": "Reinforcement Learning with Unsupervised Auxiliary Tasks",
+      "authors": [
+        "Max Jaderberg",
+        "Volodymyr Mnih",
+        "Wojciech Marian Czarnecki",
+        "Tom Schaul",
+        "Joel Z Leibo",
+        "David Silver",
+        "Koray Kavukcuoglu"
+      ],
+      "year": 2016,
+      "venue": "arXiv",
+      "doi": "",
+      "url": "https://openreview.net/forum?id=SJ6yPD5xg",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/1611.05397",
+        "https://arxiv.org/pdf/1611.05397",
+        "https://doi.org/10.48550/arXiv.1611.05397",
+        "https://openreview.net/forum?id=SJ6yPD5xg"
+      ]
+    },
+    {
+      "id": "visfly",
+      "title": "VisFly: An Efficient and Versatile Simulator for Training Vision-Based Flight",
+      "authors": [
+        "Fanxing Li",
+        "Fangyu Sun",
+        "Tianbao Zhang",
+        "Danping Zou"
+      ],
+      "year": 2025,
+      "venue": "2025 IEEE International Conference on Robotics and Automation (ICRA)",
+      "doi": "10.1109/ICRA55743.2025.11128458",
+      "url": "https://doi.org/10.1109/ICRA55743.2025.11128458",
+      "topics": [
+        "simulation-evaluation"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2407.14783",
+        "https://arxiv.org/pdf/2407.14783",
+        "https://doi.org/10.1109/ICRA55743.2025.11128458",
+        "https://doi.org/10.48550/arXiv.2407.14783",
+        "https://ieeexplore.ieee.org/document/11128458"
+      ]
+    },
+    {
+      "id": "voxblox",
+      "title": "Voxblox: Incremental 3D Euclidean Signed Distance Fields for on-board MAV planning",
+      "authors": [
+        "Helen Oleynikova",
+        "Zachary Taylor",
+        "Marius Fehr",
+        "Roland Siegwart",
+        "Juan Nieto"
+      ],
+      "year": 2017,
+      "venue": "2017 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)",
+      "doi": "10.1109/IROS.2017.8202315",
+      "url": "https://doi.org/10.1109/IROS.2017.8202315",
+      "topics": [
+        "classical-planning-control"
+      ],
+      "sources": [
+        "http://ieeexplore.ieee.org/document/8202315/",
+        "https://arxiv.org/abs/1611.03631",
+        "https://arxiv.org/pdf/1611.03631",
+        "https://doi.org/10.1109/IROS.2017.8202315",
+        "https://ieeexplore.ieee.org/document/8202315",
+        "https://ieeexplore.ieee.org/document/8202315/"
+      ]
+    },
+    {
+      "id": "world-model-reconstruction",
+      "title": "Learning Humanoid Locomotion with World Model Reconstruction",
+      "authors": [
+        "Wandong Sun",
+        "Long Chen",
+        "Yongbo Su",
+        "Baoshi Cao",
+        "Yang Liu",
+        "Zongwu Xie"
+      ],
+      "year": 2025,
+      "venue": "arXiv",
+      "doi": "10.48550/arXiv.2502.16230",
+      "url": "https://doi.org/10.48550/arXiv.2502.16230",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://arxiv.org/abs/2502.16230",
+        "https://arxiv.org/pdf/2502.16230",
+        "https://doi.org/10.48550/arXiv.2502.16230"
+      ]
+    },
+    {
+      "id": "yopo",
+      "title": "You Only Plan Once: A Learning-Based One-Stage Planner With Guidance Learning",
+      "authors": [
+        "Junjie Lu",
+        "Xuewei Zhang",
+        "Hongming Shen",
+        "Liwen Xu",
+        "Bailing Tian"
+      ],
+      "year": 2024,
+      "venue": "IEEE Robotics and Automation Letters",
+      "doi": "10.1109/lra.2024.3399589",
+      "url": "https://doi.org/10.1109/lra.2024.3399589",
+      "topics": [
+        "learning-based-planning"
+      ],
+      "sources": [
+        "https://doi.org/10.1109/lra.2024.3399589",
+        "https://ieeexplore.ieee.org/document/10528860/"
+      ],
+      "codeUrl": "https://github.com/TJU-Aerial-Robotics/YOPO"
+    }
+  ]
+}

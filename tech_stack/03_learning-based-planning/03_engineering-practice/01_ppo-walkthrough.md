@@ -124,7 +124,7 @@ $$
 | Critic 是否提供可用估值 | target / value 的分布、value loss、explained variance、边界样本 |
 | 数据是否异常 | reward 分项、终止/截断比例、观测与动作范围、NaN/Inf |
 
-这些是推荐观测量，不要求所有框架采用同一 tag。记录 value loss 时说明是否乘了系数、是否对 value/return 归一化；target 方差接近零时，explained variance 也难以提供稳定解释。全站命名参考 [TensorBoard 指标模板](./03_tensorboard-metrics.md)。
+这些是推荐观测量，不要求所有框架采用同一 tag。记录 value loss 时说明是否乘了系数、是否对 value/return 归一化；target 方差接近零时，explained variance 也难以提供稳定解释。全站命名参考 [TensorBoard 指标模板](./03_training-metrics-and-diagnosis.md)。
 
 ### 4.3 训练状态保存与恢复
 
@@ -198,9 +198,9 @@ $$
 ### 6.1 知识关联
 
 - **算法主线**：[PPO](../02_rl-algorithms/02_model-free-rl/03_ppo.md)——目标函数、GAE、梯度路径与教学代码。
-- **实现边界**：[强化学习工程避坑指南](./02_rl-engineering-pitfalls.md)——接口、采样边界、训练与恢复的一致性。
-- **监控规范**：[TensorBoard 指标模板](./03_tensorboard-metrics.md)——指标含义和统计层级。
-- **部署实践**：[多服务器多 GPU 训练](../../04_engineering-tools/ppo-in-multi-GPU/01_multi-gpu-training-deployment-guide.md)——并行训练与运维入口。
+- **实现边界**：[强化学习工程避坑指南](./02_uav-rl-task-design.md)——接口、采样边界、训练与恢复的一致性。
+- **监控规范**：[TensorBoard 指标模板](./03_training-metrics-and-diagnosis.md)——指标含义和统计层级。
+- **部署实践**：[多服务器多 GPU 训练](../../04_engineering-tools/02_training-infrastructure/01_multi-gpu-training-deployment-guide.md)——并行训练与运维入口。
 
 ### 6.2 参考资料
 

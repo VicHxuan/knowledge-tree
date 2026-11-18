@@ -1,0 +1,14 @@
+---
+const { siteTitleHref } = Astro.locals.starlightRoute;
+---
+<a class="kt-site-title" href={siteTitleHref} aria-label="知识树首页 · VicHxuan">
+  <span class="kt-site-name">知识树</span>
+  <span class="kt-site-author" translate="no">VicHxuan</span>
+</a>
+<style>
+  .kt-site-title { display: flex; align-items: baseline; gap: .75rem; color: var(--kt-ink); text-decoration: none; white-space: nowrap; padding: .25rem 0; }
+  .kt-site-name { font-family: var(--sl-font-heading); font-weight: 600; font-size: 1.5rem; }
+  .kt-site-author { font-size: .75rem; color: var(--kt-muted); }
+  .kt-site-title:hover { color: var(--kt-accent); }
+  @media (max-width: 24rem) { .kt-site-author { display: none; } }
+</style>

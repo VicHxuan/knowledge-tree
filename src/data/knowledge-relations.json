@@ -262,11 +262,6 @@
       "type": "related"
     },
     {
-      "from": "learning-based-planning/engineering-practice/observation-action-reward-design",
-      "to": "learning-based-planning/engineering-practice/rl-engineering-pitfalls",
-      "type": "related"
-    },
-    {
       "from": "learning-based-planning/neural-network-architectures/cnn",
       "to": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
       "type": "prerequisite"
@@ -293,7 +288,7 @@
     },
     {
       "from": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
-      "to": "learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization",
+      "to": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
       "type": "related"
     },
     {
@@ -307,22 +302,12 @@
       "type": "prerequisite"
     },
     {
-      "from": "learning-based-planning/engineering-practice/work-pipeline",
-      "to": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "from": "simulation-evaluation/simulation-environment/simulator-overview",
+      "to": "simulation-evaluation/sim-to-real/sim-to-real-gap",
       "type": "related"
     },
     {
-      "from": "simulation-evaluation/simulation-platforms/simulator-overview",
-      "to": "simulation-evaluation/scenario-design/domain-randomization",
-      "type": "related"
-    },
-    {
-      "from": "simulation-evaluation/scenario-design/static-dynamic-scenarios",
-      "to": "simulation-evaluation/evaluation-methodology/navigation-metrics",
-      "type": "related"
-    },
-    {
-      "from": "simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis",
+      "from": "simulation-evaluation/simulation-environment/navigation-scenarios",
       "to": "simulation-evaluation/evaluation-methodology/navigation-metrics",
       "type": "related"
     },
@@ -345,31 +330,6 @@
       "type": "prerequisite",
       "from": "learning-based-planning/rl-algorithms/rl-foundations/model-free-vs-model-based",
       "to": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations"
-    },
-    {
-      "type": "prerequisite",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/dyna"
-    },
-    {
-      "type": "prerequisite",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/pets"
-    },
-    {
-      "type": "prerequisite",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/dreamer"
-    },
-    {
-      "type": "prerequisite",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization"
-    },
-    {
-      "type": "prerequisite",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/dyna",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/mbpo"
     },
     {
       "type": "prerequisite",
@@ -430,26 +390,6 @@
       "type": "related",
       "from": "learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies",
       "to": "learning-based-planning/neural-network-architectures/rnn-lstm"
-    },
-    {
-      "type": "related",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/pets",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/muzero"
-    },
-    {
-      "type": "related",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/pets",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/mbpo"
-    },
-    {
-      "type": "related",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/muzero",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/dreamer"
-    },
-    {
-      "type": "related",
-      "from": "learning-based-planning/rl-algorithms/model-based-rl/dreamer",
-      "to": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization"
     },
     {
       "type": "related",
@@ -585,6 +525,131 @@
       "from": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
       "to": "learning-based-planning/neural-network-architectures/encoder-decoder",
       "type": "related"
+    },
+    {
+      "from": "learning-based-planning/learning-based-trajectory-planning/yopo",
+      "to": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/engineering-practice/rl-engineering-pitfalls",
+      "to": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
+      "type": "prerequisite"
+    },
+    {
+      "from": "learning-based-planning/engineering-practice/tensorboard-metrics",
+      "to": "simulation-evaluation/evaluation-methodology/navigation-metrics",
+      "type": "related"
+    },
+    {
+      "from": "simulation-evaluation/simulation-environment/navigation-scenarios",
+      "to": "simulation-evaluation/evaluation-methodology/navigation-metrics",
+      "type": "prerequisite"
+    },
+    {
+      "from": "simulation-evaluation/evaluation-methodology/navigation-metrics",
+      "to": "simulation-evaluation/sim-to-real/sim-to-real-gap",
+      "type": "prerequisite"
+    },
+    {
+      "from": "simulation-evaluation/sim-to-real/sim-to-real-gap",
+      "to": "real-flight/navigation-system-integration",
+      "type": "prerequisite"
+    },
+    {
+      "from": "engineering-tools/px4-ros/px4-sitl",
+      "to": "real-flight/navigation-system-integration",
+      "type": "prerequisite"
+    },
+    {
+      "from": "real-flight/remote-control-setup",
+      "to": "real-flight/navigation-system-integration",
+      "type": "related"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/dyna"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/dyna",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/mbpo"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/pets"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/pets",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/td-mpc"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/muzero"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/shac"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/shac",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/supermimic"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/dreamer"
+    },
+    {
+      "type": "prerequisite",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/dreamer"
+    },
+    {
+      "type": "related",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/pets",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/mbpo"
+    },
+    {
+      "type": "related",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/td-mpc",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/muzero"
+    },
+    {
+      "type": "related",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/td-mpc",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/shac"
+    },
+    {
+      "type": "related",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/td-mpc",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/dreamer"
+    },
+    {
+      "type": "related",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/shac",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/dreamer"
+    },
+    {
+      "type": "related",
+      "from": "learning-based-planning/rl-algorithms/model-based-rl/dreamer",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/supermimic"
+    },
+    {
+      "type": "prerequisite",
+      "from": "mathematics/calculus-optimization/gradient-jacobian-hessian",
+      "to": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization"
     }
   ]
 }

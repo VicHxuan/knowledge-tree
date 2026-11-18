@@ -1,0 +1,39 @@
+/* Knowledge Tree — 飞行研究手册。Design contract: /DESIGN.md */
+:root {
+  --kt-space-1: .25rem; --kt-space-2: .5rem; --kt-space-3: .75rem;
+  --kt-space-4: 1rem; --kt-space-6: 1.5rem; --kt-space-8: 2rem;
+  --kt-space-12: 3rem; --kt-space-16: 4rem;
+  --kt-radius-sm: 3px; --kt-radius-md: 3px; --kt-radius-lg: 3px;
+  --kt-ease: 140ms ease-out;
+  --kt-transition: background-color var(--kt-ease), border-color var(--kt-ease), color var(--kt-ease);
+  --kt-paper: #171f1b; --kt-surface: #1c2720; --kt-rail: #212d25;
+  --kt-ink: #e1e9e2; --kt-muted: #a7b7ab; --kt-accent: #9fc5ad;
+  --kt-selected: #304738; --kt-line: #415247; --kt-control-line: #819788;
+  --sl-font-body: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif;
+  --sl-font-heading: 'KT Serif', 'KT CJK Serif', 'Noto Serif CJK SC', 'Songti SC', SimSun, serif;
+  --sl-font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Noto Sans Mono CJK SC', Consolas, monospace;
+  --sl-content-width: 44rem; --sl-sidebar-width: 16.5rem;
+  --sl-text-h1: 2.25rem; --sl-text-h2: 1.625rem; --sl-text-h3: 1.3125rem;
+  --sl-text-h4: 1.0625rem; --sl-text-body: 1.0625rem; --sl-line-height: 1.9;
+}
+:root[data-theme='light'] {
+  --kt-paper: #f8faf8; --kt-surface: #ffffff; --kt-rail: #e8eee7;
+  --kt-ink: #24372f; --kt-muted: #59675e; --kt-accent: #315a46;
+  --kt-selected: #d7e4d8; --kt-line: #c8d2c8; --kt-control-line: #7b8c7e;
+  color-scheme: light;
+}
+:root[data-theme='dark'] { color-scheme: dark; }
+:root, :root[data-theme='light'] {
+  --sl-color-bg: var(--kt-paper); --sl-color-bg-nav: var(--kt-paper);
+  --sl-color-bg-sidebar: var(--kt-rail); --sl-color-bg-inline-code: var(--kt-rail);
+  --sl-color-bg-accent: var(--kt-accent); --sl-color-accent: var(--kt-accent);
+  --sl-color-accent-high: var(--kt-accent); --sl-color-accent-low: var(--kt-selected);
+  --sl-color-text: var(--kt-ink); --sl-color-text-accent: var(--kt-accent);
+  --sl-color-text-invert: var(--kt-paper); --sl-color-white: var(--kt-ink); --sl-color-black: var(--kt-paper);
+  --sl-color-hairline: var(--kt-line); --sl-color-hairline-light: var(--kt-line); --sl-color-hairline-shade: var(--kt-rail);
+  --sl-color-gray-1: var(--kt-ink); --sl-color-gray-2: var(--kt-ink); --sl-color-gray-3: var(--kt-muted);
+  --sl-color-gray-4: var(--kt-control-line); --sl-color-gray-5: var(--kt-line); --sl-color-gray-6: var(--kt-rail); --sl-color-gray-7: var(--kt-paper);
+}
+@media (max-width: 49.999rem) {
+  :root { --sl-text-h1: 1.75rem; --sl-text-h2: 1.5rem; --sl-text-body: 1rem; }
+}

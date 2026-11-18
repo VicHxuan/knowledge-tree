@@ -1,0 +1,500 @@
+{
+  "version": 1,
+  "edges": [
+    {
+      "paper": "arxiv-1105-1186",
+      "article": "classical-planning-control/path-search/sampling-based-search",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1602-00763",
+      "article": "classical-planning-control/perception-slam/dynamic-obstacle-tracking",
+      "note": "参考文献"
+    },
+    {
+      "paper": "fast-lio2",
+      "article": "classical-planning-control/perception-slam/fast-lio",
+      "note": "参考文献"
+    },
+    {
+      "paper": "fiesta",
+      "article": "classical-planning-control/perception-slam/occupancy-grid-esdf",
+      "note": "参考文献"
+    },
+    {
+      "paper": "voxblox",
+      "article": "classical-planning-control/perception-slam/occupancy-grid-esdf",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1708-03852",
+      "article": "classical-planning-control/perception-slam/visual-inertial-odometry",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1003-2005",
+      "article": "classical-planning-control/tracking-control/geometric-control-se3",
+      "note": "参考文献"
+    },
+    {
+      "paper": "minimum-snap",
+      "article": "classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap",
+      "note": "参考文献"
+    },
+    {
+      "paper": "ego-planner",
+      "article": "classical-planning-control/trajectory-optimization/ego-planner",
+      "note": "原始方法"
+    },
+    {
+      "paper": "fast-planner",
+      "article": "classical-planning-control/trajectory-optimization/fast-planner",
+      "note": "原始方法"
+    },
+    {
+      "paper": "gcopter",
+      "article": "classical-planning-control/trajectory-optimization/gcopter-minco",
+      "note": "原始方法"
+    },
+    {
+      "paper": "gcopter",
+      "article": "classical-planning-control/trajectory-optimization/minco-parameterization",
+      "note": "轨迹参数化"
+    },
+    {
+      "paper": "gcopter",
+      "article": "classical-planning-control/trajectory-optimization/safe-flight-corridor",
+      "note": "参考文献"
+    },
+    {
+      "paper": "gcopter",
+      "article": "classical-planning-control/trajectory-optimization/trajectory-representation-parameterization",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-2210-05064",
+      "article": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
+      "note": "参考文献"
+    },
+    {
+      "paper": "dd-ppo",
+      "article": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
+      "note": "分布式 PPO"
+    },
+    {
+      "paper": "ppo",
+      "article": "learning-based-planning/engineering-practice/ppo-walkthrough",
+      "note": "参考文献"
+    },
+    {
+      "paper": "ppo",
+      "article": "learning-based-planning/engineering-practice/tensorboard-metrics",
+      "note": "参考文献"
+    },
+    {
+      "paper": "navrl",
+      "article": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "note": "参考文献"
+    },
+    {
+      "paper": "yopo",
+      "article": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+      "note": "学习式轨迹规划"
+    },
+    {
+      "paper": "navrl",
+      "article": "learning-based-planning/learning-based-trajectory-planning/navrl",
+      "note": "原始方法"
+    },
+    {
+      "paper": "arxiv-1703-06114",
+      "article": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
+      "note": "参考文献"
+    },
+    {
+      "paper": "yopo",
+      "article": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
+      "note": "轨迹候选生成"
+    },
+    {
+      "paper": "yopo",
+      "article": "learning-based-planning/learning-based-trajectory-planning/yopo",
+      "note": "原始方法"
+    },
+    {
+      "paper": "arxiv-1706-03762",
+      "article": "learning-based-planning/neural-network-architectures/attention-transformer",
+      "note": "参考文献"
+    },
+    {
+      "paper": "autoencoder",
+      "article": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "note": "自编码器基础"
+    },
+    {
+      "paper": "concurrent-estimator",
+      "article": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "note": "状态估计与策略联合训练"
+    },
+    {
+      "paper": "dwl",
+      "article": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "note": "去噪表征学习"
+    },
+    {
+      "paper": "humanoid-soccer",
+      "article": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "note": "视觉策略的编码器应用"
+    },
+    {
+      "paper": "rma",
+      "article": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "note": "环境隐变量估计"
+    },
+    {
+      "paper": "unreal",
+      "article": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "note": "参考文献"
+    },
+    {
+      "paper": "world-model-reconstruction",
+      "article": "learning-based-planning/neural-network-architectures/encoder-decoder",
+      "note": "世界模型重构与估计器"
+    },
+    {
+      "paper": "arxiv-1612-03144",
+      "article": "learning-based-planning/neural-network-architectures/feature-pyramid-multiscale",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1705-09406",
+      "article": "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion",
+      "note": "参考文献"
+    },
+    {
+      "paper": "supermimic",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization",
+      "note": "可微世界模型"
+    },
+    {
+      "paper": "svg",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization",
+      "note": "随机价值梯度"
+    },
+    {
+      "paper": "arxiv-2301-04104",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/dreamer",
+      "note": "参考文献"
+    },
+    {
+      "paper": "pilco",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
+      "note": "模型不确定性"
+    },
+    {
+      "paper": "arxiv-1911-08265",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/muzero",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1509-02971",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/ddpg",
+      "note": "参考文献"
+    },
+    {
+      "paper": "deterministic-policy-gradient",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/ddpg",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1509-06461",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/dqn",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1710-02298",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/dqn",
+      "note": "参考文献"
+    },
+    {
+      "paper": "dqn",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/dqn",
+      "note": "参考文献"
+    },
+    {
+      "paper": "dueling-network",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/dqn",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1506-02438",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/ppo",
+      "note": "参考文献"
+    },
+    {
+      "paper": "ppo",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/ppo",
+      "note": "参考文献"
+    },
+    {
+      "paper": "trpo",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/ppo",
+      "note": "参考文献"
+    },
+    {
+      "paper": "sac",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/sac",
+      "note": "参考文献"
+    },
+    {
+      "paper": "sac-applications",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/sac",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1509-02971",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/td3",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1509-06461",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/td3",
+      "note": "参考文献"
+    },
+    {
+      "paper": "td3",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/td3",
+      "note": "参考文献"
+    },
+    {
+      "paper": "motor-skills-policy-gradients",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/trpo",
+      "note": "参考文献"
+    },
+    {
+      "paper": "natural-policy-gradient",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/trpo",
+      "note": "参考文献"
+    },
+    {
+      "paper": "trpo",
+      "article": "learning-based-planning/rl-algorithms/model-free-rl/trpo",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1805-12114",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/model-free-vs-model-based",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1906-08253",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/model-free-vs-model-based",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1912-01603",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/model-free-vs-model-based",
+      "note": "参考文献"
+    },
+    {
+      "paper": "pilco",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/model-free-vs-model-based",
+      "note": "概率动力学模型"
+    },
+    {
+      "paper": "arxiv-1506-02438",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1602-07714",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "note": "参考文献"
+    },
+    {
+      "paper": "constrained-policy-optimization",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "note": "参考文献"
+    },
+    {
+      "paper": "hybrid-reward-architecture",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "note": "参考文献"
+    },
+    {
+      "paper": "multicritical",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "note": "按任务划分价值网络"
+    },
+    {
+      "paper": "ppo",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "note": "参考文献"
+    },
+    {
+      "paper": "robotkeyframing",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "note": "稠密与稀疏奖励的多 Critic"
+    },
+    {
+      "paper": "td3",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/multi-critic",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1507-06527",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies",
+      "note": "参考文献"
+    },
+    {
+      "paper": "mavrl",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies",
+      "note": "无人机历史观测表征"
+    },
+    {
+      "paper": "pomdp-planning",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies",
+      "note": "参考文献"
+    },
+    {
+      "paper": "ppo",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/pomdp-recurrent-policies",
+      "note": "参考文献"
+    },
+    {
+      "paper": "deterministic-policy-gradient",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations",
+      "note": "参考文献"
+    },
+    {
+      "paper": "dqn",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations",
+      "note": "参考文献"
+    },
+    {
+      "paper": "reinforce",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations",
+      "note": "参考文献"
+    },
+    {
+      "paper": "a3c",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1710-02298",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1911-08265",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1912-01603",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-2212-07536",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "dqn",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "policy-gradient-theorem",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "ppo",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "reinforce",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "sac",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "trpo",
+      "article": "learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1412-6980",
+      "article": "mathematics/calculus-optimization/unconstrained-optimization",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1711-05101",
+      "article": "mathematics/calculus-optimization/unconstrained-optimization",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-2108-13264",
+      "article": "simulation-evaluation/evaluation-methodology/navigation-metrics",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1703-06907",
+      "article": "simulation-evaluation/sim-to-real/sim-to-real-gap",
+      "note": "参考文献"
+    },
+    {
+      "paper": "arxiv-1710-06537",
+      "article": "simulation-evaluation/sim-to-real/sim-to-real-gap",
+      "note": "参考文献"
+    },
+    {
+      "paper": "rma",
+      "article": "simulation-evaluation/sim-to-real/sim-to-real-gap",
+      "note": "在线适应"
+    },
+    {
+      "paper": "navrl",
+      "article": "simulation-evaluation/simulation-environment/navigation-scenarios",
+      "note": "参考文献"
+    },
+    {
+      "paper": "visfly",
+      "article": "simulation-evaluation/simulation-environment/simulator-overview",
+      "note": "视觉飞行仿真平台"
+    },
+    {
+      "paper": "arxiv-1805-12114",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/pets",
+      "note": "概率系综与轨迹采样"
+    },
+    {
+      "paper": "arxiv-1906-08253",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/mbpo",
+      "note": "短模型展开与策略优化"
+    },
+    {
+      "paper": "arxiv-1912-01603",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/dreamer",
+      "note": "Dreamer V1 原始方法"
+    },
+    {
+      "paper": "pilco",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization",
+      "note": "高斯过程与解析策略梯度"
+    },
+    {
+      "paper": "supermimic",
+      "article": "learning-based-planning/rl-algorithms/model-based-rl/supermimic",
+      "note": "原始方法与官方实现"
+    }
+  ]
+}

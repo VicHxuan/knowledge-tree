@@ -7,7 +7,7 @@ sidebar:
 
 ## 项目定位
 
-YOPO（You Only Plan Once）是学习式轨迹规划方向的代表性工作：**用一次前向传播直接输出可执行轨迹**，替代经典管线中「搜索 → 优化」的迭代过程。项目页跟踪该论文族的阅读与实践，对应的站点章节（学习式轨迹规划总览、YOPO、NavRL）正在撰写中 🚧。
+YOPO（You Only Plan Once）是学习式轨迹规划方向的代表性工作：**用一次前向传播直接输出可执行轨迹**，替代经典管线中「搜索 → 优化」的迭代过程。项目页跟踪该论文族的阅读与实践，相关原理见[YOPO 轨迹规划](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/yopo/)。
 
 ## 系统与知识关系
 
@@ -17,15 +17,15 @@ YOPO（You Only Plan Once）是学习式轨迹规划方向的代表性工作：*
 2. **监督信号的设计空间**：与 behavior cloning 只模仿专家不同，YOPO 的 loss 可以引入**不属于网络输入的环境信息**（guidance learning）——这让监督训练获得类似 reward 的环境反馈，而不必等待完整 RL 闭环；
 3. **数据来源**：训练数据从轻量级仿真器快速提取，绕开 RL 在线交互的数据效率瓶颈。
 
-这套「用环境信息求 loss」的思路，与 RL 的 reward 设计一脉相承，具体的对比分析在[小脑 Work Pipeline](/knowledge-tree/learning-based-planning/engineering-practice/work-pipeline/) 中有展开。
+这套「用环境信息求 loss」的思路，与 RL 的 reward 设计一脉相承，具体的对比分析在[学习式无人机规划](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview/) 中有展开。
 
 ## 实践入口
 
-- 论文原文与衍生工作（YOPO-swarm 等多机变体）走读计划收录在[学习式轨迹规划](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/)板块；
+- 论文原文与衍生工作（YOPO-swarm 等多机变体）原理整理在[学习式轨迹规划](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/)板块；
 - 训练基础设施相关：[多服务器多 GPU 训练](/knowledge-tree/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide/)、[PPO 全流程走读](/knowledge-tree/learning-based-planning/engineering-practice/ppo-walkthrough/)。
 
 ## 进展与证据
 
-论文走读与架构分析撰写中（对应知识树的 `learning-based-planning/learning-based-trajectory-planning` 目录），本页随进展更新。
+YOPO 的轨迹参数化、代价梯度与模型接入已在技术文章中整理；NavRL 和候选选择提供相关方法入口。
 
 本页整理知识与复现入口；具体实验结论需附配置、评估协议及结果记录后补充。

@@ -1,6 +1,6 @@
 ---
 title: "Model-Based RL"
-description: "Dyna、PETS、MBPO、MuZero、Dreamer 与可微策略优化"
+description: "模型生成经验、在线规划与模型内策略学习；从 Dyna 到 SuperMimic"
 sidebar:
   order: 3
 ---
@@ -9,11 +9,19 @@ import TopicIndex from '../../../../../components/TopicIndex.astro';
 
 ## 板块定位
 
-从交互数据学习环境转移模型、再消费模型的算法主线，三种用法覆盖三族算法：在线规划、生成合成经验、想象中优化策略。本分支撰写中。
+以模型在决策中的用途组织基于模型的强化学习。先明确状态表示和模型来源，再追踪模型如何影响目标、训练数据与策略梯度。无人机主线侧重连续控制、短时域规划和可微动力学。
 
 ## 阅读主线
 
-先理解转移模型及其误差，再按模型用途阅读：Dyna/MBPO 生成经验，PETS/MuZero 消费模型进行规划，Dreamer 在想象轨迹中训练策略，最后研究可微模型中的梯度传播。
+从 [Model-Based RL 基础](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations/) 开始，按需求选择路线：
+
+| 路线 | 阅读顺序 | 核心问题 |
+|---|---|---|
+| 模型生成经验 | [Dyna](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/dyna/) → [MBPO](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/mbpo/) | 模型样本如何进入价值与策略损失 |
+| 在线规划 | [PETS](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/pets/) → [TD-MPC](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/td-mpc/) | 动作序列如何由预测回报和末端价值评价 |
+| 模型内策略学习 | [可微模型与策略梯度](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization/) → [SHAC](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/shac/) → [SuperMimic](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/supermimic/) | 动力学和价值导数如何更新 Actor |
+
+[Dreamer](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/dreamer/) 补充潜在世界模型与行为学习；[MuZero](/knowledge-tree/learning-based-planning/rl-algorithms/model-based-rl/muzero/) 补充潜在动力学与树搜索。
 
 ## 主题目录
 
@@ -21,4 +29,4 @@ import TopicIndex from '../../../../../components/TopicIndex.astro';
 
 ## 下一步
 
-[返回上级板块](/knowledge-tree/learning-based-planning/rl-algorithms/) · [强化学习学习路径](/knowledge-tree/learning-paths/reinforcement-learning/) · [学习式无人机导航](/knowledge-tree/learning-paths/learning-based-uav-navigation/)
+[模型式控制学习路径](/knowledge-tree/learning-paths/model-based-control/) · [强化学习学习路径](/knowledge-tree/learning-paths/reinforcement-learning/) · [学习式无人机导航](/knowledge-tree/learning-paths/learning-based-uav-navigation/) · [返回上级板块](/knowledge-tree/learning-based-planning/rl-algorithms/)

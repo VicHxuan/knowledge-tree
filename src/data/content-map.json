@@ -345,71 +345,101 @@
       "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/01_model-based-rl-foundations.md",
       "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations.md",
       "slug": "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations",
-      "title": "基于模型的强化学习基础",
-      "label": "MB RL 基础",
-      "order": 12,
-      "status": "draft",
-      "description": "环境动力学模型与奖励模型、世界模型组成、真实与想象 rollout、模型不确定性——Model-Based RL 分支的技术地基。"
+      "title": "Model-Based RL 基础",
+      "label": "Model-Based RL 基础",
+      "order": 1,
+      "status": "published",
+      "description": "模型来源、状态表示、三种用途与误差分析"
     },
     {
       "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/02_dyna.md",
       "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/dyna.md",
       "slug": "learning-based-planning/rl-algorithms/model-based-rl/dyna",
-      "title": "Dyna：基于模型生成经验的强化学习架构",
+      "title": "Dyna：模型学习与规划更新",
       "label": "Dyna",
-      "order": 13,
-      "status": "draft",
-      "description": "Dyna 架构：真实经验与模型生成的虚拟经验共同更新值函数，经典 Dyna-Q 及其与现代 MBPO 的思想血缘。"
+      "order": 2,
+      "status": "published",
+      "description": "实际交互、模型学习、规划更新与价值传播"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/03_pets.md",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/04_pets.md",
       "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/pets.md",
       "slug": "learning-based-planning/rl-algorithms/model-based-rl/pets",
-      "title": "PETS：概率动力学模型与轨迹采样规划",
+      "title": "PETS：概率系综与轨迹采样",
       "label": "PETS",
-      "order": 14,
-      "status": "draft",
-      "description": "PETS：概率系综动力学模型与 CEM 轨迹采样规划，每步在线重规划的 MPC 式 Model-Based RL。"
+      "order": 4,
+      "status": "published",
+      "description": "概率系综、TS¹ 与 TS∞、CEM 与滚动规划"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/04_mbpo.md",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/03_mbpo.md",
       "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/mbpo.md",
       "slug": "learning-based-planning/rl-algorithms/model-based-rl/mbpo",
-      "title": "MBPO：基于模型生成经验的策略优化",
+      "title": "MBPO：短模型展开与策略优化",
       "label": "MBPO",
-      "order": 15,
-      "status": "draft",
-      "description": "MBPO：短时域模型 rollout 生成合成经验，交给 SAC 等 model-free 学习器，无 BPTT 的经验放大器。"
+      "order": 3,
+      "status": "published",
+      "description": "短模型展开、合成经验与 SAC 的损失和梯度"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/05_muzero.md",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/06_muzero.md",
       "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/muzero.md",
       "slug": "learning-based-planning/rl-algorithms/model-based-rl/muzero",
-      "title": "MuZero：潜在动力学学习与模型规划",
+      "title": "MuZero：潜在动力学与树搜索",
       "label": "MuZero",
-      "order": 16,
-      "status": "draft",
-      "description": "MuZero：表示/动力学/预测三网络与 MCTS 结合，不重建观测的价值等效潜在模型规划。"
+      "order": 6,
+      "status": "published",
+      "description": "潜在动力学、树搜索与奖励价值策略的联合监督"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/06_dreamer.md",
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/09_dreamer.md",
       "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/dreamer.md",
       "slug": "learning-based-planning/rl-algorithms/model-based-rl/dreamer",
-      "title": "Dreamer：基于潜在世界模型的想象策略学习",
+      "title": "Dreamer：潜在世界模型与行为学习",
       "label": "Dreamer",
-      "order": 17,
-      "status": "draft",
-      "description": "Dreamer：RSSM 潜在世界模型中的想象 rollout，actor-critic 经冻结模型反传的梯度式策略优化。"
+      "order": 9,
+      "status": "published",
+      "description": "RSSM、想象回报与 V1、V2、V3 的策略梯度差异"
     },
     {
       "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/07_differentiable-policy-optimization.md",
       "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization.md",
       "slug": "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization",
-      "title": "可微动力学与直接策略优化",
-      "label": "可微策略优化",
-      "order": 18,
-      "status": "draft",
-      "description": "可微动力学与短时域 BPTT 的直接策略优化：pathwise 梯度、SHAC 与梯度稳定性设计。"
+      "title": "可微模型与策略梯度",
+      "label": "可微模型与策略梯度",
+      "order": 7,
+      "status": "published",
+      "description": "闭环路径梯度、随机价值梯度与 PILCO"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/05_td-mpc.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/td-mpc.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/td-mpc",
+      "title": "TD-MPC：潜在动力学与价值规划",
+      "label": "TD-MPC",
+      "order": 5,
+      "status": "published",
+      "description": "任务相关潜在模型、TD 学习与短时域滚动规划"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/08_shac.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/shac.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/shac",
+      "title": "SHAC：短时域 Actor-Critic",
+      "label": "SHAC",
+      "order": 8,
+      "status": "published",
+      "description": "短时域策略梯度、末端价值与 Critic 回报目标"
+    },
+    {
+      "source": "tech_stack/03_learning-based-planning/02_rl-algorithms/03_model-based-rl/10_supermimic.md",
+      "output": "src/content/docs/learning-based-planning/rl-algorithms/model-based-rl/supermimic.md",
+      "slug": "learning-based-planning/rl-algorithms/model-based-rl/supermimic",
+      "title": "SuperMimic：可微世界模型与运动控制",
+      "label": "SuperMimic",
+      "order": 10,
+      "status": "published",
+      "description": "共享可微世界模型、多步预测与运动控制策略学习"
     },
     {
       "source": "tech_stack/03_learning-based-planning/03_engineering-practice/01_ppo-walkthrough.md",
@@ -422,64 +452,64 @@
       "description": "PPO 训练循环的工程走读：环境契约、采样与更新配置、指标诊断、检查点和复现"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/02_rl-engineering-pitfalls.md",
+      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/02_uav-rl-task-design.md",
       "output": "src/content/docs/learning-based-planning/engineering-practice/rl-engineering-pitfalls.md",
       "slug": "learning-based-planning/engineering-practice/rl-engineering-pitfalls",
-      "title": "强化学习工程避坑指南与注意事项手册",
-      "label": "工程避坑指南",
+      "title": "无人机强化学习任务设计",
+      "label": "无人机强化学习任务设计",
       "order": 2,
       "status": "published",
-      "description": "动手训练前必读的工程注意事项"
+      "description": "无人机导航任务把传感器与状态估计转换为观测，把策略输出转换为可执行指令，再用运动结果构造奖励和回合边界"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/03_tensorboard-metrics.md",
+      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/03_training-metrics-and-diagnosis.md",
       "output": "src/content/docs/learning-based-planning/engineering-practice/tensorboard-metrics.md",
       "slug": "learning-based-planning/engineering-practice/tensorboard-metrics",
-      "title": "通用强化学习 TensorBoard 指标模板",
-      "label": "TensorBoard 指标",
+      "title": "训练指标与诊断",
+      "label": "训练指标与诊断",
       "order": 3,
       "status": "published",
-      "description": "RL 训练指标体系与解读"
+      "description": "训练诊断沿着任务结果、数据采样、策略更新和系统性能逐层定位问题"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/04_work-pipeline.md",
-      "output": "src/content/docs/learning-based-planning/engineering-practice/work-pipeline.md",
-      "slug": "learning-based-planning/engineering-practice/work-pipeline",
-      "title": "小脑 Work Pipeline",
-      "label": "小脑 Work Pipeline",
-      "order": 4,
-      "status": "published",
-      "description": "小脑项目的工作流"
-    },
-    {
-      "source": "tech_stack/04_engineering-tools/px4-ros/03_px4-sitl.md",
+      "source": "tech_stack/04_engineering-tools/01_flight-stack/03_px4-mavros.md",
       "output": "src/content/docs/engineering-tools/px4-ros/px4-sitl.md",
       "slug": "engineering-tools/px4-ros/px4-sitl",
-      "title": "PX4 / MAVROS 面试知识点整理",
-      "label": "PX4 / MAVROS",
+      "title": "PX4 与 MAVROS 控制接口",
+      "label": "PX4 与 MAVROS 控制接口",
       "order": 3,
       "status": "published",
-      "description": "PX4 与 MAVROS 面试要点"
+      "description": "PX4 运行状态估计、控制与执行器输出，MAVROS 将 ROS 消息与 MAVLink 数据连接起来"
     },
     {
-      "source": "tech_stack/04_engineering-tools/px4-ros/01_ros1.md",
+      "source": "tech_stack/04_engineering-tools/01_flight-stack/01_ros1.md",
       "output": "src/content/docs/engineering-tools/px4-ros/ros1.md",
       "slug": "engineering-tools/px4-ros/ros1",
-      "title": "ROS1 面试知识点整理",
-      "label": "ROS1",
+      "title": "ROS1 无人机系统集成",
+      "label": "ROS1 无人机系统集成",
       "order": 1,
       "status": "published",
-      "description": "ROS1 面试要点"
+      "description": "ROS1 用节点和消息连接传感器、状态估计、规划与控制"
     },
     {
       "source": "tech_stack/06_real-flight/01_remote-control-setup.md",
       "output": "src/content/docs/real-flight/remote-control-setup.md",
       "slug": "real-flight/remote-control-setup",
-      "title": "遥控器与接收机配置（QGC 校准）",
-      "label": "遥控器配置",
+      "title": "遥控器与接收机配置",
+      "label": "遥控器与接收机配置",
       "order": 1,
       "status": "published",
-      "description": "QGC 遥控器校准"
+      "description": "遥控链路将操作者输入传给飞控，飞控根据模式和控制配置产生执行器输出"
+    },
+    {
+      "source": "tech_stack/06_real-flight/02_navigation-system-integration.md",
+      "output": "src/content/docs/real-flight/navigation-system-integration.md",
+      "slug": "real-flight/navigation-system-integration",
+      "title": "无人机导航系统部署与验证",
+      "label": "无人机导航系统部署与验证",
+      "order": 2,
+      "status": "published",
+      "description": "机载导航沿“传感器 → 状态估计 → 观测构造 → 规划推理 → 轨迹解码 → 控制执行”闭环运行"
     },
     {
       "source": "tech_stack/04_engineering-tools/01_git-manual.md",
@@ -492,14 +522,14 @@
       "description": "Git 常用指令"
     },
     {
-      "source": "tech_stack/04_engineering-tools/ppo-in-multi-GPU/01_multi-gpu-training-deployment-guide.md",
+      "source": "tech_stack/04_engineering-tools/02_training-infrastructure/01_multi-gpu-training-deployment-guide.md",
       "output": "src/content/docs/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide.md",
       "slug": "engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide",
-      "title": "多 GPU 强化学习训练环境部署与运维指南",
-      "label": "多 GPU 训练部署",
+      "title": "多 GPU 训练部署与恢复",
+      "label": "多 GPU 训练部署与恢复",
       "order": 1,
       "status": "published",
-      "description": "多 GPU 训练环境的服务器部署与运维"
+      "description": "训练部署将代码、模型、仿真环境和计算资源组成可恢复的实验"
     },
     {
       "source": "tech_stack/01_math-physic-base/01_linear-algebra-geometry/01_matrix-decomposition.md",
@@ -732,184 +762,114 @@
       "description": "融合层级、时间聚合、缺失与可信度、损失与梯度的定义、计算与应用"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/05_observation-action-reward-design.md",
-      "output": "src/content/docs/learning-based-planning/engineering-practice/observation-action-reward-design.md",
-      "slug": "learning-based-planning/engineering-practice/observation-action-reward-design",
-      "title": "观测、动作与奖励设计",
-      "label": "观测与奖励设计",
-      "order": 5,
-      "status": "draft",
-      "description": "MDP 接口工程化设计"
-    },
-    {
-      "source": "tech_stack/03_learning-based-planning/03_engineering-practice/06_ppo-training-and-debugging.md",
-      "output": "src/content/docs/learning-based-planning/engineering-practice/ppo-training-and-debugging.md",
-      "slug": "learning-based-planning/engineering-practice/ppo-training-and-debugging",
-      "title": "PPO 训练与调试实录",
-      "label": "训练与调试",
-      "order": 6,
-      "status": "draft",
-      "description": "训练全流程的系统性调试方法"
-    },
-    {
       "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/01_learning-based-planning-overview.md",
       "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview.md",
       "slug": "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
-      "title": "学习式轨迹规划总览",
-      "label": "规划总览",
+      "title": "学习式无人机规划",
+      "label": "学习式无人机规划",
       "order": 1,
-      "status": "draft",
-      "description": "学习式规划的问题分类与路线"
+      "status": "published",
+      "description": "学习式规划将传感器观测、运动状态与导航目标映射为动作或轨迹"
     },
     {
       "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/02_yopo.md",
       "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/yopo.md",
       "slug": "learning-based-planning/learning-based-trajectory-planning/yopo",
-      "title": "YOPO：一次性规划网络",
-      "label": "YOPO",
+      "title": "YOPO 轨迹规划",
+      "label": "YOPO 轨迹规划",
       "order": 2,
-      "status": "draft",
-      "description": "感知骨干与轨迹候选生成网络"
+      "status": "published",
+      "description": "YOPO 用一次网络前向预测多个运动基元的终端状态修正与评分，再生成所选轨迹"
     },
     {
       "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/03_navrl.md",
       "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/navrl.md",
       "slug": "learning-based-planning/learning-based-trajectory-planning/navrl",
-      "title": "NavRL：导航强化学习",
-      "label": "NavRL",
+      "title": "NavRL 导航策略",
+      "label": "NavRL 导航策略",
       "order": 3,
-      "status": "draft",
-      "description": "端到端导航策略学习"
+      "status": "published",
+      "description": "NavRL 将静态障碍与动态障碍转换为结构化观测，用 PPO 学习速度决策，并在部署阶段通过安全修正处理策略动作"
     },
     {
       "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/04_trajectory-candidate-selection.md",
       "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection.md",
       "slug": "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection",
       "title": "轨迹候选生成与选择",
-      "label": "候选轨迹选择",
+      "label": "轨迹候选生成与选择",
       "order": 4,
-      "status": "draft",
-      "description": "候选生成、打分与 RL 选择器"
+      "status": "published",
+      "description": "候选选择将连续规划分成两步：生成有限条可执行轨迹，再根据当前场景选择其中一条"
     },
     {
-      "source": "tech_stack/03_learning-based-planning/04_learning-based-trajectory-planning/05_residual-trajectory-optimization.md",
-      "output": "src/content/docs/learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization.md",
-      "slug": "learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization",
-      "title": "残差轨迹优化",
-      "label": "残差轨迹优化",
-      "order": 5,
-      "status": "draft",
-      "description": "学习与优化的互补结合"
-    },
-    {
-      "source": "tech_stack/04_engineering-tools/px4-ros/02_ros2.md",
+      "source": "tech_stack/04_engineering-tools/01_flight-stack/02_ros2.md",
       "output": "src/content/docs/engineering-tools/px4-ros/ros2.md",
       "slug": "engineering-tools/px4-ros/ros2",
-      "title": "ROS2 与 DDS 通信",
-      "label": "ROS2",
-      "order": 2,
-      "status": "draft",
-      "description": "DDS 中间件与 ROS1 迁移"
-    },
-    {
-      "source": "tech_stack/04_engineering-tools/02_docker-environment.md",
-      "output": "src/content/docs/engineering-tools/docker-environment.md",
-      "slug": "engineering-tools/docker-environment",
-      "title": "Docker 训练环境",
-      "label": "Docker 环境",
-      "order": 2,
-      "status": "draft",
-      "description": "容器化训练环境与 GPU 支持"
-    },
-    {
-      "source": "tech_stack/04_engineering-tools/ppo-in-multi-GPU/02_distributed-rl-training-architecture.md",
-      "output": "src/content/docs/engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture.md",
-      "slug": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
-      "title": "分布式强化学习训练架构与并行机制",
-      "label": "分布式训练架构",
+      "title": "ROS2 无人机通信",
+      "label": "ROS2 无人机通信",
       "order": 2,
       "status": "published",
-      "description": "同步数据并行 PPO 的架构、梯度同步与调度机制"
+      "description": "ROS2 通过节点、执行器和通信中间件组织无人机的数据与控制链"
     },
     {
-      "source": "tech_stack/05_simulation-evaluation/01_simulation-platforms/01_simulator-overview.md",
-      "output": "src/content/docs/simulation-evaluation/simulation-platforms/simulator-overview.md",
-      "slug": "simulation-evaluation/simulation-platforms/simulator-overview",
-      "title": "仿真平台总览（Isaac Sim / Gazebo / AirSim）",
-      "label": "仿真平台总览",
+      "source": "tech_stack/04_engineering-tools/02_training-infrastructure/02_distributed-rl-training-architecture.md",
+      "output": "src/content/docs/engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture.md",
+      "slug": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
+      "title": "分布式强化学习训练",
+      "label": "分布式强化学习训练",
+      "order": 2,
+      "status": "published",
+      "description": "同步分布式 PPO 将环境采样分配到多个 Rank，每个 Rank 保留网络副本和本地数据，再通过梯度同步执行共同更新"
+    },
+    {
+      "source": "tech_stack/05_simulation-evaluation/01_simulation-environment/01_simulator-overview.md",
+      "output": "src/content/docs/simulation-evaluation/simulation-environment/simulator-overview.md",
+      "slug": "simulation-evaluation/simulation-environment/simulator-overview",
+      "title": "无人机仿真平台",
+      "label": "无人机仿真平台",
       "order": 1,
-      "status": "draft",
-      "description": "平台对比与选型"
+      "status": "published",
+      "description": "无人机仿真需要同时提供运动演化、传感器观测和控制执行接口"
     },
     {
-      "source": "tech_stack/05_simulation-evaluation/01_simulation-platforms/02_simulation-timing-and-interfaces.md",
-      "output": "src/content/docs/simulation-evaluation/simulation-timing-and-interfaces.md",
-      "slug": "simulation-evaluation/simulation-timing-and-interfaces",
+      "source": "tech_stack/05_simulation-evaluation/01_simulation-environment/02_simulation-timing-and-interfaces.md",
+      "output": "src/content/docs/simulation-evaluation/simulation-environment/simulation-timing-and-interfaces.md",
+      "slug": "simulation-evaluation/simulation-environment/simulation-timing-and-interfaces",
       "title": "仿真时序与接口",
-      "label": "仿真时序",
+      "label": "仿真时序与接口",
       "order": 2,
-      "status": "draft",
-      "description": "sim time、步进与观测动作对齐"
+      "status": "published",
+      "description": "一次策略决策需要将观测、动作、物理推进和奖励对应到同一段时间"
     },
     {
-      "source": "tech_stack/05_simulation-evaluation/02_scenario-design/01_static-dynamic-scenarios.md",
-      "output": "src/content/docs/simulation-evaluation/scenario-design/static-dynamic-scenarios.md",
-      "slug": "simulation-evaluation/scenario-design/static-dynamic-scenarios",
-      "title": "静态与动态场景设计",
-      "label": "场景设计",
-      "order": 1,
-      "status": "draft",
-      "description": "障碍物、密度与课程序列"
+      "source": "tech_stack/05_simulation-evaluation/01_simulation-environment/03_navigation-scenarios.md",
+      "output": "src/content/docs/simulation-evaluation/simulation-environment/navigation-scenarios.md",
+      "slug": "simulation-evaluation/simulation-environment/navigation-scenarios",
+      "title": "无人机导航场景设计",
+      "label": "无人机导航场景设计",
+      "order": 3,
+      "status": "published",
+      "description": "导航场景定义无人机从何处出发、前往何处以及途中遇到哪些障碍"
     },
     {
-      "source": "tech_stack/05_simulation-evaluation/02_scenario-design/02_domain-randomization.md",
-      "output": "src/content/docs/simulation-evaluation/scenario-design/domain-randomization.md",
-      "slug": "simulation-evaluation/scenario-design/domain-randomization",
-      "title": "域随机化",
-      "label": "域随机化",
-      "order": 2,
-      "status": "draft",
-      "description": "外观与物理随机化策略"
-    },
-    {
-      "source": "tech_stack/05_simulation-evaluation/03_evaluation-methodology/01_navigation-metrics.md",
+      "source": "tech_stack/05_simulation-evaluation/02_evaluation-methodology/01_navigation-evaluation.md",
       "output": "src/content/docs/simulation-evaluation/evaluation-methodology/navigation-metrics.md",
       "slug": "simulation-evaluation/evaluation-methodology/navigation-metrics",
-      "title": "导航评估指标",
-      "label": "评估指标",
+      "title": "无人机导航评估",
+      "label": "无人机导航评估",
       "order": 1,
-      "status": "draft",
-      "description": "成功率、效率与安全三类指标"
+      "status": "published",
+      "description": "导航评估固定模型、场景和执行条件，衡量到达能力、安全性、运动效率和计算开销"
     },
     {
-      "source": "tech_stack/05_simulation-evaluation/03_evaluation-methodology/02_baselines-and-oracle-analysis.md",
-      "output": "src/content/docs/simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis.md",
-      "slug": "simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis",
-      "title": "基线与上界（Oracle）分析",
-      "label": "基线与 Oracle",
-      "order": 2,
-      "status": "draft",
-      "description": "用基线与上界定位改进空间"
-    },
-    {
-      "source": "tech_stack/05_simulation-evaluation/03_evaluation-methodology/03_generalization-and-ablation.md",
-      "output": "src/content/docs/simulation-evaluation/evaluation-methodology/generalization-and-ablation.md",
-      "slug": "simulation-evaluation/evaluation-methodology/generalization-and-ablation",
-      "title": "泛化性与消融实验",
-      "label": "泛化与消融",
-      "order": 3,
-      "status": "draft",
-      "description": "泛化维度与组件消融方法"
-    },
-    {
-      "source": "tech_stack/05_simulation-evaluation/04_sim-to-real/01_sim-to-real-gap.md",
+      "source": "tech_stack/05_simulation-evaluation/03_sim-to-real/01_sim-to-real.md",
       "output": "src/content/docs/simulation-evaluation/sim-to-real/sim-to-real-gap.md",
       "slug": "simulation-evaluation/sim-to-real/sim-to-real-gap",
-      "title": "Sim-to-Real 差距与迁移",
-      "label": "Sim-to-Real",
+      "title": "仿真到真机迁移",
+      "label": "仿真到真机迁移",
       "order": 1,
-      "status": "draft",
-      "description": "差距来源、迁移方法与真机验证"
+      "status": "published",
+      "description": "仿真到真机迁移把训练中的观测、决策和执行链映射到真实无人机"
     }
   ]
 }

@@ -1,19 +1,19 @@
 ---
-title: "PX4 与 ROS"
-description: "ROS1/ROS2 中间件与 PX4 仿真生态"
+title: "飞行软件栈"
+description: "ROS 通信、时间坐标与 PX4 控制接口"
 sidebar:
-  order: 3
+  order: 1
 ---
 
 import TopicIndex from '../../../../components/TopicIndex.astro';
 
 ## 板块定位
 
-飞控与机器人中间件基础：ROS1 核心概念、ROS2/DDS 迁移，以及 PX4 与 MAVROS/SITL 生态。
+连接传感器、规划器和飞控，统一数据与控制语义。
 
 ## 阅读主线
 
-ROS 的节点、消息与坐标变换 → MAVROS 的消息桥接 → PX4 的控制层级与 SITL 闭环。需要迁移中间件时再阅读 ROS2/DDS。
+先明确 ROS 消息、坐标与时间，再确定 PX4 接入层级。ROS1 与 ROS2 按项目运行环境选读，控制输出进入相同的验证流程。
 
 ## 主题目录
 
@@ -21,4 +21,4 @@ ROS 的节点、消息与坐标变换 → MAVROS 的消息桥接 → PX4 的控�
 
 ## 下一步
 
-[返回上级板块](/knowledge-tree/engineering-tools/) · [PPO 算法](/knowledge-tree/learning-based-planning/rl-algorithms/model-free-rl/ppo/) · [PX4 控制器](/knowledge-tree/classical-planning-control/tracking-control/px4-controller-attitude-rate/) · [真机飞行](/knowledge-tree/real-flight/)
+[系统部署与验证](/knowledge-tree/real-flight/navigation-system-integration/) · [跟踪控制](/knowledge-tree/classical-planning-control/tracking-control/)

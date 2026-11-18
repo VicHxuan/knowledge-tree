@@ -31,7 +31,7 @@ sidebar:
 | EGO-Planner | B 样条（梯度版） | 免 ESDF 的局部优化 |
 | GCOPTER | MINCO | 联合优化空间与时间，结合几何及动力学约束 |
 
-对应站点章节：[轨迹表示与参数化](/knowledge-tree/classical-planning-control/trajectory-optimization/trajectory-representation-parameterization/)、[微分平坦与 Minimum Snap](/knowledge-tree/classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap/)、[GCOPTER-MINCO 框架](/knowledge-tree/classical-planning-control/trajectory-optimization/gcopter-minco/)；MINCO 轨迹参数化的专题章节撰写中（🚧）。
+对应站点章节：[轨迹表示与参数化](/knowledge-tree/classical-planning-control/trajectory-optimization/trajectory-representation-parameterization/)、[微分平坦与 Minimum Snap](/knowledge-tree/classical-planning-control/trajectory-optimization/differential-flatness-minimum-snap/)、[GCOPTER-MINCO 框架](/knowledge-tree/classical-planning-control/trajectory-optimization/gcopter-minco/)；[MINCO 参数化专题](/knowledge-tree/classical-planning-control/trajectory-optimization/minco-parameterization/)集中说明方程与梯度。
 
 ### 与学习式路线的关系
 
@@ -40,7 +40,7 @@ MINCO 管线在这个知识体系里承担两个角色：
 1. **基线**：学习式方法的对照——规划质量、计算时间、鲁棒性的参照系；
 2. **组件**：轨迹候选生成器本身可以由 MINCO 类方法提供，交由学习模块选择（见 [RL 轨迹选择器](/knowledge-tree/projects/rl-trajectory-selector/)）。
 
-两条路线的完整对比在[学习式轨迹规划总览](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/)（🚧 撰写中）中展开。
+两条路线的完整对比在[学习式轨迹规划总览](/knowledge-tree/learning-based-planning/learning-based-trajectory-planning/)中展开。
 
 ## 实践入口
 
@@ -48,6 +48,6 @@ MINCO 管线在这个知识体系里承担两个角色：
 
 ## 进展与证据
 
-GCOPTER-MINCO 框架走读已发布；MINCO 参数化专题与实现笔记撰写中。
+GCOPTER-MINCO 框架走读与 MINCO 参数化专题已提供原理和推导，实验记录按实际证据补充。
 
 本页整理知识与复现入口；具体实验结论需附配置、评估协议及结果记录后补充。

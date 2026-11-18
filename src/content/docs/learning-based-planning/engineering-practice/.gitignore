@@ -1,8 +1,5 @@
 # BEGIN knowledge-tree generated files
-/observation-action-reward-design.md
-/ppo-training-and-debugging.md
 /ppo-walkthrough.md
 /rl-engineering-pitfalls.md
 /tensorboard-metrics.md
-/work-pipeline.md
 # END knowledge-tree generated files

@@ -16,7 +16,7 @@
   "/rl-end-to-end/engineering-practice/ppo-walkthrough": "/learning-based-planning/engineering-practice/ppo-walkthrough",
   "/rl-end-to-end/engineering-practice/rl-engineering-pitfalls": "/learning-based-planning/engineering-practice/rl-engineering-pitfalls",
   "/rl-end-to-end/engineering-practice/tensorboard-metrics": "/learning-based-planning/engineering-practice/tensorboard-metrics",
-  "/rl-end-to-end/engineering-practice/work-pipeline": "/learning-based-planning/engineering-practice/work-pipeline",
+  "/rl-end-to-end/engineering-practice/work-pipeline": "/learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
   "/learning-based-planning/rl-algorithms/algorithm-evolution": "/learning-based-planning/rl-algorithms/rl-foundations/rl-algorithm-evolution",
   "/learning-based-planning/rl-algorithms/trpo": "/learning-based-planning/rl-algorithms/model-free-rl/trpo",
   "/learning-based-planning/rl-algorithms/ppo": "/learning-based-planning/rl-algorithms/model-free-rl/ppo",
@@ -33,5 +33,18 @@
   "/engineering-tools/px4-sitl": "/engineering-tools/px4-ros/px4-sitl",
   "/engineering-tools/ros1": "/engineering-tools/px4-ros/ros1",
   "/engineering-tools/remote-control-setup": "/real-flight/remote-control-setup",
-  "/learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae": "/learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations"
+  "/learning-based-planning/rl-algorithms/model-free-rl/policy-gradient-actor-critic-gae": "/learning-based-planning/rl-algorithms/rl-foundations/reinforcement-learning-foundations",
+  "/learning-based-planning/engineering-practice/work-pipeline": "/learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+  "/learning-based-planning/engineering-practice/observation-action-reward-design": "/learning-based-planning/engineering-practice/rl-engineering-pitfalls",
+  "/learning-based-planning/engineering-practice/ppo-training-and-debugging": "/learning-based-planning/engineering-practice/tensorboard-metrics",
+  "/learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization": "/learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview",
+  "/engineering-tools/docker-environment": "/engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide",
+  "/simulation-evaluation/scenario-design/domain-randomization": "/simulation-evaluation/sim-to-real/sim-to-real-gap",
+  "/simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis": "/simulation-evaluation/evaluation-methodology/navigation-metrics",
+  "/simulation-evaluation/evaluation-methodology/generalization-and-ablation": "/simulation-evaluation/evaluation-methodology/navigation-metrics",
+  "/simulation-evaluation/simulation-platforms/simulator-overview": "/simulation-evaluation/simulation-environment/simulator-overview",
+  "/simulation-evaluation/simulation-timing-and-interfaces": "/simulation-evaluation/simulation-environment/simulation-timing-and-interfaces",
+  "/simulation-evaluation/scenario-design/static-dynamic-scenarios": "/simulation-evaluation/simulation-environment/navigation-scenarios",
+  "/simulation-evaluation/simulation-platforms": "/simulation-evaluation/simulation-environment",
+  "/simulation-evaluation/scenario-design": "/simulation-evaluation/simulation-environment"
 }

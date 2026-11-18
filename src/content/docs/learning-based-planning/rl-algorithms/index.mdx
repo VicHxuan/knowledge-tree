@@ -1,6 +1,6 @@
 ---
 title: "强化学习算法"
-description: "RL 基础与 Model-Free / Model-Based 双主线：DQN、TRPO、PPO、DDPG、TD3、SAC 与 Dyna、PETS、MBPO、MuZero、Dreamer"
+description: "RL 基础与 Model-Free / Model-Based 双主线：DQN、TRPO、PPO、DDPG、TD3、SAC 与模型生成经验、在线规划及模型内策略学习"
 sidebar:
   order: 2
 ---
@@ -14,6 +14,8 @@ import TopicIndex from '../../../../components/TopicIndex.astro';
 ## 阅读主线
 
 先用强化学习基础统一 MDP、价值函数与策略梯度语言，再按是否使用环境模型分为 Model-Free 与 Model-Based 两条分支。首次学习策略优化可直接沿基础 → PPO → 工程走读推进，TRPO 用于补充信赖域背景。
+
+模型式控制沿 [模型基础 → 可微策略梯度 → SHAC → SuperMimic](/knowledge-tree/learning-paths/model-based-control/) 学习。数据复用与在线规划分别参照 Dyna → MBPO、PETS → TD-MPC。
 
 ## 主题目录
 

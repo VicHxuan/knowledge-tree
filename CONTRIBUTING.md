@@ -115,3 +115,7 @@ npm run astro -- dev stop
 提交前检查具体 diff，定向暂存原件、配置和手写页面。`SITE-AND-WORKFLOW.md` 是本地实现说明，不入库；`tech_stack/personal/`、`tech_stack/references/` 和隐私模式库保持本地。
 
 本地有隐私规则时运行扫描；无规则的 CI 会明确显示跳过。推送 main 会自动触发校验、构建和 GitHub Pages 发布。使用当前仓库的 SSH remote，按用户的提交/发布指令执行。
+
+## 文献与论文目录
+
+Zotero 维护书目信息和全文，网站只导出选定文献。`src/data/paper-relations.json` 维护文献与文章的关系，原文链接旁的“文献”入口和论文目录由数据生成。新增引用时匹配 Zotero 条目并维护关系，公开数据更新后执行 `npm run papers:check`。完整流程见 [文献维护](PAPERS.md)。

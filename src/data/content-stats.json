@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "entries": 91,
-  "published": 67,
-  "draft": 24,
+  "entries": 87,
+  "published": 87,
+  "draft": 0,
   "domains": {
     "mathematics": {
       "published": 14,
@@ -15,24 +15,24 @@
       "total": 25
     },
     "learning-based-planning": {
-      "published": 22,
-      "draft": 14,
-      "total": 36
+      "published": 35,
+      "draft": 0,
+      "total": 35
     },
     "engineering-tools": {
-      "published": 5,
-      "draft": 2,
-      "total": 7
+      "published": 6,
+      "draft": 0,
+      "total": 6
     },
     "real-flight": {
-      "published": 1,
+      "published": 2,
       "draft": 0,
-      "total": 1
+      "total": 2
     },
     "simulation-evaluation": {
-      "published": 0,
-      "draft": 8,
-      "total": 8
+      "published": 5,
+      "draft": 0,
+      "total": 5
     }
   },
   "recent": [
@@ -104,20 +104,10 @@
     "learning-based-planning/rl-algorithms/model-free-rl/sac": "2026-11-16",
     "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations": "2026-11-06",
     "learning-based-planning/rl-algorithms/model-based-rl/dyna": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-based-rl/pets": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-based-rl/mbpo": "2026-11-16",
-    "learning-based-planning/rl-algorithms/model-based-rl/muzero": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-based-rl/dreamer": "2026-11-06",
     "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization": "2026-11-16",
     "learning-based-planning/engineering-practice/ppo-walkthrough": "2026-11-16",
-    "learning-based-planning/engineering-practice/rl-engineering-pitfalls": "2026-11-06",
-    "learning-based-planning/engineering-practice/tensorboard-metrics": "2026-11-06",
-    "learning-based-planning/engineering-practice/work-pipeline": "2026-11-06",
-    "engineering-tools/px4-ros/px4-sitl": "2026-11-06",
-    "engineering-tools/px4-ros/ros1": "2026-11-06",
     "real-flight/remote-control-setup": "2026-11-06",
     "engineering-tools/git-manual": "2026-11-06",
-    "engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide": "2026-11-06",
     "mathematics/linear-algebra-geometry/matrix-decomposition": "2026-11-16",
     "mathematics/linear-algebra-geometry/coordinate-transforms": "2026-11-16",
     "mathematics/linear-algebra-geometry/so3-se3-quaternion": "2026-11-16",
@@ -141,24 +131,10 @@
     "classical-planning-control/tracking-control/tracking-latency-and-actuator-dynamics": "2026-11-16",
     "learning-based-planning/neural-network-architectures/feature-pyramid-multiscale": "2026-11-16",
     "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion": "2026-11-16",
-    "learning-based-planning/engineering-practice/observation-action-reward-design": "2026-11-06",
-    "learning-based-planning/engineering-practice/ppo-training-and-debugging": "2026-11-06",
     "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview": "2026-11-06",
     "learning-based-planning/learning-based-trajectory-planning/yopo": "2026-11-06",
     "learning-based-planning/learning-based-trajectory-planning/navrl": "2026-11-06",
-    "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection": "2026-11-06",
-    "learning-based-planning/learning-based-trajectory-planning/residual-trajectory-optimization": "2026-11-06",
-    "engineering-tools/px4-ros/ros2": "2026-11-06",
-    "engineering-tools/docker-environment": "2026-11-06",
-    "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture": "2026-11-06",
-    "simulation-evaluation/simulation-platforms/simulator-overview": "2026-11-06",
-    "simulation-evaluation/simulation-timing-and-interfaces": "2026-11-06",
-    "simulation-evaluation/scenario-design/static-dynamic-scenarios": "2026-11-06",
-    "simulation-evaluation/scenario-design/domain-randomization": "2026-11-06",
-    "simulation-evaluation/evaluation-methodology/navigation-metrics": "2026-11-06",
-    "simulation-evaluation/evaluation-methodology/baselines-and-oracle-analysis": "2026-11-06",
-    "simulation-evaluation/evaluation-methodology/generalization-and-ablation": "2026-11-06",
-    "simulation-evaluation/sim-to-real/sim-to-real-gap": "2026-11-06"
+    "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection": "2026-11-06"
   },
-  "contentHash": "c69895e3e626e2345767c67167802ca5"
+  "contentHash": "c3f3607e0222797a2963dd1e2ec0c866"
 }

@@ -1,143 +1,138 @@
-# 基于模型的强化学习基础
+# Model-Based RL 基础
 
 ## 1. 概述
 
-> **状态：草稿** — Knowledge Tree V2 规划章节，正文撰写中。
-
-Model-Based RL（基于模型的强化学习）的核心思想：显式学习一个环境模型，让策略额外从「模型产生的经验」中学习，用模型误差换取样本效率。本篇是 Model-Based RL 分支的技术地基：定义环境模型与奖励模型的形态、世界模型的组成、真实与想象 rollout 的区别，以及模型误差如何影响策略优化。范式层面的对比与选型（Model-Free 与 Model-Based 的本质区别、两条路线的适用场景）在《有模型与无模型强化学习》中展开，本篇不重复。
+Model-Based RL 使用环境模型辅助决策与学习。模型的主要用途包括生成训练经验、评价候选动作序列，以及传播策略梯度。不同方法的关键区别在于：模型预测什么、模型如何参与优化，以及哪些梯度经过模型。
 
 ## 2. 基础与定义
 
-### 2.1 动力学模型与奖励模型
+### 2.1 环境与模型
 
-MDP 的转移核与奖励函数是环境的完整描述，Model-Based RL 的「模型」即对它们的学习或利用：
+设状态为 $s_t$，动作为 $a_t$，转移分布为 $p(s_{t+1}\mid s_t,a_t)$，奖励为 $r_t$，折扣因子为 $\gamma$。策略优化目标为：
 
-- **动力学模型（dynamics model）**：$\hat p(s'\mid s,a)$ 或确定性映射 $\hat s' = f_\theta(s,a)$，预测状态转移；
-- **奖励模型（reward model）**：$\hat r(s,a)$ 或 $\hat r(s'\mid s,a)$，预测即时奖励；
-- **终止/继续信号（continue prediction）**：$\hat d(s,a)$，预测回合是否结束，决定想象轨迹的折扣与截断。
+$$
+J(\theta)=\mathbb E_{\pi_\theta,p}\left[\sum_{t=0}^{\infty}\gamma^t r_t\right].
+$$
 
-### 2.2 已知动力学与学习动力学
+模型 $p_\phi$ 近似环境转移，并在需要时预测奖励与终止。模型可以来自已知物理方程、交互数据学习，或“物理模型 + 学习残差”。实际环境可以是物理系统，也可以是提供交互数据的高保真仿真器。
 
-- **已知动力学**：规则完全已知的棋类、可解析的刚体/轨道动力学——模型给定，问题退化为规划（经典 MPC、MCTS 属于这一形态，它们本身不必然是强化学习）。
-- **学习动力学**：真实环境未知，从交互数据中拟合 $\hat p,\hat r$——本分支各篇主要讨论这一类。
-- **中间形态**：存在近似物理模型但与真实环境失配（model mismatch），只学习残差或做少量参数校准。
+### 2.2 状态表示
 
-### 2.3 确定性模型与概率模型
+| 表示 | 预测对象 | 典型方法 |
+|---|---|---|
+| 物理状态 | 位置、速度、姿态等可解释变量 | PETS、MBPO、SuperMimic |
+| 潜在状态 | 从观测或历史编码的任务相关变量 | TD-MPC、MuZero、Dreamer |
 
-- **确定性模型**：输出单点预测 $\hat s' = f_\theta(s,a)$。实现简单，但无法表达环境固有的随机性（偶然不确定性），多步展开时容易把「平均」错当「真实」。
-- **概率模型**：输出分布 $\hat p_\theta(s'\mid s,a)$（常用高斯：预测均值与方差）。PILCO / PETS 一线的工作表明：概率模型是长时域规划稳定性的关键，方差输出同时为不确定性度量提供基础。
-
-### 2.4 显式状态与潜在状态
-
-- **显式模型**：在原始观测空间直接预测下一观测（PETS、MBPO），状态语义清楚、监督信号直接。
-- **潜在模型（world model）**：先把观测编码为隐状态 $z_t$，在隐空间中建模转移（Dreamer 的 RSSM、MuZero 的隐式状态）。优点是压缩表示、天然适配图像观测；代价是需要为「隐状态是否学到位」设计间接监督（重建、奖励预测、价值预测等）。
+世界模型描述用于预测环境演化的模型系统，可以使用物理状态或潜在状态。部分可观测任务需要把足够的历史信息纳入状态表示，以支撑未来预测。
 
 ## 3. 核心原理
 
-### 3.1 真实轨迹与模型轨迹
+### 3.1 模型用途与梯度
 
-- **真实 rollout**：策略与环境真实交互产生的 $(s_t,a_t,r_t,s_{t+1})$ 序列——数据「贵但无模型偏差」。
-- **想象 rollout（imagined rollout）**：从某个（通常是真实的）状态出发，在模型中逐步展开：
+| 路线 | 模型的作用 | 决策或学习目标 | 策略梯度经过动力学 |
+|---|---|---|---|
+| 生成经验 | 产生额外转移样本 | TD 学习或离策略 Actor-Critic | Dyna、MBPO 的常规更新不经过 |
+| 在线规划 | 评价未来动作序列 | 模型内累计回报与末端价值 | PETS、TD-MPC 主要采用采样优化 |
+| 模型内策略学习 | 展开当前策略 | 想象轨迹的回报 | PILCO、SVG、SHAC、SuperMimic 使用 |
 
-$$\hat s_{t+1}\sim\hat p_\theta(\cdot\mid \hat s_t,a_t),\qquad \hat r_t=\hat r_\theta(\hat s_t,a_t)$$
+Dreamer 在潜在模型中学习行为，具体梯度随版本变化。MuZero 用搜索结果训练策略与价值预测，其网络训练梯度与搜索决策过程分别处理。
 
-配齐奖励与终止信号后即得到合成轨迹——数据「便宜但携带模型偏差」。
+模型可微性、状态表示和模型用途是三个独立的分类维度。可微神经模型也可以只用于生成样本。
 
-Model-Based RL 的各变体，本质都是在回答三个问题：想象 rollout 从哪开始、走多远、产生的数据（或梯度）交给谁使用。
+### 3.2 模型学习
 
-### 3.2 预测误差与累积误差
+从实际环境收集经验 $\mathcal D=\{s_t,a_t,r_t,s_{t+1},d_t\}$。概率转移模型通过负对数似然学习：
 
-模型每步的小误差 $\varepsilon_t$ 会沿 rollout 复合放大——即使单步误差有界，$k$ 步后状态分布也会显著偏离真实。两个工程后果：
+$$
+L_M(\phi)=-\mathbb E_{\mathcal D}\left[\log p_\phi(s_{t+1}\mid s_t,a_t)\right].
+$$
 
-1. **短 rollout**：把想象轨迹限制在模型可信的时域内（MBPO 用线性递增的 rollout 长度控制偏差增长）；
-2. **单步监督优先**：训练世界模型时以单步（或少数几步）转移预测为主，而非长序列端到端拟合。
+对于对角高斯模型，预测均值 $\mu_\phi$ 与协方差 $\Sigma_\phi$：
 
-### 3.3 模型不确定性与误差利用
+$$
+L_M=\frac12\mathbb E\left[
+(s'-\mu_\phi)^\top\Sigma_\phi^{-1}(s'-\mu_\phi)+\log\det\Sigma_\phi\right]+C.
+$$
 
-- **认知不确定性（epistemic）**：数据不足所致，随数据增加而下降。工程上用系综（ensemble 成员间的方差）或贝叶斯网络度量。
-- **偶然不确定性（aleatoric）**：环境本身随机，只能用概率模型表达，不会随数据消失。
-- **Model exploitation（模型利用 / 模型钻空子）**：策略优化会把模型预测「过于乐观」的区域当作真实可达的高回报区域，主动 exploiting 模型误差——模型偏差从数值问题升级为被优化目标。经典对策：系综不确定性加权、限制 rollout 长度、对想象数据降低置信度。
+残差模型可预测 $\Delta s=s'-s$；姿态等流形状态需采用相应的更新与误差表示。奖励可由任务定义直接计算，也可增加奖励预测损失。
 
-### 3.4 世界模型学习与策略优化
+<details class="kt-derivation" id="model-ensemble-uncertainty">
+<summary>概率系综的不确定性</summary>
 
-模型学习的目标（极大似然、变分推断、重建损失）与策略优化目标是分离的：模型只需「好到能产生有用的数据或梯度」。这解释了两个经验现象：
+设 $B$ 个模型输出 $\mu_b,\Sigma_b$，以均匀混合表示预测分布。总协方差满足：
 
-- 不追求完美模型——策略关心的区域与任务相关，短时域内够用即可；
-- 模型质量与最终性能之间不是单调关系——更强的模型若误差分布被策略利用，性能反而可能下降。
+$$
+\operatorname{Cov}(s')=\frac1B\sum_b\Sigma_b+
+\frac1B\sum_b(\mu_b-\bar\mu)(\mu_b-\bar\mu)^\top,
+\qquad \bar\mu=\frac1B\sum_b\mu_b.
+$$
 
-### 3.5 训练流程
+第一项表示各成员预测的条件噪声，第二项表示成员之间的分歧。不同初始化和自助采样使成员产生差异。分歧是否反映真实预测风险，需要通过留出数据上的覆盖率与误差检验。
 
-1. 策略与环境交互，收集真实数据进 replay buffer；
-2. 用真实数据训练世界模型（单步/多步转移监督）；
-3. 用模型生成想象 rollout（起点通常取自真实数据）；
-4. 想象数据交给策略学习器——规划搜索、model-free 更新、或梯度反传，三种用法见 4.2；
-5. 回到第 1 步，交替进行。
+单个高斯输出表示一个条件高斯分布；多个成员的混合可以表达更复杂的预测形状。
 
-Dyna、PETS、MBPO、MuZero、Dreamer 的差异全部体现在第 3–4 步的「怎么用模型」上。
+</details>
+
+### 3.3 模型使用时域
+
+用模型展开 $H$ 步时，误差随状态分布改变而累积。短展开减少预测链长度，末端价值补充更长时间的回报：
+
+$$
+\hat J_H=\mathbb E_{p_\phi,\pi_\theta}\left[
+\sum_{t=0}^{H-1}\gamma^t r_t+\gamma^H V_\psi(s_H)\right].
+$$
+
+增加 $H$ 会改变模型误差与价值误差的相对影响。适当时域取决于模型精度、任务时间尺度和规划或训练预算。
+
+<details class="kt-derivation" id="model-rollout-error">
+<summary>多步预测误差</summary>
+
+考虑固定动作序列，真实映射为 $f$，模型为 $\hat f$。若相关状态区域内单步误差至多 $\varepsilon$，且 $f$ 对状态的 Lipschitz 常数为 $L$，则：
+$$
+e_{t+1}=\|\hat s_{t+1}-s_{t+1}\|\leq\varepsilon+Le_t.
+$$
+
+相同起点下：
+
+$$
+e_t\leq\varepsilon\sum_{j=0}^{t-1}L^j.
+$$
+
+闭环预测中，动作也随预测状态变化，此时应分析策略与动力学组合后的映射。轨迹误差与梯度误差是不同的量，可微策略优化还需要检查局部雅可比。
+
+</details>
 
 ## 4. 实现与应用
 
-### 4.1 概率系综模型实现
+### 4.1 学习闭环
 
-```python
-import torch
-import torch.nn as nn
+1. 用当前策略或规划器访问实际环境，更新经验库。
+2. 用训练数据拟合模型，用独立轨迹检验单步和多步预测。
+3. 依据路线，用模型生成样本、在线规划或更新策略。
+4. 在实际环境中评价改进，并补充新的状态与动作区域。
 
-class ProbabilisticDynamics(nn.Module):
-    """单个系综成员：输出高斯 (mean, log_var)，表达偶然不确定性."""
-    def __init__(self, s_dim, a_dim, h=256):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(s_dim + a_dim, h), nn.SiLU(),
-            nn.Linear(h, h), nn.SiLU(),
-        )
-        self.mean = nn.Linear(h, s_dim)
-        self.log_var = nn.Linear(h, s_dim)
+训练与验证按轨迹或实验批次划分，避免相邻帧泄漏导致过度乐观的预测指标。
 
-    def forward(self, s, a):
-        x = torch.cat([s, a], dim=-1)
-        return self.mean(self.net(x)), self.log_var(self.net(x)).clamp(-10, 2)
+### 4.2 无人机应用
 
-class DynamicsEnsemble(nn.Module):
-    """N 个独立初始化、独立训练的成员，成员间方差表达认知不确定性."""
-    def __init__(self, s_dim, a_dim, n=5):
-        super().__init__()
-        self.members = nn.ModuleList(
-            ProbabilisticDynamics(s_dim, a_dim) for _ in range(n))
+| 需求 | 优先研究的机制 | 主要验证对象 |
+|---|---|---|
+| 数据昂贵，希望复用交互 | MBPO 的短模型展开 | 合成数据对实际回报的影响 |
+| 在线修正动作序列 | PETS、TD-MPC | 规划时延、模型误差与约束 |
+| 利用动力学导数训练控制器 | SHAC、SuperMimic | 雅可比、末端价值梯度与闭环稳定性 |
+| 从图像历史建立预测状态 | Dreamer | 潜在预测、观测编码与任务泛化 |
 
-    def step(self, s, a):
-        preds = [m(s, a) for m in self.members]
-        mean = torch.stack([p[0] for p in preds])   # [N, B, s_dim]
-        log_var = torch.stack([p[1] for p in preds])
-        return mean, log_var
-```
-
-### 4.2 模型使用方式
-
-| 流派 | 模型用途 | 代表方法 |
-| :--- | :--- | :--- |
-| 规划式 | 在模型内搜索动作序列/搜索树 | PETS（CEM）、MuZero（MCTS） |
-| 数据生成式 | 模型 rollout 产出合成经验，交给 model-free 学习器 | Dyna、MBPO |
-| 梯度式 | 策略目标函数经过可微模型反传梯度 | Dreamer、SHAC |
-
-三种用法不互斥：MuZero 用搜索树产生比初始策略更强的训练信号（规划式），Dreamer 在冻结的世界模型中反传策略梯度（梯度式），MBPO 则把模型当「经验放大器」（数据生成式）。分支内的各篇文档按此脉络展开。
+无人机模型状态应覆盖影响后续转移的执行器与环境因素。观测延迟、推力响应和风场状态是否进入模型，直接影响预测闭环。
 
 ## 5. 分析与总结
 
-- **主线是交换**：以模型偏差与额外计算，换取真实交互样本量。样本贵（真实机器人、风洞、真实场景）时收益最大；样本便宜（仿真器大规模并行）时 model-free 往往更简单可靠。
-- **设计要点**：概率模型表达偶然不确定性；系综表达认知不确定性；短 rollout 控制误差复合；起点取自真实数据分布。
-- **准确理解边界**：Model-Based 不要求神经网络世界模型（表格 Dyna-Q 也是 model-based）；Model-Based 不要求通过动力学反传梯度（MBPO 恰恰不反传）；On-Policy / Off-Policy 与 Model-Based / Model-Free 是两个独立的分类维度。
+模型质量由任务中的用途决定：生成经验关注转移分布与样本偏差，规划关注候选动作的排序，可微策略学习还关注导数。实际环境回报与同预算对照实验是检验模型收益的共同标准。
 
 ## 6. 关联与参考
 
-### 6.1 相关知识
-
-- **先修知识**：[强化学习核心公式手册](../01_rl-foundations/01_reinforcement-learning-foundations.md)——MDP、贝尔曼方程与策略梯度
-- **范式导航**：🚧 有模型与无模型强化学习（撰写中）——两条范式的对比与选型
-- **进阶阅读**：🚧 Dyna（撰写中）、🚧 PETS（撰写中）、🚧 MBPO（撰写中）、🚧 Dreamer（撰写中）——按 4.2 的三种模型用法逐篇展开
-
-### 6.2 参考资料
-
-1. Sutton & Barto，《Reinforcement Learning: An Introduction》（第 2 版，2018）第 8 章：planning and learning with models。正式链接待补充。
-2. Sutton, "Integrated Architectures for Learning, Planning, and Reacting Based on Approximating Dynamic Programming"（ICML 1990）——Dyna 架构原始文献。正式链接待补充。
-3. Hafner et al., "Learning Latent Dynamics for Planning from Pixels"（ICML 2019，PlaNet）——潜在世界模型与想象 rollout。正式链接待补充。
+- 生成经验：[Dyna](02_dyna.md) → [MBPO](03_mbpo.md)。
+- 在线规划：[PETS](04_pets.md) → [TD-MPC](05_td-mpc.md)，补充 [MuZero](06_muzero.md)。
+- 策略梯度：[可微模型与策略梯度](07_differentiable-policy-optimization.md) → [SHAC](08_shac.md) → [SuperMimic](10_supermimic.md)。
+- 潜在模型：[Dreamer](09_dreamer.md)。
+- Chua 等：[Deep Reinforcement Learning in a Handful of Trials using Probabilistic Dynamics Models](https://proceedings.neurips.cc/paper_files/paper/2018/hash/3de568f8597b94bda53149c7d7f5958c-Abstract.html)，NeurIPS 2018。
+- Janner 等：[When to Trust Your Model: Model-Based Policy Optimization](https://proceedings.neurips.cc/paper_files/paper/2019/hash/5faf461eff3099671ad63c6f3f094f7f-Abstract.html)，NeurIPS 2019。

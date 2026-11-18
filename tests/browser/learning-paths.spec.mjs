@@ -66,7 +66,7 @@ test('v1 可导入，v2 仅按 ID 更新匹配步骤，导出携带 v2 标识', 
 	await download.delete();
 });
 
-for (const [id, count] of [['reinforcement-learning', 10], ['classical-trajectory-planning', 7], ['learning-based-uav-navigation', 8]]) {
+for (const [id, count] of [['reinforcement-learning', 10], ['classical-trajectory-planning', 7], ['learning-based-uav-navigation', 10], ['model-based-control', 5]]) {
 	test(`${id} 使用五段结构，草稿步骤不产生不可用链接`, async ({ page }) => {
 		await page.goto(`learning-paths/${id}/`);
 		const headings = await page.locator('.sl-markdown-content h2').allTextContents();

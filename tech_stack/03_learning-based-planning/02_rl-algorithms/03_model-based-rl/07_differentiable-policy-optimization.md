@@ -1,117 +1,165 @@
-# 可微动力学与直接策略优化
+# 可微模型与策略梯度
 
 ## 1. 概述
 
-> **状态：草稿** — Knowledge Tree V2 规划章节，正文撰写中。
-
-除了「模型造数据」（Dyna/MBPO）与「模型内搜索」（PETS/MuZero），还有第三种用法：**把状态转移当作可微计算图，用反向传播（BPTT）直接求策略梯度**。这类方法统称可微动力学/直接策略优化——策略回报对动作的敏感度经由 $\partial s'/\partial a$、$\partial s'/\partial s$ 链式传播到策略参数，即 pathwise（路径导数）策略梯度。SHAC（Short-Horizon Actor-Critic，2022）是这条路线中兼顾稳定性与样本效率的代表：短时域 rollout + critic 终端自举，抑制长链梯度的爆炸与偏差。
-
-三个必须先说清的边界（也是分支内反复强调的区分）：
-
-1. **可微动力学不是所有 Model-Based RL 的必要条件**——Dyna/MBPO/PETS/MuZero 都不需要动力学可微；
-2. **冻结世界模型参数 ≠ 切断经过世界模型的梯度**——Dreamer 冻结模型却反传策略梯度；「冻结」指不更新模型权重，梯度仍然流经模型函数；
-3. **使用模型生成样本与通过模型反传梯度是两种不同的技术机制**——前者改数据的量，后者改梯度的路。
+可微策略优化把策略、动力学和奖励连接成计算图，通过未来回报对动作的导数更新策略。PILCO 从概率模型中的期望代价求导；SVG 用重参数化连接随机策略、随机动力学与价值函数；SHAC 将这种梯度限制在短时域，并用 Critic 估计后续回报。
 
 ## 2. 基础与定义
 
-### 2.1 可微状态转移
+### 2.1 模型与策略
 
-设转移 $s_{t+1}=f(s_t,a_t)$ 可微，则 rollout 是一个复合函数计算图。两类来源：
+设状态为 $s_t$，动作为 $a_t$，策略参数为 $\theta$，动力学参数为 $\phi$，价值参数为 $\psi$。先考虑确定性闭环：
 
-- **可微物理仿真器**：以可微算子实现刚体/软体动力学（分析梯度或自动微分），常见于 GPU 加速仿真与图形学；
-- **学习得到的可微代理动力学**：神经网络拟合的 $\hat f_\theta$ 天然可微——但梯度质量取决于模型在训练分布之外的行为。
+$$
+a_t=\pi_\theta(s_t),\qquad s_{t+1}=f_\phi(s_t,a_t).
+$$
 
-### 2.2 状态与动作雅可比矩阵
+模型可以来自解析动力学、可微仿真器或数据拟合。Actor 更新时固定 $\phi$ 与 $\psi$，保留模型和价值函数对输入的导数。初始状态来自采样分布，在一次更新中视为固定。
 
-反传的核心变量是两个雅可比：
+### 2.2 优化目标
 
-$$A_t=\frac{\partial f}{\partial a}\Big|_{(s_t,a_t)},\qquad S_t=\frac{\partial f}{\partial s}\Big|_{(s_t,a_t)}$$
+对长度为 $H$ 的轨迹，奖励 $r_t=r(s_t,a_t)$，折扣因子为 $\gamma$：
 
-$k$ 步 BPTT 中，梯度按 $\prod_{j}S_j$ 复合——**状态雅可比的谱半径决定梯度爆炸/消失**：这是该路线一切稳定性设计的根源。
+$$
+J_H(\theta)=\mathbb E\left[\sum_{t=0}^{H-1}\gamma^t r(s_t,a_t)+\gamma^H V_\psi(s_H)\right],\qquad L_\pi=-J_H.
+$$
 
-### 2.3 路径导数策略梯度
-
-对随机策略 $a\sim\pi_\phi(s)$，用重参数化把随机性从优化变量中剥离后，可直接对期望回报求导：
-
-$$\nabla_\phi J=\mathbb E\Big[\nabla_\phi\big(\textstyle\sum_{t=0}^{k-1}r(s_t,a_t)+V(s_k)\big)\Big]$$
-
-与 score-function（REINFORCE 型）梯度相比，pathwise 梯度方差低、但要求模型可微且光滑假设更强。
+前一项由模型展开计算，末端价值估计 $H$ 步之后的回报。有限任务真正终止时，后续价值取零。
 
 ## 3. 核心原理
 
-### 3.1 时域截断与 BPTT
+### 3.1 策略梯度
 
-对短时域想象 rollout（长度 $k$），从真实起点 $(s_0)$ 出发：
+定义 $D_t=\partial s_t/\partial\theta$，$U_t=\partial a_t/\partial\theta$。以下 $f_s,f_a$ 为动力学对状态和动作的雅可比，$\pi_s,\pi_\theta$ 为策略对状态和参数的雅可比。省略求值点，有：
 
-$$s_{t+1}=f_\theta(s_t,a_t),\quad a_t=\pi_\phi(s_t),\quad J_k=\sum_{t=0}^{k-1}r(s_t,a_t)+V_\psi(s_k)$$
+$$
+U_t=\pi_sD_t+\pi_\theta,\qquad
+D_{t+1}=f_sD_t+f_aU_t=(f_s+f_a\pi_s)D_t+f_a\pi_\theta.
+$$
 
-对 $J_k$ 做 BPTT：梯度依次穿过 $V_\psi$、$\prod S$、奖励函数，回到 $\pi_\phi$。截断在 $k$ 步而非整回合，是稳定性设计的第一层。
+因此，目标梯度为：
 
-### 3.2 终端价值自举与 SHAC
+$$
+\nabla_\theta J_H=
+\mathbb E\left[\sum_{t=0}^{H-1}\gamma^t(r_sD_t+r_aU_t)+\gamma^H V_s(s_H)D_H\right].
+$$
 
-SHAC 的关键组合：**短时域想象 + 终端价值自举**。
+策略既改变当前动作，也通过状态转移影响后续动作和末端价值。反向传播按这条依赖链累积各时刻贡献。
 
-- rollout 只展开 $k$ 步（如 3~5），梯度链长度受控；
-- 第 $k$ 步不假设「自然结束」，而是用学习到的 critic $V_\psi$ 估计余下回报，作为 BPTT 目标的终端；
-- critic 用标准 TD/actor-critic 目标训练，对 $V$ 的梯度**不**穿过动力学（否则会被 $\prod S$ 的病态谱污染）。
+<details class="kt-derivation" id="pathwise-two-step">
+<summary>二步回报的梯度</summary>
 
-直觉：短链保住梯度的方向感（真实敏感度），bootstrap 补回被截断的长时视野。
+固定 $s_0$ 时，$D_0=0$，$U_0=\pi_\theta(s_0)$。第一步与第二步状态导数分别为：
 
-### 3.3 梯度截断与数值稳定性
+$$
+D_1=f_{a,0}\pi_{\theta,0},\qquad
+D_2=(f_{s,1}+f_{a,1}\pi_{s,1})D_1+f_{a,1}\pi_{\theta,1}.
+$$
 
-工程上的四件套：
+对 $J_2=r_0+\gamma r_1+\gamma^2V_\psi(s_2)$ 求导：
 
-1. **时域截断**（如上）；
-2. **梯度范数裁剪**：对 BPTT 梯度按范数截断，防 $S$ 谱半径 > 1 时的爆炸；
-3. **对 $V$ 通路 stop-gradient**：终端 bootstrap 只提供标量价值，不回传过模型；
-4. **模型侧正则**：训练可微代理模型时约束 Lipschitz/雅可比幅度，压低 $\|S\|$。
+$$
+\nabla_\theta J_2=r_{a,0}\pi_{\theta,0}
++\gamma\left[r_{s,1}D_1+r_{a,1}(\pi_{s,1}D_1+\pi_{\theta,1})\right]
++\gamma^2V_s(s_2)D_2.
+$$
 
-### 3.4 动力学误差对策略梯度的影响
+末项把 Critic 对末状态的评价传回前两步动作。对 $V_\psi(s_2)$ 整体停止梯度会删除这一项。
 
-与「造数据」路线不同，梯度式路线中模型误差直接**改写梯度方向**：$\partial\hat f/\partial a\neq\partial f/\partial a$ 时，策略沿着模型以为的最优方向优化，而真实环境可能并不买账。光滑性失配（接触、摩擦切换等不连续动力学）会让 $\hat f$ 的雅可比在真实环境的行为附近剧烈错误。这解释了该路线的成功域：**光滑动力学、短视野、连续控制**；而在接触丰富任务上，「造数据」类方法（MBPO）往往更稳。
+</details>
+
+### 3.2 随机价值梯度
+
+SVG 将噪声从可学习映射中分离：
+
+$$
+a_t=g_\theta(s_t,\epsilon_t),\qquad
+s_{t+1}=f_\phi(s_t,a_t,\xi_t),
+$$
+
+其中 $\epsilon_t,\xi_t$ 来自与参数无关的基础分布。在允许交换微分与期望的条件下，固定一次噪声样本即可对整条路径求导，再用多条路径估计期望梯度。
+
+一步价值展开给出动作梯度的来源：
+
+$$
+Q(s,a)=\mathbb E_\xi[r(s,a)+\gamma V_\psi(f_\phi(s,a,\xi))],
+$$
+
+$$
+\nabla_a Q=\mathbb E_\xi\left[r_a+\gamma V_s f_a\right].
+$$
+
+| 方法 | 价值信号 | 动力学导数的用途 |
+|---|---|---|
+| SVG(0) | 学习的 $Q(s,a)$ | 通过 $Q_a$ 更新策略 |
+| SVG(1) | 单步奖励与下一状态价值 | 通过 $f_a$ 传播一次价值梯度 |
+| 多步 SVG | 多步奖励与后续价值 | 沿轨迹传播状态与动作导数 |
+
+原始 SVG 还利用实际环境轨迹及推断的噪声，在访问过的状态上计算模型局部导数，减少完全依赖长预测轨迹造成的状态偏移。
+
+### 3.3 PILCO
+
+PILCO 学习高斯过程动力学，并在策略作用下传播状态分布。若以高斯分布近似 $p(s_t)$，可用矩匹配计算下一状态的均值和协方差，再优化期望代价：
+
+$$
+J_c(\theta)=\sum_{t=1}^{T}\mathbb E_{p(s_t;\theta)}[c(s_t)].
+$$
+
+梯度经过“策略参数 → 状态分布矩 → 期望代价”。模型不确定性参与分布传播，影响策略对未来风险的评价。
+
+<details class="kt-derivation" id="pilco-moment-gradient">
+<summary>分布矩的梯度</summary>
+
+令 $m_t=(\mu_t,\Sigma_t)$ 表示近似状态分布，矩传播记为 $m_{t+1}=F(m_t,\theta)$。则：
+
+$$
+\frac{d m_{t+1}}{d\theta}=F_m\frac{d m_t}{d\theta}+F_\theta,
+$$
+
+$$
+\frac{dJ_c}{d\theta}=\sum_t\left[
+\frac{\partial\mathbb E[c]}{\partial\mu_t}\frac{d\mu_t}{d\theta}
++\left\langle\frac{\partial\mathbb E[c]}{\partial\Sigma_t},\frac{d\Sigma_t}{d\theta}\right\rangle_F\right].
+$$
+
+矩匹配对所选高斯过程核及输入分布计算预测矩，再以高斯分布近似传播结果。近似来自分布表示；该机制与只在均值处进行一阶线性化有不同的误差来源。
+
+</details>
 
 ## 4. 实现与应用
 
-### 4.1 可微策略梯度实现
+### 4.1 训练流程
 
-```python
-import torch
+1. 收集环境状态、动作与下一状态，训练模型；使用已知可微动力学时直接调用模型。
+2. 从环境数据采样起点，固定本轮模型及 Critic 参数。
+3. 用当前策略展开 $H$ 步，计算奖励与末端价值。
+4. 对 $L_\pi$ 反向传播，更新 Actor。
+5. 用停止梯度的回报目标更新 Critic，重新采集数据并刷新模型。
 
-def short_horizon_policy_grad(f_model, policy, critic, s0, k=4):
-    """SHAC 式短时域直接策略优化（示意：批评家终端自举，价值通路不反传）."""
-    s, J = s0, 0.0
-    for t in range(k):
-        a = policy(s)                       # 确定性策略（或重参数化采样）
-        s = f_model(s, a)                   # 可微动力学：梯度将穿过这里
-        J += reward(s, a)
-    J = J + critic(s).detach()              # 终端 bootstrap：critic 提供标量，不传梯度
-    (-J).backward()                         # 最大化回报 = 最小化 -J
-    torch.nn.utils.clip_grad_norm_(policy.parameters(), 1.0)   # 梯度裁剪
-    # f_model.parameters() 的 requires_grad=False：冻结模型，梯度仍流经其计算图
-```
+冻结参数时，自动微分仍需记录模型与价值函数的输入依赖。模型输出、下一状态或末端价值的整体 `detach` 会切断对应路径。
 
-### 4.2 应用场景
+### 4.2 梯度验证
 
-- 可微仿真器内的策略预训练/轨迹优化（图形学、机器人滚动接触等光滑阶段）；
-- 与 model-free 方法级联：短时域 BPTT 预训练 + model-free 精调；
-- 与学习型世界模型结合时，注意代理模型的雅可比质量决定可用时域上限。
+选择短轨迹和固定噪声，用中心差分检查自动微分：
+
+$$
+\frac{\partial J}{\partial\theta_i}\approx
+\frac{J(\theta+\varepsilon e_i)-J(\theta-\varepsilon e_i)}{2\varepsilon}.
+$$
+
+同时检查模型预测误差与局部导数误差。对无人机动力学，优先核对姿态更新、推力响应、动作饱和及气动载荷在当前飞行包线内的导数。
 
 ## 5. 分析与总结
 
-- 该路线的赌注：**模型的雅可比比模型的输出更有用**。成立时光滑任务上梯度质量远超 score-function；不成立时（不连续、模型外推区）反噬同样剧烈。
-- SHAC 的启示与 MBPO/Dreamer 一致：短 rollout + 终端价值，是所有现代 MBRL 控制误差的共同手段——只是控制的对象从「数据分布」变成了「梯度链」。
-- 方法选型速览：模型造数据（最稳，样本效率中等）→ 模型传梯度（样本效率最高，稳定性最依赖模型光滑性）→ 模型内搜索（推理开销大，无策略滞后）。
+路径梯度利用动力学的局部结构。其质量同时依赖模型预测、模型雅可比、奖励导数与末端价值导数。
+
+长时域反向传播包含多个闭环雅可比 $f_s+f_a\pi_s$ 的乘积；其放大或收缩可能导致梯度爆炸或消失。缩短展开时域减少这条链的长度，同时增加对 Critic 的依赖。接触切换、碰撞终止与硬裁剪需要按具体动力学检查可微性。
+
+PILCO 强调不确定性的解析传播，SVG 建立随机路径梯度框架，SHAC 将短时域路径梯度与长期价值估计结合。
 
 ## 6. 关联与参考
 
-### 6.1 相关知识
-
-- **先修知识**：[强化学习核心公式手册](../01_rl-foundations/01_reinforcement-learning-foundations.md)——策略梯度定理与重参数化
-- **本分支地基**：🚧 基于模型的强化学习基础（撰写中）——模型使用的三种流派
-- **进阶阅读**：🚧 Dreamer（撰写中）——同样反传经过模型、但作用于潜在世界模型；[强化学习核心公式手册](../01_rl-foundations/01_reinforcement-learning-foundations.md)——策略梯度与 Actor-Critic 基础
-
-### 6.2 参考资料
-
-1. SHAC（Short-Horizon Actor-Critic，2022）——短时域想象 + critic 终端自举的直接策略优化。正式链接待补充。
-2. Schulman et al., "Gradient Estimation Using Stochastic Computation Graphs"（NeurIPS 2015）——pathwise 与 score-function 梯度的统一视角。正式链接待补充。
-3. 可微物理仿真器的代表工作（GPU 分析梯度仿真、DiffTaichi 一线）。具体文献待补充。
+- 前置：[Model-Based RL 基础](01_model-based-rl-foundations.md)。
+- 后续：[SHAC](08_shac.md)、[Dreamer](09_dreamer.md)、[SuperMimic](10_supermimic.md)。
+- Deisenroth & Rasmussen：[PILCO](https://icml.cc/2011/papers/323_icmlpaper.pdf)，ICML 2011。
+- Heess 等：[Learning Continuous Control Policies by Stochastic Value Gradients](https://proceedings.neurips.cc/paper_files/paper/2015/hash/148510031349642de5ca0c544f31b2ef-Abstract.html)，NeurIPS 2015。
