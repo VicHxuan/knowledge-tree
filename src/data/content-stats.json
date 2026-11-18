@@ -37,34 +37,34 @@
   },
   "recent": [
     {
-      "slug": "classical-planning-control/path-search/heuristic-search",
-      "title": "图搜索与启发式搜索",
-      "domain": "classical-planning-control",
-      "date": "2026-11-16"
+      "slug": "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture",
+      "title": "分布式强化学习训练",
+      "domain": "engineering-tools",
+      "date": "2026-11-18"
     },
     {
-      "slug": "classical-planning-control/path-search/incremental-search",
-      "title": "增量搜索与路径修复",
-      "domain": "classical-planning-control",
-      "date": "2026-11-16"
+      "slug": "engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide",
+      "title": "多 GPU 训练部署与恢复",
+      "domain": "engineering-tools",
+      "date": "2026-11-18"
     },
     {
-      "slug": "classical-planning-control/path-search/kinodynamic-search",
-      "title": "动力学约束搜索",
-      "domain": "classical-planning-control",
-      "date": "2026-11-16"
+      "slug": "engineering-tools/px4-ros/px4-sitl",
+      "title": "PX4 与 MAVROS 控制接口",
+      "domain": "engineering-tools",
+      "date": "2026-11-18"
     },
     {
-      "slug": "classical-planning-control/path-search/sampling-based-search",
-      "title": "采样规划与路线图",
-      "domain": "classical-planning-control",
-      "date": "2026-11-16"
+      "slug": "engineering-tools/px4-ros/ros1",
+      "title": "ROS1 无人机系统集成",
+      "domain": "engineering-tools",
+      "date": "2026-11-18"
     },
     {
-      "slug": "classical-planning-control/perception-slam/dynamic-obstacle-tracking",
-      "title": "动态障碍物感知与跟踪",
-      "domain": "classical-planning-control",
-      "date": "2026-11-16"
+      "slug": "engineering-tools/px4-ros/ros2",
+      "title": "ROS2 无人机通信",
+      "domain": "engineering-tools",
+      "date": "2026-11-18"
     }
   ],
   "lastModified": {
@@ -102,12 +102,25 @@
     "learning-based-planning/rl-algorithms/model-free-rl/ddpg": "2026-11-16",
     "learning-based-planning/rl-algorithms/model-free-rl/td3": "2026-11-16",
     "learning-based-planning/rl-algorithms/model-free-rl/sac": "2026-11-16",
-    "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-based-rl/dyna": "2026-11-06",
-    "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization": "2026-11-16",
-    "learning-based-planning/engineering-practice/ppo-walkthrough": "2026-11-16",
-    "real-flight/remote-control-setup": "2026-11-06",
+    "learning-based-planning/rl-algorithms/model-based-rl/model-based-rl-foundations": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/dyna": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/pets": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/mbpo": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/muzero": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/dreamer": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/differentiable-policy-optimization": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/td-mpc": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/shac": "2026-11-18",
+    "learning-based-planning/rl-algorithms/model-based-rl/supermimic": "2026-11-18",
+    "learning-based-planning/engineering-practice/ppo-walkthrough": "2026-11-18",
+    "learning-based-planning/engineering-practice/rl-engineering-pitfalls": "2026-11-18",
+    "learning-based-planning/engineering-practice/tensorboard-metrics": "2026-11-18",
+    "engineering-tools/px4-ros/px4-sitl": "2026-11-18",
+    "engineering-tools/px4-ros/ros1": "2026-11-18",
+    "real-flight/remote-control-setup": "2026-11-18",
+    "real-flight/navigation-system-integration": "2026-11-18",
     "engineering-tools/git-manual": "2026-11-06",
+    "engineering-tools/ppo-in-multi-gpu/multi-gpu-training-deployment-guide": "2026-11-18",
     "mathematics/linear-algebra-geometry/matrix-decomposition": "2026-11-16",
     "mathematics/linear-algebra-geometry/coordinate-transforms": "2026-11-16",
     "mathematics/linear-algebra-geometry/so3-se3-quaternion": "2026-11-16",
@@ -131,10 +144,17 @@
     "classical-planning-control/tracking-control/tracking-latency-and-actuator-dynamics": "2026-11-16",
     "learning-based-planning/neural-network-architectures/feature-pyramid-multiscale": "2026-11-16",
     "learning-based-planning/neural-network-architectures/temporal-multimodal-fusion": "2026-11-16",
-    "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview": "2026-11-06",
-    "learning-based-planning/learning-based-trajectory-planning/yopo": "2026-11-06",
-    "learning-based-planning/learning-based-trajectory-planning/navrl": "2026-11-06",
-    "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection": "2026-11-06"
+    "learning-based-planning/learning-based-trajectory-planning/learning-based-planning-overview": "2026-11-18",
+    "learning-based-planning/learning-based-trajectory-planning/yopo": "2026-11-18",
+    "learning-based-planning/learning-based-trajectory-planning/navrl": "2026-11-18",
+    "learning-based-planning/learning-based-trajectory-planning/trajectory-candidate-selection": "2026-11-18",
+    "engineering-tools/px4-ros/ros2": "2026-11-18",
+    "engineering-tools/ppo-in-multi-gpu/distributed-rl-training-architecture": "2026-11-18",
+    "simulation-evaluation/simulation-environment/simulator-overview": "2026-11-18",
+    "simulation-evaluation/simulation-environment/simulation-timing-and-interfaces": "2026-11-18",
+    "simulation-evaluation/simulation-environment/navigation-scenarios": "2026-11-18",
+    "simulation-evaluation/evaluation-methodology/navigation-metrics": "2026-11-18",
+    "simulation-evaluation/sim-to-real/sim-to-real-gap": "2026-11-18"
   },
   "contentHash": "c3f3607e0222797a2963dd1e2ec0c866"
 }
